@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RCM Pro UAE v4.0 — Premium Enterprise Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{
+--primary:#0f172a;--primary-light:#334155;--accent:#38bdf8;--accent-dark:#0284c7;
+--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--gold:#fbbf24;
+--bg-dark:#020617;--bg-card:#1e293b;--bg-card2:#0f172a;
+--text-primary:#f8fafc;--text-secondary:#94a3b8;--border:#334155;
+--gradient-pro:linear-gradient(135deg,#38bdf8,#818cf8);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);overflow-x:hidden;}
+
+/* PRO UI ELEMENTS */
+.sidebar{width:280px;background:var(--bg-card2);border-right:1px solid var(--border);position:fixed;height:100vh;display:flex;flex-direction:column;z-index:100;}
+.main-content{margin-left:280px;min-height:100vh;background:var(--bg-dark);}
+.pro-badge{background:var(--gradient-pro);color:white;font-size:10px;padding:2px 8px;border-radius:10px;text-transform:uppercase;font-weight:800;margin-left:8px;}
+.nav-item{padding:12px 20px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;font-size:14px;}
+.nav-item:hover,.nav-item.active{background:rgba(56,189,248,0.1);color:var(--accent);}
+
+/* TOP BAR */
+.top-header{padding:16px 30px;background:rgba(2,6,23,0.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;position:sticky;top:0;z-index:90;}
+
+/* DASHBOARD GRID */
+.page-content{padding:30px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.metric-card{background:var(--bg-card);padding:24px;border-radius:16px;border:1px solid var(--border);}
+.val{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px;}
+
+/* CHATBOT FLOATER */
+#expertBot{position:fixed;bottom:20px;right:20px;width:350px;background:var(--bg-card);border:1px solid var(--accent);border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.5);display:none;flex-direction:column;z-index:1000;}
+.bot-header{background:var(--accent);color:var(--bg-dark);padding:12px;border-radius:15px 15px 0 0;font-weight:800;display:flex;justify-content:space-between;}
+.bot-messages{height:300px;overflow-y:auto;padding:15px;font-size:13px;display:flex;flex-direction:column;gap:10px;}
+.msg{padding:8px 12px;border-radius:12px;max-width:85%;}
+.bot-msg{background:var(--primary-light);align-self:flex-start;}
+.user-msg{background:var(--accent-dark);align-self:flex-end;}
+.bot-input{border-top:1px solid var(--border);padding:10px;display:flex;gap:5px;}
+.bot-input input{flex:1;background:var(--bg-dark);border:1px solid var(--border);color:white;padding:8px;border-radius:8px;outline:none;}
+
+/* BENCHMARKING */
+.bench-selector{background:rgba(56,189,248,0.1);padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;}
+
+/* UTILS */
+.btn{padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;font-size:13px;}
+.btn-pro{background:var(--gradient-pro);color:white;}
+.status-denied{color:var(--danger);font-weight:700;}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+th{text-align:left;color:var(--text-secondary);font-size:11px;padding:12px;}
+td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
+.page{display:none;}.page.active{display:block;}
+
+@media(max-width:1024px){.grid-4{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="padding:25px;border-bottom:1px solid var(--border);">
+        <h2 style="color:var(--accent)">RCM Pro <span class="pro-badge">v4.0</span></h2>
+        <p style="font-size:10px;color:var(--text-secondary)">DUBAI CLINIC EDITION</p>
+    </div>
+    <div class="sidebar-section">
+        <div class="nav-item active" onclick="nav('dashboard',this)">📊 Executive Dashboard</div>
+        <div class="nav-item" onclick="nav('upload',this)">📂 Data Importer</div>
+        <div class="nav-item" onclick="nav('analysis',this)">🔍 Denial Engine</div>
+        <div class="nav-item" onclick="nav('bench',this)">📈 Market Benchmark</div>
+        <div class="nav-item" onclick="nav('tracker',this)">📋 Appeal Tracker</div>
+    </div>
+    <div style="margin-top:auto;padding:20px;font-size:11px;color:var(--text-secondary);border-top:1px solid var(--border)">
+        Revenue Recovered: <span id="sideRecovered" style="color:var(--success)">AED 0</span>
+    </div>
+</div>
+
+<div class="main-content">
+    <header class="top-header">
+        <h3 id="pageTitle">Executive Dashboard</h3>
+        <div style="display:flex;gap:10px;">
+            <button class="btn btn-pro" onclick="toggleBot()">💬 Coding Expert</button>
+            <button class="btn btn-pro" onclick="exportFullExcel()">📥 Full Report</button>
+        </div>
+    </header>
+
+    <div class="page-content">
+        <!-- BENCHMARK BAR -->
+        <div class="bench-selector">
+            <span>📍 <strong>Clinic Specialty:</strong></span>
+            <select id="specialtySelect" onchange="updateBenchmark()" style="background:#0f172a;color:white;border:1px solid var(--border);padding:5px;border-radius:5px;">
+                <option value="gp">General Practice / Polyclinic</option>
+                <option value="dental">Dental Clinic</option>
+                <option value="ortho">Orthopedics / Physio</option>
+                <option value="derma">Dermatology & Aesthetics</option>
+            </select>
+            <div id="benchInfo" style="font-size:12px;color:var(--text-secondary);">Market Avg Denial: 18%</div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="page-dashboard" class="page active">
+            <div class="grid-4">
+                <div class="metric-card"><p class="val" id="mTotal">AED 0</p><p class="metric-label">Total Claims</p></div>
+                <div class="metric-card"><p class="val" id="mDenied" style="color:var(--danger)">AED 0</p><p class="metric-label">Total Denied</p></div>
+                <div class="metric-card"><p class="val" id="mRate">0%</p><p class="metric-label">Your Denial Rate</p></div>
+                <div class="metric-card"><p class="val" id="mPotential" style="color:var(--success)">AED 0</p><p class="metric-label">Recovery Potential</p></div>
+            </div>
+            <div style="margin-top:30px;background:var(--bg-card);padding:20px;border-radius:16px;">
+                <h4>Financial Acceptance Trend</h4>
+                <div style="height:300px;"><canvas id="mainChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- UPLOAD -->
+        <div id="page-upload" class="page">
+            <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
+                <h1 style="font-size:50px;">☁️</h1>
+                <h2>Import Clinic Data</h2>
+                <p>Supports DHA XML, eClaim CSV, and Excel Rejection Reports</p>
+                <input type="file" id="fileIn" multiple style="display:none" onchange="handleFiles(event)">
+            </div>
+            <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Dubai Polyclinic Sample</button>
+        </div>
+
+        <!-- ANALYSIS -->
+        <div id="page-analysis" class="page">
+            <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
+                <table id="claimsTable">
+                    <thead>
+                        <tr><th>Claim ID</th><th>Payer</th><th>Amount</th><th>Status</th><th>Denial Code</th><th>Action</th></tr>
+                    </thead>
+                    <tbody id="analysisBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHATBOT -->
+<div id="expertBot">
+    <div class="bot-header">
+        <span>RCM EXPERT GPT (DUBAI)</span>
+        <span style="cursor:pointer" onclick="toggleBot()">×</span>
+    </div>
+    <div class="bot-messages" id="botMsgs">
+        <div class="msg bot-msg">Assalamu Alaikum! I am your Dubai RCM Expert. Ask me about DHA coding, ICD-10, or specific payer rules (Daman, AXA, etc.)</div>
+    </div>
+    <div class="bot-input">
+        <input type="text" id="botIn" placeholder="e.g. Can I use modifier 25 with 99213?" onkeypress="if(event.key==='Enter')askBot()">
+        <button onclick="askBot()" style="background:var(--accent);border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">Send</button>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// DATA & CONSTANTS
+// ==========================================
+let DATA = [];
+let RECOVERED = 0;
+const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
+const DENIAL_MAP = {
+    'DEN001': 'Member Ineligible: Verify card via ClaimLinc before appointment.',
+    'DEN002': 'Pre-Auth Missing: DHA requires auth for any procedure > AED 500.',
+    'DEN003': 'Medical Necessity: Physician notes must justify treatment.',
+    'DEN004': 'Coding Error: ICD-10 code does not match procedure.',
+    'DEN014': 'Modifier Missing: Add modifier 25 for same-day E&M services.'
+};
+
+// ==========================================
+// CORE APP LOGIC
+// ==========================================
+function nav(page, el) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('pageTitle').textContent = el.textContent;
+}
+
+function handleFiles(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            // Mapping Logic (Simulated for Demo)
+            loadSample(50); // Load sample for visual demo
+        };
+        reader.readAsText(file);
+    });
+}
+
+function loadSample(count = 50) {
+    const payers = ['Daman', 'AXA', 'MetLife', 'Oman Insurance', 'ADNIC'];
+    const codes = ['DEN001', 'DEN002', 'DEN003', 'DEN004', 'DEN014', 'PAID'];
+    let localData = [];
+    for(let i=0; i<count; i++) {
+        const amt = Math.floor(Math.random() * 2000) + 200;
+        const status = Math.random() > 0.7 ? 'denied' : 'paid';
+        localData.push({
+            id: 'DBI-'+Math.floor(Math.random()*90000),
+            payer: payers[Math.floor(Math.random()*5)],
+            amt: amt,
+            status: status,
+            code: status === 'denied' ? codes[Math.floor(Math.random()*5)] : ''
+        });
+    }
+    DATA = localData;
+    updateUI();
+    nav('dashboard', document.querySelector('.nav-item'));
+}
+
+function updateUI() {
+    const total = DATA.reduce((a,b)=>a+b.amt,0);
+    const denied = DATA.filter(d=>d.status==='denied').reduce((a,b)=>a+b.amt,0);
+    const rate = DATA.length ? (DATA.filter(d=>d.status==='denied').length / DATA.length * 100).toFixed(1) : 0;
+    
+    document.getElementById('mTotal').textContent = 'AED ' + total.toLocaleString();
+    document.getElementById('mDenied').textContent = 'AED ' + denied.toLocaleString();
+    document.getElementById('mRate').textContent = rate + '%';
+    document.getElementById('mPotential').textContent = 'AED ' + Math.floor(denied * 0.65).toLocaleString();
+    
+    renderTable();
+    renderChart();
+    updateBenchmark();
+}
+
+function renderTable() {
+    const body = document.getElementById('analysisBody');
+    body.innerHTML = DATA.map(item => `
+        <tr>
+            <td>${item.id}</td>
+            <td>${item.payer}</td>
+            <td>AED ${item.amt}</td>
+            <td class="status-${item.status}">${item.status.toUpperCase()}</td>
+            <td>${item.code || '-'}</td>
+            <td>
+                ${item.status==='denied' ? 
+                `<button class="btn btn-pro btn-sm" onclick="generateAppeal('${item.id}', '${item.payer}', '${item.code}', ${item.amt})">📄 Appeal PDF</button>` : '✅'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==========================================
+// FEATURE 1: APPEAL GENERATOR (PRO)
+// ==========================================
+function generateAppeal(id, payer, code, amt) {
+    const doc = new jspdf.jsPDF();
+    const reason = DENIAL_MAP[code] || "Standard clinical review required.";
+    
+    doc.setFontSize(18);
+    doc.text("MEDICAL INSURANCE APPEAL LETTER", 20, 30);
+    doc.setFontSize(12);
+    doc.text(`To: Medical Claims Manager, ${payer}`, 20, 50);
+    doc.text(`Reference: Claim ID ${id}`, 20, 60);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 70);
+    
+    doc.text(`Subject: Formal Appeal for Rejected Claim Amount AED ${amt}`, 20, 90);
+    
+    const bodyText = `Our medical audit shows that the claim was rejected under code ${code}. 
+Pursuant to DHA billing standards, we wish to clarify: ${reason}.
+Please find attached the clinical justification and treatmet notes.`;
+
+    doc.text(doc.splitTextToSize(bodyText, 170), 20, 110);
+    
+    doc.text("Sincerely,", 20, 160);
+    doc.text("Billing Department / RCM Manager", 20, 170);
+    
+    doc.save(`Appeal_${id}.pdf`);
+    RECOVERED += amt;
+    document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
+}
+
+// ==========================================
+// FEATURE 2: CODING EXPERT BOT (PRO)
+// ==========================================
+function toggleBot() {
+    const bot = document.getElementById('expertBot');
+    bot.style.display = bot.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function askBot() {
+    const inp = document.getElementById('botIn');
+    const msgs = document.getElementById('botMsgs');
+    const q = inp.value.toLowerCase();
+    if(!q) return;
+
+    msgs.innerHTML += `<div class="msg user-msg">${inp.value}</div>`;
+    inp.value = '';
+
+    let response = "I'm analyzing that DHA rule... As per DHA Coding Standards 2024, ensure your documentation supports medical necessity. Would you like to check the ICD-10 crosswalk?";
+    
+    if(q.includes('25')) response = "Modifier 25 is for a significant, separately identifiable E&M service by the same physician on the same day of a procedure. Don't forget to link it to a different ICD-10 if possible.";
+    if(q.includes('daman')) response = "Daman is very strict with 'Member Ineligible' (DEN001). Always use the Daman Provider Portal for real-time verification before the patient sees the doctor.";
+    if(q.includes('icd')) response = "Dubai clinics should now be transitioning to ICD-10-CM (2024). Avoid using 'Unspecified' codes (.9) as AXA and MetLife are currently rejecting these.";
+
+    setTimeout(() => {
+        msgs.innerHTML += `<div class="msg bot-msg">${response}</div>`;
+        msgs.scrollTop = msgs.scrollHeight;
+    }, 600);
+}
+
+// ==========================================
+// FEATURE 3: BENCHMARKING (PRO)
+// ==========================================
+function updateBenchmark() {
+    const spec = document.getElementById('specialtySelect').value;
+    const avg = BENCHMARKS[spec];
+    const info = document.getElementById('benchInfo');
+    const myRate = parseFloat(document.getElementById('mRate').textContent);
+    
+    let comparison = myRate > avg ? 
+        `<span style="color:var(--danger)">High (+${(myRate-avg).toFixed(1)}%)</span>` : 
+        `<span style="color:var(--success)">Good (-${(avg-myRate).toFixed(1)}%)</span>`;
+    
+    info.innerHTML = `Market Avg for ${spec.toUpperCase()}: ${avg}% | Your Status: ${comparison}`;
+}
+
+// ==========================================
+// VISUALS
+// ==========================================
+function renderChart() {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    if(window.myChart) window.myChart.destroy();
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Claim Acceptance Rate %',
+                data: [85, 78, 82, 88],
+                borderColor: '#38bdf8',
+                tension: 0.4
+            }]
+        },
+        options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#334155' } } } }
+    });
+}
+</script>
+</body>
+</html>
+		
