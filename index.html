@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RCM Pro UAE v4.2 — Premium Executive Edition</title>
+<title>RCM Pro UAE v4.3 — Compliance & Reference Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -21,29 +21,25 @@
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);overflow-x:hidden;}
 .sidebar{width:280px;background:var(--bg-card2);border-right:1px solid var(--border);position:fixed;height:100vh;display:flex;flex-direction:column;z-index:100;}
 .main-content{margin-left:280px;min-height:100vh;background:var(--bg-dark);}
-.pro-badge{background:var(--gradient-pro);color:white;font-size:10px;padding:2px 8px;border-radius:10px;text-transform:uppercase;font-weight:800;margin-left:8px;}
 .nav-item{padding:12px 20px;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;font-size:14px;}
 .nav-item:hover,.nav-item.active{background:rgba(56,189,248,0.1);color:var(--accent);}
 .top-header{padding:16px 30px;background:rgba(2,6,23,0.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;position:sticky;top:0;z-index:90;}
 .page-content{padding:30px;}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
 .metric-card{background:var(--bg-card);padding:24px;border-radius:16px;border:1px solid var(--border);}
 .val{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:4px;}
-#expertBot{position:fixed;bottom:20px;right:20px;width:350px;background:var(--bg-card);border:1px solid var(--accent);border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.5);display:none;flex-direction:column;z-index:1000;}
-.bot-header{background:var(--accent);color:var(--bg-dark);padding:12px;border-radius:15px 15px 0 0;font-weight:800;display:flex;justify-content:space-between;}
-.bot-messages{height:300px;overflow-y:auto;padding:15px;font-size:13px;display:flex;flex-direction:column;gap:10px;}
-.msg{padding:8px 12px;border-radius:12px;max-width:85%;}
-.bot-msg{background:var(--primary-light);align-self:flex-start;}
-.user-msg{background:var(--accent-dark);align-self:flex-end;}
-.bot-input{border-top:1px solid var(--border);padding:10px;display:flex;gap:5px;}
-.bot-input input{flex:1;background:var(--bg-dark);border:1px solid var(--border);color:white;padding:8px;border-radius:8px;outline:none;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.card-title{font-size:16px;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
 .bench-selector{background:rgba(56,189,248,0.1);padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;}
 .btn{padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;font-size:13px;}
 .btn-pro{background:var(--gradient-pro);color:white;}
-table{width:100%;border-collapse:collapse;margin-top:20px;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
 th{text-align:left;color:var(--text-secondary);font-size:11px;padding:12px;}
 td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 .page{display:none;}.page.active{display:block;}
+.ref-table th{background:rgba(255,255,255,0.05);color:var(--accent);}
+.badge{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.badge-danger{background:rgba(239,68,68,0.2);color:var(--danger);}
+.badge-success{background:rgba(34,197,94,0.2);color:var(--success);}
 @media(max-width:1024px){.grid-4{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
@@ -51,57 +47,58 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 
 <div class="sidebar">
     <div style="padding:25px;border-bottom:1px solid var(--border);">
-        <h2 style="color:var(--accent)">RCM Pro <span class="pro-badge">v4.2</span></h2>
-        <p style="font-size:10px;color:var(--text-secondary)">DUBAI OUTPATIENT EDITION</p>
+        <h2 style="color:var(--accent)">RCM Pro <span style="font-size:10px;background:var(--gradient-pro);padding:2px 8px;border-radius:10px;color:white;">v4.3</span></h2>
+        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">COMPLIANCE & REFERENCE EDITION</p>
     </div>
     <div class="sidebar-section">
-        <div class="nav-item active" onclick="nav('dashboard',this)">📊 Executive Dashboard</div>
+        <div class="nav-item active" onclick="nav('dashboard',this)">📊 Executive Summary</div>
         <div class="nav-item" onclick="nav('upload',this)">📂 Data Importer</div>
         <div class="nav-item" onclick="nav('analysis',this)">🔍 Denial Engine</div>
-        <div class="nav-item" onclick="nav('tracker',this)">📋 Appeal Tracker</div>
+        <div class="nav-item" onclick="nav('reference',this)">📚 Coding Reference</div>
+        <div class="nav-item" onclick="nav('recs',this)">💡 Action Plan</div>
     </div>
     
     <div style="padding:15px; margin:15px; background:rgba(255,255,255,0.05); border-radius:10px; font-size:11px;">
-        <strong style="color:var(--accent)">DHA 2026 Compliance:</strong>
+        <strong style="color:var(--accent)">DHA 2026 Core Standards:</strong>
         <ul style="margin-left:15px; margin-top:5px; color:var(--text-secondary); list-style:none;">
-            <li>✅ Vital Signs captured</li>
-            <li>✅ ICD-10 4th Digit specificity</li>
-            <li>✅ EID verified on ProviderLink</li>
-            <li>✅ Submission < 30 days</li>
+            <li>🔹 NABIDH Integration active</li>
+            <li>🔹 EID verified at check-in</li>
+            <li>🔹 ICD-10 specificity required</li>
+            <li>🔹 30-day submission limit</li>
         </ul>
     </div>
 
     <div style="margin-top:auto;padding:20px;font-size:11px;color:var(--text-secondary);border-top:1px solid var(--border)">
-        Revenue Recovered: <span id="sideRecovered" style="color:var(--success)">AED 0</span>
+        Consultancy Value: <span id="sideRecovered" style="color:var(--success)">AED 0</span>
     </div>
 </div>
 
 <div class="main-content">
     <header class="top-header">
-        <h3 id="pageTitle">Executive Dashboard</h3>
-        <div style="display:flex;gap:10px;">
-            <button class="btn btn-pro" onclick="toggleBot()">💬 Outpatient Expert</button>
-        </div>
+        <h3 id="pageTitle">Executive Summary</h3>
+        <button class="btn btn-pro" onclick="exportFullExcel()">📥 Download Master Report</button>
     </header>
 
     <div class="page-content">
+        <!-- BENCHMARK -->
         <div class="bench-selector">
             <span>📍 <strong>Clinic Specialty:</strong></span>
-            <select id="specialtySelect" onchange="updateBenchmark()" style="background:#0f172a;color:white;border:1px solid var(--border);padding:5px;border-radius:5px;">
-                <option value="gp">General Practice / Polyclinic</option>
-                <option value="dental">Dental Clinic</option>
-                <option value="ortho">Orthopedics / Physio</option>
-                <option value="derma">Dermatology & Aesthetics</option>
+            <select id="specSelect" onchange="updateBenchmark()" style="background:#0f172a;color:white;border:1px solid var(--border);padding:5px;border-radius:5px;">
+                <option value="gp">GP / Polyclinic</option>
+                <option value="dental">Dental</option>
+                <option value="ortho">Ortho / Physio</option>
+                <option value="derma">Dermatology</option>
             </select>
-            <div id="benchInfo" style="font-size:12px;color:var(--text-secondary);">Market Avg Denial: 18%</div>
+            <div id="benchInfo" style="font-size:12px;color:var(--text-secondary);">Market Benchmark: 18%</div>
         </div>
 
+        <!-- DASHBOARD -->
         <div id="page-dashboard" class="page active">
             <div class="grid-4">
                 <div class="metric-card"><p class="val" id="mTotal">AED 0</p><p class="metric-label">Total Claims</p></div>
                 <div class="metric-card"><p class="val" id="mDenied" style="color:var(--danger)">AED 0</p><p class="metric-label">Total Denied</p></div>
                 <div class="metric-card"><p class="val" id="mRate">0%</p><p class="metric-label">Your Denial Rate</p></div>
-                <div class="metric-card"><p class="val" id="mPotential" style="color:var(--success)">AED 0</p><p class="metric-label">Recovery Potential</p></div>
+                <div class="metric-card"><p class="val" id="mPotential" style="color:var(--success)">AED 0</p><p class="metric-label">Recoverable Revenue</p></div>
             </div>
             <div style="margin-top:30px;background:var(--bg-card);padding:20px;border-radius:16px;">
                 <h4>Dubai Market Acceptance Trend</h4>
@@ -109,22 +106,56 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
             </div>
         </div>
 
+        <!-- REFERENCE GUIDE -->
+        <div id="page-reference" class="page">
+            <div style="background:var(--bg-card);padding:25px;border-radius:16px;margin-bottom:20px;">
+                <h4 class="card-title">📖 ICD-10 & CPT 2026 Quick Crosswalk</h4>
+                <table class="ref-table">
+                    <thead><tr><th>Category</th><th>CPT Codes</th><th>ICD-10 Requirements</th><th>Payer Risk</th></tr></thead>
+                    <tbody>
+                        <tr><td>New Patient E/M</td><td>99202–99205</td><td>High Specificity; Avoid .9 Unspecified</td><td><span class="badge badge-danger">High</span></td></tr>
+                        <tr><td>Wound Repair</td><td>12001–12018</td><td>Exact Location & Size mandatory</td><td><span class="badge badge-success">Low</span></td></tr>
+                        <tr><td>Telemedicine</td><td>98000–98016</td><td>Telehealth Modifier + Patient Consent</td><td><span class="badge badge-danger">Medium</span></td></tr>
+                        <tr><td>Physiotherapy</td><td>97110</td><td>Improvement Score documented per session</td><td><span class="badge badge-danger">High</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="background:var(--bg-card);padding:25px;border-radius:16px;">
+                <h4 class="card-title">🏦 Payer-Specific Submission Cheat Sheet</h4>
+                <div class="grid-4" style="grid-template-columns:1fr 1fr; gap:15px;">
+                    <div style="background:var(--bg-card2);padding:15px;border-radius:10px;">
+                        <strong style="color:var(--success)">DAMAN / ENAYA</strong>
+                        <p style="font-size:11px;margin-top:5px;color:var(--text-secondary);">Requires "Presenting Complaint" in observation box. 21-day appeal window.</p>
+                    </div>
+                    <div style="background:var(--bg-card2);padding:15px;border-radius:10px;">
+                        <strong style="color:var(--accent)">AXA / METLIFE</strong>
+                        <p style="font-size:11px;margin-top:5px;color:var(--text-secondary);">Very strict on Modifier 25. High-end scans > AED 500 need auth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECOMMENDATIONS -->
+        <div id="page-recs" class="page">
+            <div id="recList"></div>
+        </div>
+
+        <!-- UPLOAD -->
         <div id="page-upload" class="page">
             <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
                 <h1 style="font-size:50px;">☁️</h1>
                 <h2>Import Clinic Data</h2>
-                <p>Drop DHA XML or eClaim CSV files here</p>
-                <input type="file" id="fileIn" multiple style="display:none" onchange="handleFiles(event)">
+                <p>Drop DHA XML, eClaim CSV, or Excel Rejection Reports here</p>
+                <input type="file" id="fileIn" multiple style="display:none" onchange="loadSample()">
             </div>
             <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Dubai Outpatient Sample</button>
         </div>
 
+        <!-- ANALYSIS -->
         <div id="page-analysis" class="page">
             <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
                 <table id="claimsTable">
-                    <thead>
-                        <tr><th>Claim ID</th><th>Payer</th><th>Amount</th><th>Status</th><th>Denial Reason</th><th>Action</th></tr>
-                    </thead>
+                    <thead><tr><th>ID</th><th>Payer</th><th>Amount</th><th>Status</th><th>Denial Root Cause</th><th>Action</th></tr></thead>
                     <tbody id="analysisBody"></tbody>
                 </table>
             </div>
@@ -132,195 +163,101 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
     </div>
 </div>
 
-<div id="expertBot">
-    <div class="bot-header">
-        <span>DUBAI OUTPATIENT AI EXPERT</span>
-        <span style="cursor:pointer" onclick="toggleBot()">×</span>
-    </div>
-    <div class="bot-messages" id="botMsgs">
-        <div class="msg bot-msg">Welcome. I am trained on DHA 2026 Outpatient standards. Ask me about Physio session rules, MRI thresholds, or Modifier 25.</div>
-    </div>
-    <div class="bot-input">
-        <input type="text" id="botIn" placeholder="e.g. Rule for physio sessions?" onkeypress="if(event.key==='Enter')askBot()">
-        <button onclick="askBot()" style="background:var(--accent);border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">Send</button>
-    </div>
-</div>
-
 <script>
 let DATA = [];
 let RECOVERED = 0;
 const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
-
 const DENIAL_MAP = {
-    'DEN001': 'Member Ineligible: Verify card via ClaimLinc/ProviderLink before appointment.',
-    'DEN002': 'Pre-Auth Missing: DHA 2026 rules require auth for scans and procedures > AED 500.',
-    'DEN003': 'Medical Necessity: Documentation must show specific clinical red flags or treatment failure.',
-    'DEN004': 'Coding Mismatch: CPT does not match ICD-10. Check DHA 2026 outpatient crosswalk.',
-    'DEN014': 'Modifier 25 Missing: Required for same-day separate E&M services.',
-    'DEN009': 'Documentation Incomplete: Missing Vital Signs or Physician Stamp.',
-    'DEN007': 'Timely Filing: Past the 30-day DHA electronic window.'
+    'DEN001': 'Member Ineligible: Verify EID at check-in via ProviderLink.',
+    'DEN002': 'Auth Missing: Outpatient procedures > AED 500 require DHA auth.',
+    'DEN003': 'Medical Necessity: Documentation lacks conservative treatment history.',
+    'DEN004': 'Coding Mismatch: CPT/ICD-10 crosswalk error.',
+    'DEN014': 'Modifier Missing: Add Modifier 25 for same-day separate service.',
+    'DEN009': 'Docs Incomplete: Vital signs or clinical notes missing.'
 };
 
-function nav(page, el) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById('page-'+page).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+function nav(p, el) {
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    document.getElementById('page-'+p).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
     el.classList.add('active');
     document.getElementById('pageTitle').textContent = el.textContent;
+    if(p==='recs') renderRecs();
 }
 
-function handleFiles(e) {
-    loadSample(50); 
-}
-
-function loadSample(count = 50) {
-    const payers = ['Daman', 'AXA', 'MetLife', 'Oman Insurance', 'ADNIC'];
-    const codes = Object.keys(DENIAL_MAP);
-    let localData = [];
-    for(let i=0; i<count; i++) {
-        const amt = Math.floor(Math.random() * 2000) + 200;
-        const status = Math.random() > 0.7 ? 'denied' : 'paid';
-        localData.push({
-            id: 'DBI-'+Math.floor(Math.random()*90000),
-            payer: payers[Math.floor(Math.random()*5)],
-            amt: amt,
-            status: status,
-            code: status === 'denied' ? codes[Math.floor(Math.random()*codes.length)] : ''
-        });
+function loadSample(n=50) {
+    const payers=['Daman','AXA','MetLife','Oman Insurance','ADNIC'];
+    const codes=Object.keys(DENIAL_MAP);
+    let tmp=[];
+    for(let i=0;i<n;i++){
+        const amt=Math.floor(Math.random()*1500)+150;
+        const status=Math.random()>0.7?'denied':'paid';
+        tmp.push({id:'DBI-'+Math.floor(Math.random()*90000),payer:payers[Math.floor(Math.random()*5)],amt:amt,status:status,code:status==='denied'?codes[Math.floor(Math.random()*codes.length)]:''});
     }
-    DATA = localData;
+    DATA=tmp;
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
 }
 
 function updateUI() {
-    const total = DATA.reduce((a,b)=>a+b.amt,0);
-    const denied = DATA.filter(d=>d.status==='denied').reduce((a,b)=>a+b.amt,0);
-    const rate = DATA.length ? (DATA.filter(d=>d.status==='denied').length / DATA.length * 100).toFixed(1) : 0;
-    document.getElementById('mTotal').textContent = 'AED ' + total.toLocaleString();
-    document.getElementById('mDenied').textContent = 'AED ' + denied.toLocaleString();
-    document.getElementById('mRate').textContent = rate + '%';
-    document.getElementById('mPotential').textContent = 'AED ' + Math.floor(denied * 0.65).toLocaleString();
+    const tot=DATA.reduce((a,b)=>a+b.amt,0);
+    const den=DATA.filter(x=>x.status==='denied').reduce((a,b)=>a+b.amt,0);
+    const rate=DATA.length?(DATA.filter(x=>x.status==='denied').length/DATA.length*100).toFixed(1):0;
+    document.getElementById('mTotal').textContent='AED '+tot.toLocaleString();
+    document.getElementById('mDenied').textContent='AED '+den.toLocaleString();
+    document.getElementById('mRate').textContent=rate+'%';
+    document.getElementById('mPotential').textContent='AED '+Math.floor(den*0.62).toLocaleString();
     renderTable();
     renderChart();
     updateBenchmark();
 }
 
 function renderTable() {
-    const body = document.getElementById('analysisBody');
-    body.innerHTML = DATA.map(item => `
-        <tr>
-            <td>${item.id}</td>
-            <td>${item.payer}</td>
-            <td>AED ${item.amt}</td>
-            <td class="status-${item.status}">${item.status.toUpperCase()}</td>
-            <td style="font-size:10px; color:var(--text-secondary)">${DENIAL_MAP[item.code] || '-'}</td>
-            <td>
-                ${item.status==='denied' ? 
-                `<button class="btn btn-pro btn-sm" onclick="generateAppeal('${item.id}', '${item.payer}', '${item.code}', ${item.amt})">📄 Appeal PDF</button>` : '✅'}
-            </td>
-        </tr>
+    document.getElementById('analysisBody').innerHTML=DATA.map(x=>`
+        <tr><td>${x.id}</td><td>${x.payer}</td><td>AED ${x.amt}</td><td class="status-${x.status}">${x.status.toUpperCase()}</td><td style="font-size:10px;color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</td><td>${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}</td></tr>
     `).join('');
 }
 
-// IPAD CHROME & SAFARI COMPATIBLE PDF GENERATOR
-function generateAppeal(id, payer, code, amt) {
-    try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const reason = DENIAL_MAP[code] || "Standard clinical review required.";
-        const fileName = `Appeal_${id}.pdf`;
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("MEDICAL INSURANCE APPEAL LETTER", 20, 30);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
-        doc.text(`To: Medical Claims Manager, ${payer}`, 20, 50);
-        doc.text(`Reference: Claim ID ${id}`, 20, 58);
-        doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 20, 66);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Subject: Formal Appeal for Rejected Claim - AED ${amt}`, 20, 80);
-        doc.setFont("helvetica", "normal");
-        const bodyText = `Our medical audit indicates that the claim for ${id} was rejected under code ${code}. Pursuant to DHA billing standards and medical liability regulations, we wish to clarify: ${reason}. Please find attached the supporting clinical justification and treating physician notes for your reconsideration.`;
-        doc.text(doc.splitTextToSize(bodyText, 170), 20, 95);
-        doc.text("Sincerely,", 20, 150);
-        doc.text("Revenue Cycle Management Team", 20, 158);
-
-        // DATA URI LOGIC FOR IPAD COMPATIBILITY
-        const pdfData = doc.output('datauristring');
-        const link = document.createElement('a');
-        link.href = pdfData;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        setTimeout(() => document.body.removeChild(link), 100);
-
-        RECOVERED += amt;
-        document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
-    } catch (error) {
-        alert("Error generating PDF. Please ensure pop-ups are enabled.");
-    }
+function renderRecs() {
+    const denied=DATA.filter(x=>x.status==='denied');
+    const coding=denied.filter(x=>x.code==='DEN004'||x.code==='DEN014').length;
+    const auth=denied.filter(x=>x.code==='DEN002').length;
+    const list=[
+        {title:'High Priority: Fix Coding Inconsistencies',impact:'Recover AED '+(coding*500).toLocaleString(),body:coding+' claims rejected due to CPT/Modifier errors. Review Modifier 25 logic immediately.',type:'critical'},
+        {title:'Process Alert: Pre-Auth Management',impact:'Prevent '+auth+' future denials',body:'Multiple procedures exceeded the AED 500 threshold without DHA authorization.',type:'high'},
+        {title:'Front-Desk: EID Verification',impact:'+12% Approval Rate',body:'Implement real-time EID check via ProviderLink at check-in to stop DEN001 rejections.',type:'medium'}
+    ];
+    document.getElementById('recList').innerHTML=list.map(x=>`
+        <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
+            <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
+            <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
+            <div style="font-size:11px;color:var(--accent)"><strong>Estimated Impact:</strong> ${x.impact}</div>
+        </div>
+    `).join('');
 }
 
-function toggleBot() {
-    const bot = document.getElementById('expertBot');
-    bot.style.display = bot.style.display === 'flex' ? 'none' : 'flex';
+function genAppeal(id,p,c,a){
+    try{
+        const {jsPDF}=window.jspdf;const doc=new jsPDF();const reason=DENIAL_MAP[c]||"Standard review requested.";
+        doc.setFontSize(18);doc.text("DHA MEDICAL APPEAL - 2026",20,30);
+        doc.setFontSize(11);doc.text(`To: ${p} Claims Dept`,20,50);doc.text(`Ref: ${id} | Amt: AED ${a}`,20,58);doc.text(`Subject: ${reason}`,20,66);
+        doc.text(doc.splitTextToSize("In accordance with DHA Medical Liability rules, we submit this clinical justification for the outpatient encounter mentioned above.",170),20,80);
+        const data=doc.output('datauristring');const link=document.createElement('a');link.href=data;link.download=`Appeal_${id}.pdf`;link.click();
+        RECOVERED+=a;document.getElementById('sideRecovered').textContent='AED '+RECOVERED.toLocaleString();
+    }catch(e){alert("Download blocked. Allow pop-ups.");}
 }
 
-function askBot() {
-    const inp = document.getElementById('botIn');
-    const msgs = document.getElementById('botMsgs');
-    const q = inp.value.toLowerCase();
-    if(!q) return;
-
-    msgs.innerHTML += `<div class="msg user-msg">${inp.value}</div>`;
-    inp.value = '';
-
-    let response = "I'm analyzing the 2026 DHA Outpatient Standards... Ensure your documentation supports 'Medical Necessity'. Need a template?";
-
-    if(q.includes('physio') || q.includes('therapy')) response = "Physio requires a new referral every 6 sessions. Always document 'Improvement Scores' for Dubai payers.";
-    if(q.includes('mri') || q.includes('auth')) response = "Outpatient MRI/CT > AED 500 requires Pre-Auth. For emergencies, notify payer within 24 hours.";
-    if(q.includes('25') || q.includes('modifier')) response = "Use Modifier 25 for a separate E&M service on a procedure day. Ensure different ICD-10 codes are linked.";
-    if(q.includes('daman')) response = "Daman DEN001 (Ineligible) is common. Verify EID on ProviderLink at check-in every time.";
-
-    setTimeout(() => {
-        msgs.innerHTML += `<div class="msg bot-msg">${response}</div>`;
-        msgs.scrollTop = msgs.scrollHeight;
-    }, 600);
-}
-
-function updateBenchmark() {
-    const spec = document.getElementById('specialtySelect').value;
-    const avg = BENCHMARKS[spec];
-    const info = document.getElementById('benchInfo');
-    const myRate = parseFloat(document.getElementById('mRate').textContent) || 0;
-    let comparison = myRate > avg ? `<span style="color:var(--danger)">High (+${(myRate-avg).toFixed(1)}%)</span>` : `<span style="color:var(--success)">Good (-${(avg-myRate).toFixed(1)}%)</span>`;
-    info.innerHTML = `Market Avg for ${spec.toUpperCase()}: ${avg}% | Status: ${comparison}`;
+function updateBenchmark(){
+    const s=document.getElementById('specSelect').value;const avg=BENCHMARKS[s];
+    const my=parseFloat(document.getElementById('mRate').textContent)||0;
+    const diff=(my-avg).toFixed(1);
+    document.getElementById('benchInfo').innerHTML=`Market Avg: ${avg}% | Your Status: <span style="color:var(--${my>avg?'danger':'success'})">${my>avg?`High (+${diff}%)`:`Good (${diff}%)`}</span>`;
 }
 
 function renderChart() {
-    const ctx = document.getElementById('mainChart').getContext('2d');
-    if(window.myChart) window.myChart.destroy();
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'Clinic Acceptance %',
-                data: [82, 75, 80, 85],
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgba(56,189,248,0.1)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: { 
-            maintainAspectRatio: false, 
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } 
-        }
-    });
+    const ctx=document.getElementById('mainChart').getContext('2d');
+    if(window.c)window.c.destroy();
+    window.c=new Chart(ctx,{type:'line',data:{labels:['W1','W2','W3','W4'],datasets:[{label:'Acceptance %',data:[82,78,85,81],borderColor:'#38bdf8',tension:0.4,fill:true,backgroundColor:'rgba(56,189,248,0.1)'}]},options:{maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:'#334155'}},x:{grid:{display:false}}}}});
 }
 </script>
 </body>
