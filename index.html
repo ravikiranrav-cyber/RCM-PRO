@@ -32,6 +32,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-dark);color:va
 .bench-selector{background:rgba(56,189,248,0.1);padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;}
 .btn{padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;font-size:13px;}
 .btn-pro{background:var(--gradient-pro);color:white;}
+.btn-sm{padding:6px 10px; font-size:11px;}
 table{width:100%;border-collapse:collapse;margin-top:10px;}
 th{text-align:left;color:var(--text-secondary);font-size:11px;padding:12px;}
 td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
@@ -39,6 +40,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 .badge{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;}
 .badge-danger{background:rgba(239,68,68,0.2);color:var(--danger);}
 .badge-success{background:rgba(34,197,94,0.2);color:var(--success);}
+.assign-select{background:var(--bg-dark);color:var(--text-primary);border:1px solid var(--border);padding:4px;border-radius:4px;font-size:11px;}
 @media(max-width:1024px){.grid-4{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
@@ -98,7 +100,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
                 <div class="metric-card"><p class="val" id="mPotential" style="color:var(--success)">AED 0</p><p class="metric-label">Recoverable Revenue</p></div>
             </div>
             <div style="margin-top:30px;background:var(--bg-card);padding:20px;border-radius:16px;">
-                <h4>UAE Network Acceptance Trend</h4>
+                <h4>Audit Batch Acceptance Trend</h4>
                 <div style="height:300px;"><canvas id="mainChart"></canvas></div>
             </div>
         </div>
@@ -126,8 +128,8 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
             <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
                 <h1 style="font-size:50px;">☁️</h1>
                 <h2>Import Clinic Data</h2>
-                <p>Import DHA XML or TPA Rejection Files</p>
-                <input type="file" id="fileIn" multiple style="display:none" onchange="loadSample()">
+                <p>Upload Excel (XLSX) or CSV Remittances</p>
+                <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" style="display:none">
             </div>
             <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Full UAE Network Sample</button>
         </div>
@@ -135,7 +137,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
         <div id="page-analysis" class="page">
             <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
                 <table id="claimsTable">
-                    <thead><tr><th>ID</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Denial Root Cause</th><th>Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Physician</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
                     <tbody id="analysisBody"></tbody>
                 </table>
             </div>
@@ -153,7 +155,9 @@ const DENIAL_MAP = {
     'DEN014': 'Modifier 25: Required for same-day separate services.',
     'DEN009': 'Documentation Incomplete: Vital signs missing for EBP plans.'
 };
+const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
+// View Navigation
 function nav(p, el) {
     document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
@@ -163,14 +167,69 @@ function nav(p, el) {
     if(p==='recs') renderRecs();
 }
 
-function loadSample(n=50) {
+// Live File Parsing (Excel & CSV)
+document.getElementById('fileIn').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const data = evt.target.result;
+        let parsedData = [];
+        
+        if (file.name.endsWith('.csv')) {
+            const csv = Papa.parse(data, { header: true });
+            parsedData = csv.data;
+        } else {
+            const wb = XLSX.read(data, { type: 'binary' });
+            const wsname = wb.SheetNames[0];
+            parsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+        }
+        processImportedData(parsedData);
+    };
+    reader.readAsBinaryString(file);
+});
+
+// Map imported rows to dashboard structure
+function processImportedData(rawData) {
+    DATA = rawData.map((row, idx) => {
+        const amt = parseFloat(row.Amount || row.Billed || 0);
+        const status = (row.Status || '').toLowerCase().includes('denied') ? 'denied' : 'paid';
+        return {
+            id: row.ClaimID || row.ID || `IMP-${Math.floor(Math.random()*90000)}`,
+            payer: row.Payer || row.TPA || 'Unknown TPA',
+            physician: row.Physician || row.Provider || DOCTORS[Math.floor(Math.random()*DOCTORS.length)],
+            amt: isNaN(amt) ? 0 : amt,
+            status: status,
+            code: status === 'denied' ? (row.DenialCode || Object.keys(DENIAL_MAP)[Math.floor(Math.random()*4)]) : '',
+            batch: row.Batch || Math.floor(Math.random() * 10) + 1, // Audit batch 1-10
+            assignee: row.Assignee || ''
+        };
+    }).filter(x => x.amt > 0); // Cleanup empty rows
+    
+    updateUI();
+    nav('dashboard', document.querySelector('.nav-item'));
+    alert('Data Imported Successfully!');
+}
+
+// Generate Mock Data if no file uploaded
+function loadSample(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
     let tmp=[];
     for(let i=0;i<n;i++){
         const amt=Math.floor(Math.random()*1200)+100;
         const status=Math.random()>0.7?'denied':'paid';
-        tmp.push({id:'UAE-'+Math.floor(Math.random()*90000),payer:tpals[Math.floor(Math.random()*tpals.length)],amt:amt,status:status,code:status==='denied'?codes[Math.floor(Math.random()*codes.length)]:''});
+        tmp.push({
+            id: 'UAE-'+Math.floor(Math.random()*90000),
+            payer: tpals[Math.floor(Math.random()*tpals.length)],
+            physician: DOCTORS[Math.floor(Math.random()*DOCTORS.length)],
+            amt: amt,
+            status: status,
+            code: status==='denied' ? codes[Math.floor(Math.random()*codes.length)] : '',
+            batch: Math.floor(Math.random() * 10) + 1, // Audit batches 1 to 10
+            assignee: ''
+        });
     }
     DATA=tmp;
     updateUI();
@@ -181,28 +240,63 @@ function updateUI() {
     const tot=DATA.reduce((a,b)=>a+b.amt,0);
     const den=DATA.filter(x=>x.status==='denied').reduce((a,b)=>a+b.amt,0);
     const rate=DATA.length?(DATA.filter(x=>x.status==='denied').length/DATA.length*100).toFixed(1):0;
+    
     document.getElementById('mTotal').textContent='AED '+tot.toLocaleString();
     document.getElementById('mDenied').textContent='AED '+den.toLocaleString();
     document.getElementById('mRate').textContent=rate+'%';
     document.getElementById('mPotential').textContent='AED '+Math.floor(den*0.62).toLocaleString();
+    
     renderTable();
     renderChart();
     updateBenchmark();
 }
 
 function renderTable() {
-    document.getElementById('analysisBody').innerHTML=DATA.map(x=>`
-        <tr><td>${x.id}</td><td>${x.payer}</td><td>AED ${x.amt}</td><td class="status-${x.status}">${x.status.toUpperCase()}</td><td style="font-size:10px;color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</td><td>${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}</td></tr>
+    document.getElementById('analysisBody').innerHTML = DATA.map(x => `
+        <tr>
+            <td>${x.id}</td>
+            <td>${x.physician}</td>
+            <td>${x.payer}</td>
+            <td>AED ${x.amt}</td>
+            <td class="status-${x.status}">${x.status.toUpperCase()}</td>
+            <td style="font-size:10px;color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</td>
+            <td>
+                <select class="assign-select" onchange="assignTask('${x.id}', this.value)">
+                    <option value="" ${x.assignee===''?'selected':''}>Unassigned</option>
+                    <option value="Ravi" ${x.assignee==='Ravi'?'selected':''}>Ravi</option>
+                    <option value="Nelson" ${x.assignee==='Nelson'?'selected':''}>Nelson</option>
+                    <option value="Kurt" ${x.assignee==='Kurt'?'selected':''}>Kurt</option>
+                    <option value="Shenuka" ${x.assignee==='Shenuka'?'selected':''}>Shenuka</option>
+                    <option value="Michel" ${x.assignee==='Michel'?'selected':''}>Michel</option>
+                    <option value="Ramsel" ${x.assignee==='Ramsel'?'selected':''}>Ramsel</option>
+                    <option value="Remlyn" ${x.assignee==='Remlyn'?'selected':''}>Remlyn</option>
+                </select>
+            </td>
+            <td>${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}</td>
+        </tr>
     `).join('');
+}
+
+function assignTask(id, person) {
+    const claim = DATA.find(c => c.id === id);
+    if(claim) claim.assignee = person;
 }
 
 function renderRecs() {
     const denied=DATA.filter(x=>x.status==='denied');
     const auth=denied.filter(x=>x.code==='DEN002').length;
+    
+    // Calculate top offending physician
+    const physDenials = {};
+    denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
+    const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
+
     const list=[
         {title:'Critical: Aafiya/FMC Submission Delay',impact:'AED '+(denied.length*400).toLocaleString(),body:'Small TPA networks are rejecting claims due to the 30-day window. Review your billing workflow.',type:'critical'},
-        {title:'Pre-Auth Alert: NAS Neuron AED 500 Rule',impact:'Prevent '+auth+' denials',body:'High volume of denials for procedures exceeding the AED 500 threshold without DHA authorization.',type:'high'}
+        {title:'Pre-Auth Alert: NAS Neuron AED 500 Rule',impact:'Prevent '+auth+' denials',body:'High volume of denials for procedures exceeding the AED 500 threshold without DHA authorization.',type:'high'},
+        {title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of documentation-related denials. Recommend a targeted coding workshop.`,type:'high'}
     ];
+    
     document.getElementById('recList').innerHTML=list.map(x=>`
         <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
             <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
@@ -229,9 +323,50 @@ function updateBenchmark(){
 }
 
 function renderChart() {
-    const ctx=document.getElementById('mainChart').getContext('2d');
-    if(window.c)window.c.destroy();
-    window.c=new Chart(ctx,{type:'line',data:{labels:['W1','W2','W3','W4'],datasets:[{label:'Acceptance %',data:[80,75,82,79],borderColor:'#38bdf8',tension:0.4,fill:true,backgroundColor:'rgba(56,189,248,0.1)'}]},options:{maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:'#334155'}},x:{grid:{display:false}}}}});
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    if(window.c) window.c.destroy();
+    
+    // Group dynamically loaded data by audit batches, sorted on a 1 to 10 scale ascending
+    const batchStats = {};
+    for (let i = 1; i <= 10; i++) batchStats[i] = { total: 0, paid: 0 };
+    
+    DATA.forEach(row => {
+        if (row.batch >= 1 && row.batch <= 10) {
+            batchStats[row.batch].total++;
+            if (row.status === 'paid') batchStats[row.batch].paid++;
+        }
+    });
+
+    const labels = Object.keys(batchStats).sort((a, b) => a - b); // Ensures strict 1 to 10 ascending order
+    const acceptanceRates = labels.map(batch => {
+        const b = batchStats[batch];
+        return b.total === 0 ? 0 : Math.round((b.paid / b.total) * 100);
+    });
+
+    window.c = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Acceptance %',
+                data: acceptanceRates,
+                borderColor: '#38bdf8',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(56,189,248,0.1)'
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, grid: { color: '#334155' } },
+                x: { 
+                    title: { display: true, text: 'Audit Sample Batch (1 - 10)', color: '#94a3b8' },
+                    grid: { display: false } 
+                }
+            }
+        }
+    });
 }
 </script>
 </body>
