@@ -55,6 +55,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
         <div class="nav-item active" onclick="nav('dashboard',this)">📊 Executive Summary</div>
         <div class="nav-item" onclick="nav('upload',this)">📂 Data Importer</div>
         <div class="nav-item" onclick="nav('analysis',this)">🔍 Denial Engine</div>
+        <div class="nav-item" onclick="nav('crosswalk',this)">🔗 Code Crosswalk</div>
         <div class="nav-item" onclick="nav('reference',this)">📚 TPA Reference</div>
         <div class="nav-item" onclick="nav('recs',this)">💡 Action Plan</div>
     </div>
@@ -102,6 +103,30 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
             <div style="margin-top:30px;background:var(--bg-card);padding:20px;border-radius:16px;">
                 <h4>Audit Batch Acceptance Trend</h4>
                 <div style="height:300px;"><canvas id="mainChart"></canvas></div>
+            </div>
+        </div>
+
+        <div id="page-crosswalk" class="page">
+            <div style="background:var(--bg-card);padding:25px;border-radius:16px;">
+                <h4 class="card-title">🔗 CPT / ICD / DSL Crosswalk Engine</h4>
+                <div style="display:flex; gap:10px; margin-bottom: 20px;">
+                    <input type="text" id="crosswalkSearch" onkeyup="searchCrosswalk()" placeholder="Search by CPT, ICD-10, DSL code, or keyword..." style="flex:1; padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--bg-dark); color:white; font-size:14px;">
+                    <button class="btn btn-pro" onclick="searchCrosswalk()">Search</button>
+                </div>
+                <table id="crosswalkTable">
+                    <thead>
+                        <tr>
+                            <th>DSL Code</th>
+                            <th>CPT Code</th>
+                            <th>ICD-10 Focus</th>
+                            <th>Description</th>
+                            <th>DHA Rule / Modifier</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crosswalkBody">
+                        <!-- Search results will populate here -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -368,6 +393,42 @@ function renderChart() {
         }
     });
 }
+
+// CROSSWALK DATABASE & SEARCH LOGIC
+const CROSSWALK_DB = [
+    { dsl: 'DHA-ENDO-05', cpt: '83036', icd: 'E11.9', desc: 'HbA1c test (Endocrine)', rule: 'Max 1 per 90 days for Type 2 Diabetes without complications.' },
+    { dsl: 'DHA-CARD-10', cpt: '93000', icd: 'I50.9', desc: 'Electrocardiogram, routine (Cardiology)', rule: 'Requires primary symptom diagnosis; Auth needed > AED 500.' },
+    { dsl: 'DHA-ENT-22', cpt: '31575', icd: 'J38.01', desc: 'Laryngoscopy, flexible (ENT)', rule: 'Modifier 25 required if billed with same-day E/M.' },
+    { dsl: 'DHA-E/M-03', cpt: '99213', icd: 'R05.9', desc: 'Outpatient Visit - Level 3', rule: 'DHA standard documentation (vitals, history) mandatory.' },
+    { dsl: 'DHA-CARD-15', cpt: '93306', icd: 'I51.9', desc: 'Echocardiography (Cardiology)', rule: 'Prior authorization required by most top-tier TPAs.' }
+];
+
+function searchCrosswalk() {
+    const query = document.getElementById('crosswalkSearch').value.toLowerCase();
+    
+    // Filter the database based on the user's input
+    const results = CROSSWALK_DB.filter(item => 
+        item.cpt.toLowerCase().includes(query) || 
+        item.icd.toLowerCase().includes(query) || 
+        item.dsl.toLowerCase().includes(query) ||
+        item.desc.toLowerCase().includes(query)
+    );
+    
+    // Render the results into the table
+    document.getElementById('crosswalkBody').innerHTML = results.map(x => `
+        <tr>
+            <td><span class="badge badge-success">${x.dsl}</span></td>
+            <td><strong>${x.cpt}</strong></td>
+            <td>${x.icd}</td>
+            <td>${x.desc}</td>
+            <td style="color:var(--text-secondary); font-size:11px;">${x.rule}</td>
+        </tr>
+    `).join('');
+}
+
+// Initialize the crosswalk view with all codes by default
+setTimeout(searchCrosswalk, 500);
+
 </script>
 </body>
 </html>
