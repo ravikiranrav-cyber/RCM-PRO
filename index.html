@@ -247,35 +247,78 @@ function renderTable() {
 }
 
 // ==========================================
-// FEATURE 1: APPEAL GENERATOR (PRO)
+// FEATURE 1: APPEAL GENERATOR (OPTIMIZED)
 // ==========================================
-function generateAppeal(id, payer, code, amt) {
-    const doc = new jspdf.jsPDF();
-    const reason = DENIAL_MAP[code] || "Standard clinical review required.";
-    
-    doc.setFontSize(18);
-    doc.text("MEDICAL INSURANCE APPEAL LETTER", 20, 30);
-    doc.setFontSize(12);
-    doc.text(`To: Medical Claims Manager, ${payer}`, 20, 50);
-    doc.text(`Reference: Claim ID ${id}`, 20, 60);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 70);
-    
-    doc.text(`Subject: Formal Appeal for Rejected Claim Amount AED ${amt}`, 20, 90);
-    
-    const bodyText = `Our medical audit shows that the claim was rejected under code ${code}. 
-Pursuant to DHA billing standards, we wish to clarify: ${reason}.
-Please find attached the clinical justification and treatmet notes.`;
+async function generateAppeal(id, payer, code, amt) {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const reason = DENIAL_MAP[code] || "Standard clinical review required.";
+        const fileName = `Appeal_${id}.pdf`;
 
-    doc.text(doc.splitTextToSize(bodyText, 170), 20, 110);
-    
-    doc.text("Sincerely,", 20, 160);
-    doc.text("Billing Department / RCM Manager", 20, 170);
-    
-    doc.save(`Appeal_${id}.pdf`);
-    RECOVERED += amt;
-    document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
+        // --- Header Section ---
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text("MEDICAL INSURANCE APPEAL LETTER", 20, 30);
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        const headerLines = [
+            `To: Medical Claims Manager, ${payer}`,
+            `Reference: Claim ID ${id}`,
+            `Date: ${new Date().toLocaleDateString('en-GB')}`
+        ];
+        doc.text(headerLines, 20, 45);
+
+        // --- Subject Line ---
+        doc.setFont("helvetica", "bold");
+        doc.text(`Subject: Formal Appeal for Rejected Claim - AED ${amt.toLocaleString()}`, 20, 75);
+
+        // --- Body Text (Automatic Wrapping) ---
+        doc.setFont("helvetica", "normal");
+        const bodyText = `Our medical audit indicates that the claim for ${id} was rejected under code ${code}. Pursuant to DHA billing standards and medical liability regulations, we wish to clarify: ${reason}. Please find attached the supporting clinical justification and treating physician notes for your reconsideration. We expect a response within the standard regulatory timeframe.`;
+        
+        // splitTextToSize ensures text stays within margins
+        const splitText = doc.splitTextToSize(bodyText, 170);
+        doc.text(splitText, 20, 90);
+
+        // --- Footer ---
+        const footerY = 90 + (splitText.length * 7);
+        doc.text("Sincerely,", 20, footerY + 20);
+        doc.setFont("helvetica", "bold");
+        doc.text("Revenue Cycle Management Team", 20, footerY + 28);
+
+        // --- iPad/Chrome Delivery Logic ---
+        const pdfBlob = doc.output('blob');
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Cleanup memory
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        }, 500);
+
+        // --- State Management ---
+        updateRecoveryTotal(amt);
+
+    } catch (error) {
+        console.error("PDF Generation Error:", error);
+        alert("Failed to generate PDF. If on iPad, please ensure you aren't in 'Private' mode which can block local downloads.");
+    }
 }
 
+// Helper to keep logic clean
+function updateRecoveryTotal(amt) {
+    RECOVERED += amt;
+    const sideEl = document.getElementById('sideRecovered');
+    if(sideEl) sideEl.textContent = `AED ${RECOVERED.toLocaleString()}`;
+}
 // ==========================================
 // FEATURE 2: CODING EXPERT BOT (PRO)
 // ==========================================
