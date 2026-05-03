@@ -162,7 +162,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
         <div id="page-analysis" class="page">
             <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
                 <table id="claimsTable">
-                    <thead><tr><th>ID</th><th>Physician</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Physician</th><th>CPT</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
                     <tbody id="analysisBody"></tbody>
                 </table>
             </div>
@@ -215,7 +215,7 @@ document.getElementById('fileIn').addEventListener('change', function(e) {
     reader.readAsBinaryString(file);
 });
 
-// Map imported rows to dashboard structure
+// Map imported rows to dashboard structure, capturing CPT and ICD
 function processImportedData(rawData) {
     DATA = rawData.map((row, idx) => {
         const amt = parseFloat(row.Amount || row.Billed || 0);
@@ -227,10 +227,12 @@ function processImportedData(rawData) {
             amt: isNaN(amt) ? 0 : amt,
             status: status,
             code: status === 'denied' ? (row.DenialCode || Object.keys(DENIAL_MAP)[Math.floor(Math.random()*4)]) : '',
-            batch: row.Batch || Math.floor(Math.random() * 10) + 1, // Audit batch 1-10
-            assignee: row.Assignee || ''
+            batch: row.Batch || Math.floor(Math.random() * 10) + 1,
+            assignee: row.Assignee || '',
+            cpt: row.CPT || row.ProcedureCode || '',
+            icd: row.ICD || row.DiagnosisCode || ''
         };
-    }).filter(x => x.amt > 0); // Cleanup empty rows
+    }).filter(x => x.amt > 0); 
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
@@ -241,6 +243,8 @@ function processImportedData(rawData) {
 function loadSample(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
+    const mockCpts=['99213', '99214', '93000', '83036'];
+    
     let tmp=[];
     for(let i=0;i<n;i++){
         const amt=Math.floor(Math.random()*1200)+100;
@@ -252,8 +256,10 @@ function loadSample(n=100) {
             amt: amt,
             status: status,
             code: status==='denied' ? codes[Math.floor(Math.random()*codes.length)] : '',
-            batch: Math.floor(Math.random() * 10) + 1, // Audit batches 1 to 10
-            assignee: ''
+            batch: Math.floor(Math.random() * 10) + 1,
+            assignee: '',
+            cpt: mockCpts[Math.floor(Math.random()*mockCpts.length)],
+            icd: 'I50.9'
         });
     }
     DATA=tmp;
@@ -281,6 +287,7 @@ function renderTable() {
         <tr>
             <td>${x.id}</td>
             <td>${x.physician}</td>
+            <td>${x.cpt || '-'}</td>
             <td>${x.payer}</td>
             <td>AED ${x.amt}</td>
             <td class="status-${x.status}">${x.status.toUpperCase()}</td>
@@ -308,21 +315,51 @@ function assignTask(id, person) {
 }
 
 function renderRecs() {
-    const denied=DATA.filter(x=>x.status==='denied');
-    const auth=denied.filter(x=>x.code==='DEN002').length;
+    const denied = DATA.filter(x => x.status === 'denied');
     
-    // Calculate top offending physician
+    // 1. Basic Metrics
+    const auth = denied.filter(x => x.code === 'DEN002').length;
+    
+    // 2. Find Top Offending Physician
     const physDenials = {};
     denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
     const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
 
-    const list=[
-        {title:'Critical: Aafiya/FMC Submission Delay',impact:'AED '+(denied.length*400).toLocaleString(),body:'Small TPA networks are rejecting claims due to the 30-day window. Review your billing workflow.',type:'critical'},
-        {title:'Pre-Auth Alert: NAS Neuron AED 500 Rule',impact:'Prevent '+auth+' denials',body:'High volume of denials for procedures exceeding the AED 500 threshold without DHA authorization.',type:'high'},
-        {title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of documentation-related denials. Recommend a targeted coding workshop.`,type:'high'}
-    ];
+    // 3. Analyze Specific CPT/ICD Code Issues
+    let highLevelEMDenials = 0;
+    let missingModifier25 = 0;
     
-    document.getElementById('recList').innerHTML=list.map(x=>`
+    denied.forEach(d => {
+        // Look for frequently denied Level 4 or 5 E/M codes
+        if (d.cpt === '99214' || d.cpt === '99215') highLevelEMDenials++;
+        // Look for denials related to missing Modifier 25
+        if (d.code === 'DEN014') missingModifier25++;
+    });
+
+    // 4. Build the Dynamic Action Plan
+    const list = [];
+
+    if (denied.length > 0) {
+        list.push({title:'Workflow: Aafiya/FMC Submission Delay',impact:'AED '+(denied.length*400).toLocaleString(),body:'Small TPA networks are rejecting claims due to the 30-day window. Review your billing workflow.',type:'critical'});
+    }
+    
+    if (auth > 0) {
+        list.push({title:'Pre-Auth Alert: NAS Neuron AED 500 Rule',impact:'Prevent '+auth+' denials',body:'High volume of denials for procedures exceeding the AED 500 threshold without DHA authorization.',type:'high'});
+    }
+
+    if (highLevelEMDenials > 3) {
+        list.push({title:'Coding Alert: High-Level E/M Audit Required',impact:`${highLevelEMDenials} Claims Denied`,body:'Multiple TPAs are downgrading or denying CPT 99214/99215. Verify that Medical Decision Making (MDM) documentation supports these high-level ICD-10 pairings.',type:'high'});
+    }
+
+    if (missingModifier25 > 2) {
+        list.push({title:'Revenue Leakage: Modifier 25 Missing',impact:`${missingModifier25} Claims Denied`,body:'Procedures are being bundled into E/M visits. Ensure your coders are appending Modifier 25 when a significant, separately identifiable evaluation is performed.',type:'critical'});
+    }
+
+    if (topPhys !== 'N/A') {
+        list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of denials. Recommend a targeted coding workshop based on their recent cases.`,type:'high'});
+    }
+    
+    document.getElementById('recList').innerHTML = list.map(x => `
         <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
             <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
             <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
@@ -351,7 +388,6 @@ function renderChart() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     if(window.c) window.c.destroy();
     
-    // Group dynamically loaded data by audit batches, sorted on a 1 to 10 scale ascending
     const batchStats = {};
     for (let i = 1; i <= 10; i++) batchStats[i] = { total: 0, paid: 0 };
     
@@ -362,7 +398,7 @@ function renderChart() {
         }
     });
 
-    const labels = Object.keys(batchStats).sort((a, b) => a - b); // Ensures strict 1 to 10 ascending order
+    const labels = Object.keys(batchStats).sort((a, b) => a - b);
     const acceptanceRates = labels.map(batch => {
         const b = batchStats[batch];
         return b.total === 0 ? 0 : Math.round((b.paid / b.total) * 100);
@@ -399,14 +435,17 @@ const CROSSWALK_DB = [
     { dsl: 'DHA-ENDO-05', cpt: '83036', icd: 'E11.9', desc: 'HbA1c test (Endocrine)', rule: 'Max 1 per 90 days for Type 2 Diabetes without complications.' },
     { dsl: 'DHA-CARD-10', cpt: '93000', icd: 'I50.9', desc: 'Electrocardiogram, routine (Cardiology)', rule: 'Requires primary symptom diagnosis; Auth needed > AED 500.' },
     { dsl: 'DHA-ENT-22', cpt: '31575', icd: 'J38.01', desc: 'Laryngoscopy, flexible (ENT)', rule: 'Modifier 25 required if billed with same-day E/M.' },
-    { dsl: 'DHA-E/M-03', cpt: '99213', icd: 'R05.9', desc: 'Outpatient Visit - Level 3', rule: 'DHA standard documentation (vitals, history) mandatory.' },
-    { dsl: 'DHA-CARD-15', cpt: '93306', icd: 'I51.9', desc: 'Echocardiography (Cardiology)', rule: 'Prior authorization required by most top-tier TPAs.' }
+    { dsl: 'DHA-E/M-03', cpt: '99213', icd: 'R05.9', desc: 'Outpatient Visit - Level 3 (Cough)', rule: 'DHA standard documentation (vitals, history) mandatory.' },
+    { dsl: 'DHA-CARD-15', cpt: '93306', icd: 'I51.9', desc: 'Echocardiography (Cardiology)', rule: 'Prior authorization required by most top-tier TPAs.' },
+    { dsl: 'DHA-E/M-04', cpt: '99214', icd: 'R50.9', desc: 'Outpatient Visit - Level 4 (Fever)', rule: 'Requires moderate medical decision making. Document vitals.' },
+    { dsl: 'DHA-LAB-12', cpt: '85025', icd: 'R50.9', desc: 'Complete Blood Count (CBC)', rule: 'Medical necessity met for fever of unknown origin.' },
+    { dsl: 'DHA-ORTHO-01', cpt: '99203', icd: 'M54.5', desc: 'New Patient Visit (Low Back Pain)', rule: 'Require pain scale documentation.' },
+    { dsl: 'DHA-RAD-08', cpt: '72100', icd: 'M54.5', desc: 'X-ray exam of lower spine', rule: 'Step-therapy: Conservative treatment failed.' }
 ];
 
 function searchCrosswalk() {
     const query = document.getElementById('crosswalkSearch').value.toLowerCase();
     
-    // Filter the database based on the user's input
     const results = CROSSWALK_DB.filter(item => 
         item.cpt.toLowerCase().includes(query) || 
         item.icd.toLowerCase().includes(query) || 
@@ -414,7 +453,6 @@ function searchCrosswalk() {
         item.desc.toLowerCase().includes(query)
     );
     
-    // Render the results into the table
     document.getElementById('crosswalkBody').innerHTML = results.map(x => `
         <tr>
             <td><span class="badge badge-success">${x.dsl}</span></td>
@@ -426,7 +464,6 @@ function searchCrosswalk() {
     `).join('');
 }
 
-// Initialize the crosswalk view with all codes by default
 setTimeout(searchCrosswalk, 500);
 
 </script>
