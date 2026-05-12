@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RCM Pro UAE v4.4 — Full Network Edition</title>
+<title>RCM Pro UAE v5.0 — Official Coding Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -48,8 +48,8 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 
 <div class="sidebar">
     <div style="padding:25px;border-bottom:1px solid var(--border);">
-        <h2 style="color:var(--accent)">RCM Pro <span style="font-size:10px;background:var(--gradient-pro);padding:2px 8px;border-radius:10px;color:white;">v4.4</span></h2>
-        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">FULL NETWORK EDITION</p>
+        <h2 style="color:var(--accent)">RCM Pro <span style="font-size:10px;background:var(--gradient-pro);padding:2px 8px;border-radius:10px;color:white;">v5.0</span></h2>
+        <p style="font-size:10px;color:var(--text-secondary);margin-top:4px;">OFFICIAL DHA/HAAD EDITION</p>
     </div>
     <div class="sidebar-section">
         <div class="nav-item active" onclick="nav('dashboard',this)">📊 Executive Summary</div>
@@ -123,9 +123,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
                             <th>DHA Rule / Modifier</th>
                         </tr>
                     </thead>
-                    <tbody id="crosswalkBody">
-                        <!-- Search results will populate here -->
-                    </tbody>
+                    <tbody id="crosswalkBody"></tbody>
                 </table>
             </div>
         </div>
@@ -156,13 +154,13 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
                 <p>Upload Excel (XLSX) or CSV Remittances</p>
                 <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" style="display:none">
             </div>
-            <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Full UAE Network Sample</button>
+            <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Official UAE Network Sample</button>
         </div>
 
         <div id="page-analysis" class="page">
             <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
                 <table id="claimsTable">
-                    <thead><tr><th>ID</th><th>Physician</th><th>CPT</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Physician</th><th>Code Map</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
                     <tbody id="analysisBody"></tbody>
                 </table>
             </div>
@@ -174,11 +172,34 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 let DATA = [];
 let RECOVERED = 0;
 const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
+
+// ==========================================
+// OFFICIAL DHA & HAAD DENIAL CODE DICTIONARY
+// ==========================================
 const DENIAL_MAP = {
-    'DEN001': 'Member Ineligible: Verify card via ProviderLink at check-in.',
-    'DEN002': 'Auth Missing: Procedures > AED 500 require DHA auth.',
-    'DEN014': 'Modifier 25: Required for same-day separate services.',
-    'DEN009': 'Documentation Incomplete: Vital signs missing for EBP plans.'
+    'AUTH-001': 'Prior approval is required and was not obtained.',
+    'AUTH-002': 'Claim information is inconsistent with authorized services.',
+    'AUTH-004': 'Service performed outside authorization validity date.',
+    'AUTH-006': 'Drug interaction / Severe procedure contraindication.',
+    'AUTH-013': 'Missing eRx Reference Number.',
+    'BENX-001': 'Maximum Cost Per Visit / Benefit limit exceeded.',
+    'CLAI-012': 'Network procedures not applied / Not compliant with contract.',
+    'CODE-001': 'Missing, incomplete or invalid principal diagnosis.',
+    'CODE-010': 'Activity/diagnosis inconsistent with clinician specialty.',
+    'CODE-014': 'Activity/diagnosis is inconsistent with patient age/gender.',
+    'COPY-001': 'Deductible/co-pay not collected from member.',
+    'DUPL-002': 'Payment already made for same/similar service (Already Billed).',
+    'ELIG-001': 'Patient is not a covered member.',
+    'ELIG-005': 'Beneficiary insurance expired at date of treatment.',
+    'ELIG-007': 'Services performed by a non-network provider.',
+    'MNEC-003': 'Service/Drug not clinically justified based on diagnosis.',
+    'MNEC-004': 'Not identified as emergency case.',
+    'MNEC-005': 'Quantity not justified / Services too frequent.',
+    'NCOV-001': 'Excluded Diagnosis / Service is not covered.',
+    'PRCE-001': 'Calculation discrepancy / Agreed tariff not applied.',
+    'PRCE-008': 'Multiple procedure payment rules incorrectly applied (Bundling).',
+    'TIME-001': 'Claim Received After Cut-Off Period (Timely Filing).',
+    'TIME-003': 'Appeal procedures not followed or time limits not met.'
 };
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
@@ -192,30 +213,42 @@ function nav(p, el) {
     if(p==='recs') renderRecs();
 }
 
-// Live File Parsing (Excel & CSV)
+// Live File Parsing with Built-in PHI Auto-Scrubber
 document.getElementById('fileIn').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    
     const reader = new FileReader();
     reader.onload = function(evt) {
         const data = evt.target.result;
-        let parsedData = [];
+        let rawParsedData = [];
         
         if (file.name.endsWith('.csv')) {
             const csv = Papa.parse(data, { header: true });
-            parsedData = csv.data;
+            rawParsedData = csv.data;
         } else {
             const wb = XLSX.read(data, { type: 'binary' });
             const wsname = wb.SheetNames[0];
-            parsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+            rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
         }
-        processImportedData(parsedData);
+        
+        // PHI AUTO-SCRUBBER
+        const phiKeywords = ['name', 'patient', 'dob', 'emirates', 'eid', 'phone', 'member', 'policy', 'mobile', 'email'];
+        const scrubbedData = rawParsedData.map(row => {
+            let cleanRow = {};
+            for (let key in row) {
+                let keyLower = key.toLowerCase();
+                let isPHI = phiKeywords.some(phi => keyLower.includes(phi));
+                if (!isPHI) cleanRow[key] = row[key]; 
+            }
+            return cleanRow;
+        });
+
+        processImportedData(scrubbedData);
     };
     reader.readAsBinaryString(file);
 });
 
-// Map imported rows to dashboard structure, capturing CPT and ICD
+// Map imported rows to dashboard structure
 function processImportedData(rawData) {
     DATA = rawData.map((row, idx) => {
         const amt = parseFloat(row.Amount || row.Billed || 0);
@@ -226,7 +259,7 @@ function processImportedData(rawData) {
             physician: row.Physician || row.Provider || DOCTORS[Math.floor(Math.random()*DOCTORS.length)],
             amt: isNaN(amt) ? 0 : amt,
             status: status,
-            code: status === 'denied' ? (row.DenialCode || Object.keys(DENIAL_MAP)[Math.floor(Math.random()*4)]) : '',
+            code: status === 'denied' ? (row.DenialCode || Object.keys(DENIAL_MAP)[Math.floor(Math.random()*Object.keys(DENIAL_MAP).length)]) : '',
             batch: row.Batch || Math.floor(Math.random() * 10) + 1,
             assignee: row.Assignee || '',
             cpt: row.CPT || row.ProcedureCode || '',
@@ -236,10 +269,10 @@ function processImportedData(rawData) {
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
-    alert('Data Imported Successfully!');
+    alert('De-identified Data Imported Successfully!');
 }
 
-// Generate Mock Data if no file uploaded
+// Generate Mock Data utilizing Official DHA/HAAD Codes
 function loadSample(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
@@ -287,11 +320,11 @@ function renderTable() {
         <tr>
             <td>${x.id}</td>
             <td>${x.physician}</td>
-            <td>${x.cpt || '-'}</td>
+            <td style="font-size:11px;">CPT: ${x.cpt || '-'}<br>ICD: ${x.icd || '-'}</td>
             <td>${x.payer}</td>
             <td>AED ${x.amt}</td>
             <td class="status-${x.status}">${x.status.toUpperCase()}</td>
-            <td style="font-size:10px;color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</td>
+            <td style="font-size:11px;"><strong>${x.code}</strong><br><span style="color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</span></td>
             <td>
                 <select class="assign-select" onchange="assignTask('${x.id}', this.value)">
                     <option value="" ${x.assignee===''?'selected':''}>Unassigned</option>
@@ -299,9 +332,6 @@ function renderTable() {
                     <option value="Nelson" ${x.assignee==='Nelson'?'selected':''}>Nelson</option>
                     <option value="Kurt" ${x.assignee==='Kurt'?'selected':''}>Kurt</option>
                     <option value="Shenuka" ${x.assignee==='Shenuka'?'selected':''}>Shenuka</option>
-                    <option value="Michel" ${x.assignee==='Michel'?'selected':''}>Michel</option>
-                    <option value="Ramsel" ${x.assignee==='Ramsel'?'selected':''}>Ramsel</option>
-                    <option value="Remlyn" ${x.assignee==='Remlyn'?'selected':''}>Remlyn</option>
                 </select>
             </td>
             <td>${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}</td>
@@ -314,49 +344,54 @@ function assignTask(id, person) {
     if(claim) claim.assignee = person;
 }
 
+// SMART ACTION PLAN ENGINE
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
     
-    // 1. Basic Metrics
-    const auth = denied.filter(x => x.code === 'DEN002').length;
+    // Segment by Category based on Prefix
+    let adminFrontDesk = 0; // ELIG, COPY
+    let clinicalCoding = 0; // CODE, PRCE
+    let medicalNecessity = 0; // MNEC
+    let timelyFiling = 0; // TIME
+    let preAuth = 0; // AUTH
     
-    // 2. Find Top Offending Physician
+    denied.forEach(d => {
+        if(d.code.startsWith('ELIG') || d.code.startsWith('COPY')) adminFrontDesk++;
+        if(d.code.startsWith('CODE') || d.code.startsWith('PRCE')) clinicalCoding++;
+        if(d.code.startsWith('MNEC')) medicalNecessity++;
+        if(d.code.startsWith('TIME')) timelyFiling++;
+        if(d.code.startsWith('AUTH')) preAuth++;
+    });
+
     const physDenials = {};
     denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
     const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
 
-    // 3. Analyze Specific CPT/ICD Code Issues
-    let highLevelEMDenials = 0;
-    let missingModifier25 = 0;
-    
-    denied.forEach(d => {
-        // Look for frequently denied Level 4 or 5 E/M codes
-        if (d.cpt === '99214' || d.cpt === '99215') highLevelEMDenials++;
-        // Look for denials related to missing Modifier 25
-        if (d.code === 'DEN014') missingModifier25++;
-    });
-
-    // 4. Build the Dynamic Action Plan
     const list = [];
 
-    if (denied.length > 0) {
-        list.push({title:'Workflow: Aafiya/FMC Submission Delay',impact:'AED '+(denied.length*400).toLocaleString(),body:'Small TPA networks are rejecting claims due to the 30-day window. Review your billing workflow.',type:'critical'});
+    // Trigger Smart Alerts
+    if (adminFrontDesk > 3) {
+        list.push({title:'Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
     }
     
-    if (auth > 0) {
-        list.push({title:'Pre-Auth Alert: NAS Neuron AED 500 Rule',impact:'Prevent '+auth+' denials',body:'High volume of denials for procedures exceeding the AED 500 threshold without DHA authorization.',type:'high'});
+    if (clinicalCoding > 3) {
+        list.push({title:'Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
     }
 
-    if (highLevelEMDenials > 3) {
-        list.push({title:'Coding Alert: High-Level E/M Audit Required',impact:`${highLevelEMDenials} Claims Denied`,body:'Multiple TPAs are downgrading or denying CPT 99214/99215. Verify that Medical Decision Making (MDM) documentation supports these high-level ICD-10 pairings.',type:'high'});
+    if (medicalNecessity > 2) {
+        list.push({title:'Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
     }
 
-    if (missingModifier25 > 2) {
-        list.push({title:'Revenue Leakage: Modifier 25 Missing',impact:`${missingModifier25} Claims Denied`,body:'Procedures are being bundled into E/M visits. Ensure your coders are appending Modifier 25 when a significant, separately identifiable evaluation is performed.',type:'critical'});
+    if (timelyFiling > 0) {
+        list.push({title:'Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
+    }
+
+    if (preAuth > 3) {
+        list.push({title:'Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
     }
 
     if (topPhys !== 'N/A') {
-        list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of denials. Recommend a targeted coding workshop based on their recent cases.`,type:'high'});
+        list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
     }
     
     document.getElementById('recList').innerHTML = list.map(x => `
@@ -367,15 +402,49 @@ function renderRecs() {
     `).join('');
 }
 
-function genAppeal(id,p,c,a){
+// SMART APPEAL GENERATOR
+function genAppeal(id, p, code, a){
     try{
-        const {jsPDF}=window.jspdf;const doc=new jsPDF();
-        doc.setFontSize(18);doc.text("2026 TPA REJECTION APPEAL",20,30);
-        doc.setFontSize(11);doc.text(`TPA: ${p}`,20,50);doc.text(`Claim: ${id} | Amt: AED ${a}`,20,58);
-        doc.text(doc.splitTextToSize("Clinical justification for outpatient encounter submitted in accordance with 2026 DHA billing regulations.",170),20,80);
-        const data=doc.output('datauristring');const link=document.createElement('a');link.href=data;link.download=`Appeal_${id}.pdf`;link.click();
-        RECOVERED+=a;document.getElementById('sideRecovered').textContent='AED '+RECOVERED.toLocaleString();
-    }catch(e){alert("Download blocked.");}
+        const {jsPDF} = window.jspdf; 
+        const doc = new jsPDF();
+        
+        doc.setFontSize(16);
+        doc.text("2026 TPA REJECTION APPEAL - UAE", 20, 20);
+        
+        doc.setFontSize(11);
+        doc.text(`TPA: ${p}`, 20, 35);
+        doc.text(`Claim ID: ${id}`, 20, 42);
+        doc.text(`Disputed Amount: AED ${a}`, 20, 49);
+        doc.text(`Denial Code: ${code} - ${DENIAL_MAP[code] || 'Unspecified'}`, 20, 56);
+        
+        let justification = "Clinical justification for outpatient encounter submitted in accordance with DHA/HAAD billing regulations.";
+        
+        // Tailor the letter based on the DHA/HAAD code prefix
+        if (code.startsWith('MNEC')) {
+            justification = "Enclosed are the full clinical consultation notes, vital signs, and patient history which clearly establish medical necessity for the procedures performed as per standard clinical guidelines.";
+        } else if (code.startsWith('TIME')) {
+            justification = "This claim was submitted within the contractual timeframes. Please review the attached system timestamps proving timely initial dispatch to the clearinghouse.";
+        } else if (code.startsWith('AUTH')) {
+            justification = "This case qualifies under the emergency/urgent care exemption clause, waiving the requirement for standard pre-approval due to the patient's acute presentation upon arrival.";
+        } else if (code.startsWith('CODE') || code.startsWith('PRCE')) {
+            justification = "The CPT and ICD-10 pairings submitted adhere to global NCCI coding standards. Modifiers were appropriately applied to denote separately identifiable services. Please reverse the bundling edit.";
+        }
+
+        doc.text("Clinical/Administrative Justification:", 20, 70);
+        doc.setFont("helvetica", "italic");
+        doc.text(doc.splitTextToSize(justification, 170), 20, 80);
+        
+        const data = doc.output('datauristring');
+        const link = document.createElement('a');
+        link.href = data;
+        link.download = `Appeal_${id}_${code}.pdf`;
+        link.click();
+        
+        RECOVERED += a;
+        document.getElementById('sideRecovered').textContent = 'AED '+RECOVERED.toLocaleString();
+    } catch(e) {
+        alert("Download blocked or PDF library failed to load.");
+    }
 }
 
 function updateBenchmark(){
