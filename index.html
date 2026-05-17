@@ -232,7 +232,6 @@ const DENIAL_MAP = {
 };
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
-// --- NEW TOAST NOTIFICATION FUNCTION ---
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -363,10 +362,10 @@ function renderTable() {
             <td>
                 <select class="assign-select" onchange="assignTask('${x.id}', this.value)">
                     <option value="" ${x.assignee===''?'selected':''}>Unassigned</option>
-                    <option value="Ravi" ${x.assignee==='Ravi'?'selected':''}>Ravi</option>
-                    <option value="Nelson" ${x.assignee==='Nelson'?'selected':''}>Nelson</option>
-                    <option value="Kurt" ${x.assignee==='Kurt'?'selected':''}>Kurt</option>
-                    <option value="Shenuka" ${x.assignee==='Shenuka'?'selected':''}>Shenuka</option>
+                    <option value="Front Desk" ${x.assignee==='Front Desk'?'selected':''}>Front Desk</option>
+                    <option value="Medical Coder" ${x.assignee==='Medical Coder'?'selected':''}>Medical Coder</option>
+                    <option value="Biller" ${x.assignee==='Biller'?'selected':''}>Biller</option>
+                    <option value="Physician Review" ${x.assignee==='Physician Review'?'selected':''}>Physician Review</option>
                 </select>
             </td>
             <td>${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}</td>
@@ -379,7 +378,6 @@ function assignTask(id, person) {
     if(claim) claim.assignee = person;
 }
 
-// --- NEW WORKFLOW FUNCTIONS ---
 function filterTable(viewType) {
     const rows = document.querySelectorAll('#analysisBody tr');
     rows.forEach(row => {
