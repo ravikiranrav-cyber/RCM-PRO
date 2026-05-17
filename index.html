@@ -30,21 +30,45 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-dark);color:va
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
 .card-title{font-size:16px;font-weight:700;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
 .bench-selector{background:rgba(56,189,248,0.1);padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;}
-.btn{padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;font-size:13px;}
+.btn{padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:8px;font-size:13px;transition:0.2s;}
+.btn:hover{opacity:0.9;}
 .btn-pro{background:var(--gradient-pro);color:white;}
 .btn-sm{padding:6px 10px; font-size:11px;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th{text-align:left;color:var(--text-secondary);font-size:11px;padding:12px;}
-td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 .page{display:none;}.page.active{display:block;}
 .badge{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;}
 .badge-danger{background:rgba(239,68,68,0.2);color:var(--danger);}
 .badge-success{background:rgba(34,197,94,0.2);color:var(--success);}
 .assign-select{background:var(--bg-dark);color:var(--text-primary);border:1px solid var(--border);padding:4px;border-radius:4px;font-size:11px;}
+
+/* UPGRADED TABLE CSS */
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th { text-align:left; color:var(--text-secondary); font-size:11px; padding:12px; position:sticky; top:0; background:var(--bg-card); z-index:10; border-bottom:2px solid var(--border); }
+td { padding:12px; border-bottom:1px solid var(--border); font-size:13px; transition:0.2s; }
+tbody tr:hover td { background: rgba(56,189,248,0.05); }
+
+/* VISUAL STATUS PILLS */
+.status-paid { background: rgba(34,197,94,0.15); color: var(--success); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; display: inline-block; }
+.status-denied { background: rgba(239,68,68,0.15); color: var(--danger); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; display: inline-block; }
+
 @media(max-width:1024px){.grid-4{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
+
+<div id="toast" style="position:fixed; bottom:-100px; right:30px; background:var(--success); color:var(--bg-dark); padding:15px 25px; border-radius:10px; font-weight:bold; transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index:10000; box-shadow:0 10px 20px rgba(0,0,0,0.3);">Notification</div>
+
+<div id="welcomeModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,6,23,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+    <div style="background:var(--bg-card);padding:40px;border-radius:20px;border:1px solid var(--border);text-align:center;max-width:500px;margin:20px;">
+        <h2 style="color:var(--text-primary);margin-bottom:10px;">Welcome to <span style="color:var(--accent)">RCMPRO</span></h2>
+        <div style="background:rgba(56,189,248,0.1);padding:8px 15px;border-radius:20px;margin:0 auto 20px auto;font-size:11px;color:var(--accent);display:inline-block;font-weight:bold;letter-spacing:1px;">
+            v5.0 LIVE DEMONSTRATION
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:25px;font-size:14px;line-height:1.6;">
+            This is a secure, localized environment tailored for UAE clinics. To ensure complete compliance, no real Patient Health Information (PHI) is required to test the Engine. Everything is processed locally on your device.
+        </p>
+        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="document.getElementById('welcomeModal').style.display='none'">Enter the Dashboard</button>
+    </div>
+</div>
 
 <div class="sidebar">
     <div style="padding:25px;border-bottom:1px solid var(--border);">
@@ -78,7 +102,7 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
 <div class="main-content">
     <header class="top-header">
         <h3 id="pageTitle">Executive Summary</h3>
-        <button class="btn btn-pro" onclick="alert('Master Report Generation Started...')">📥 Download Master Report</button>
+        <button class="btn btn-pro" onclick="showToast('📥 Master Report Generation Started...')">📥 Download Master Report</button>
     </header>
 
     <div class="page-content">
@@ -158,7 +182,15 @@ td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;}
         </div>
 
         <div id="page-analysis" class="page">
-            <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" style="background:var(--primary-light); color:white;" onclick="filterTable('all')">📋 View All</button>
+                    <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="filterTable('denied')">🔴 Denied Only</button>
+                    <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="filterTable('paid')">🟢 Paid Only</button>
+                </div>
+                <button class="btn btn-pro" onclick="exportAudit()">📤 Export Audit to Excel</button>
+            </div>
+            <div style="background:var(--bg-card);border-radius:16px;overflow:hidden;max-height:600px;overflow-y:auto;">
                 <table id="claimsTable">
                     <thead><tr><th>ID</th><th>Physician</th><th>Code Map</th><th>TPA / Payer</th><th>Amount</th><th>Status</th><th>Root Cause</th><th>Assignee</th><th>Action</th></tr></thead>
                     <tbody id="analysisBody"></tbody>
@@ -173,9 +205,6 @@ let DATA = [];
 let RECOVERED = 0;
 const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
 
-// ==========================================
-// OFFICIAL DHA & HAAD DENIAL CODE DICTIONARY
-// ==========================================
 const DENIAL_MAP = {
     'AUTH-001': 'Prior approval is required and was not obtained.',
     'AUTH-002': 'Claim information is inconsistent with authorized services.',
@@ -203,7 +232,16 @@ const DENIAL_MAP = {
 };
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
-// View Navigation
+// --- NEW TOAST NOTIFICATION FUNCTION ---
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.bottom = '30px'; 
+    setTimeout(() => {
+        toast.style.bottom = '-100px'; 
+    }, 3000);
+}
+
 function nav(p, el) {
     document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
@@ -213,7 +251,6 @@ function nav(p, el) {
     if(p==='recs') renderRecs();
 }
 
-// Live File Parsing with Built-in PHI Auto-Scrubber
 document.getElementById('fileIn').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -231,7 +268,6 @@ document.getElementById('fileIn').addEventListener('change', function(e) {
             rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
         }
         
-        // PHI AUTO-SCRUBBER
         const phiKeywords = ['name', 'patient', 'dob', 'emirates', 'eid', 'phone', 'member', 'policy', 'mobile', 'email'];
         const scrubbedData = rawParsedData.map(row => {
             let cleanRow = {};
@@ -248,7 +284,6 @@ document.getElementById('fileIn').addEventListener('change', function(e) {
     reader.readAsBinaryString(file);
 });
 
-// Map imported rows to dashboard structure
 function processImportedData(rawData) {
     DATA = rawData.map((row, idx) => {
         const amt = parseFloat(row.Amount || row.Billed || 0);
@@ -269,10 +304,9 @@ function processImportedData(rawData) {
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
-    alert('De-identified Data Imported Successfully!');
+    showToast('✅ De-identified Data Imported Successfully!');
 }
 
-// Generate Mock Data utilizing Official DHA/HAAD Codes
 function loadSample(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
@@ -298,6 +332,7 @@ function loadSample(n=100) {
     DATA=tmp;
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
+    showToast('✅ Official Sample Data Loaded!');
 }
 
 function updateUI() {
@@ -323,7 +358,7 @@ function renderTable() {
             <td style="font-size:11px;">CPT: ${x.cpt || '-'}<br>ICD: ${x.icd || '-'}</td>
             <td>${x.payer}</td>
             <td>AED ${x.amt}</td>
-            <td class="status-${x.status}">${x.status.toUpperCase()}</td>
+            <td><span class="status-${x.status}">${x.status.toUpperCase()}</span></td>
             <td style="font-size:11px;"><strong>${x.code}</strong><br><span style="color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</span></td>
             <td>
                 <select class="assign-select" onchange="assignTask('${x.id}', this.value)">
@@ -344,16 +379,56 @@ function assignTask(id, person) {
     if(claim) claim.assignee = person;
 }
 
-// SMART ACTION PLAN ENGINE
+// --- NEW WORKFLOW FUNCTIONS ---
+function filterTable(viewType) {
+    const rows = document.querySelectorAll('#analysisBody tr');
+    rows.forEach(row => {
+        const statusText = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
+        if (viewType === 'all') {
+            row.style.display = '';
+        } else if (viewType === 'denied' && statusText.includes('denied')) {
+            row.style.display = '';
+        } else if (viewType === 'paid' && statusText.includes('paid')) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function exportAudit() {
+    if(DATA.length === 0) {
+        showToast('❌ No data to export!');
+        return;
+    }
+    const csvRows = [];
+    const headers = ['Claim_ID', 'Physician', 'CPT_Code', 'ICD_Focus', 'TPA', 'Amount_AED', 'Status', 'Denial_Code', 'Root_Cause'];
+    csvRows.push(headers.join(','));
+    
+    DATA.forEach(row => {
+        const rowData = [
+            row.id, row.physician, row.cpt, row.icd, row.payer, row.amt, row.status, row.code, 
+            (DENIAL_MAP[row.code] || '').replace(/,/g, '') 
+        ];
+        csvRows.push(rowData.join(','));
+    });
+    
+    const csvString = csvRows.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'RCMPRO_Audit_Export.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('📤 Audit Exported Successfully!');
+}
+
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
-    
-    // Segment by Category based on Prefix
-    let adminFrontDesk = 0; // ELIG, COPY
-    let clinicalCoding = 0; // CODE, PRCE
-    let medicalNecessity = 0; // MNEC
-    let timelyFiling = 0; // TIME
-    let preAuth = 0; // AUTH
+    let adminFrontDesk = 0; let clinicalCoding = 0; let medicalNecessity = 0; let timelyFiling = 0; let preAuth = 0;
     
     denied.forEach(d => {
         if(d.code.startsWith('ELIG') || d.code.startsWith('COPY')) adminFrontDesk++;
@@ -369,30 +444,12 @@ function renderRecs() {
 
     const list = [];
 
-    // Trigger Smart Alerts
-    if (adminFrontDesk > 3) {
-        list.push({title:'Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
-    }
-    
-    if (clinicalCoding > 3) {
-        list.push({title:'Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
-    }
-
-    if (medicalNecessity > 2) {
-        list.push({title:'Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
-    }
-
-    if (timelyFiling > 0) {
-        list.push({title:'Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
-    }
-
-    if (preAuth > 3) {
-        list.push({title:'Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
-    }
-
-    if (topPhys !== 'N/A') {
-        list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
-    }
+    if (adminFrontDesk > 3) list.push({title:'Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
+    if (clinicalCoding > 3) list.push({title:'Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
+    if (medicalNecessity > 2) list.push({title:'Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
+    if (timelyFiling > 0) list.push({title:'Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
+    if (preAuth > 3) list.push({title:'Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
+    if (topPhys !== 'N/A') list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
     
     document.getElementById('recList').innerHTML = list.map(x => `
         <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
@@ -402,7 +459,6 @@ function renderRecs() {
     `).join('');
 }
 
-// SMART APPEAL GENERATOR
 function genAppeal(id, p, code, a){
     try{
         const {jsPDF} = window.jspdf; 
@@ -419,16 +475,10 @@ function genAppeal(id, p, code, a){
         
         let justification = "Clinical justification for outpatient encounter submitted in accordance with DHA/HAAD billing regulations.";
         
-        // Tailor the letter based on the DHA/HAAD code prefix
-        if (code.startsWith('MNEC')) {
-            justification = "Enclosed are the full clinical consultation notes, vital signs, and patient history which clearly establish medical necessity for the procedures performed as per standard clinical guidelines.";
-        } else if (code.startsWith('TIME')) {
-            justification = "This claim was submitted within the contractual timeframes. Please review the attached system timestamps proving timely initial dispatch to the clearinghouse.";
-        } else if (code.startsWith('AUTH')) {
-            justification = "This case qualifies under the emergency/urgent care exemption clause, waiving the requirement for standard pre-approval due to the patient's acute presentation upon arrival.";
-        } else if (code.startsWith('CODE') || code.startsWith('PRCE')) {
-            justification = "The CPT and ICD-10 pairings submitted adhere to global NCCI coding standards. Modifiers were appropriately applied to denote separately identifiable services. Please reverse the bundling edit.";
-        }
+        if (code.startsWith('MNEC')) justification = "Enclosed are the full clinical consultation notes, vital signs, and patient history which clearly establish medical necessity for the procedures performed as per standard clinical guidelines.";
+        else if (code.startsWith('TIME')) justification = "This claim was submitted within the contractual timeframes. Please review the attached system timestamps proving timely initial dispatch to the clearinghouse.";
+        else if (code.startsWith('AUTH')) justification = "This case qualifies under the emergency/urgent care exemption clause, waiving the requirement for standard pre-approval due to the patient's acute presentation upon arrival.";
+        else if (code.startsWith('CODE') || code.startsWith('PRCE')) justification = "The CPT and ICD-10 pairings submitted adhere to global NCCI coding standards. Modifiers were appropriately applied to denote separately identifiable services. Please reverse the bundling edit.";
 
         doc.text("Clinical/Administrative Justification:", 20, 70);
         doc.setFont("helvetica", "italic");
@@ -442,8 +492,9 @@ function genAppeal(id, p, code, a){
         
         RECOVERED += a;
         document.getElementById('sideRecovered').textContent = 'AED '+RECOVERED.toLocaleString();
+        showToast('📄 Appeal PDF Generated Successfully!');
     } catch(e) {
-        alert("Download blocked or PDF library failed to load.");
+        showToast('❌ PDF Generator blocked by browser.');
     }
 }
 
@@ -499,7 +550,6 @@ function renderChart() {
     });
 }
 
-// CROSSWALK DATABASE & SEARCH LOGIC
 const CROSSWALK_DB = [
     { dsl: 'DHA-ENDO-05', cpt: '83036', icd: 'E11.9', desc: 'HbA1c test (Endocrine)', rule: 'Max 1 per 90 days for Type 2 Diabetes without complications.' },
     { dsl: 'DHA-CARD-10', cpt: '93000', icd: 'I50.9', desc: 'Electrocardiogram, routine (Cardiology)', rule: 'Requires primary symptom diagnosis; Auth needed > AED 500.' },
