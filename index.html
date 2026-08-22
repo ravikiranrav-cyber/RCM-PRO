@@ -600,6 +600,136 @@ const DENIAL_MAP = {
     'TIME-001': 'Claim Received After Cut-Off Period (Timely Filing).',
     'TIME-003': 'Appeal procedures not followed or time limits not met.'
 };
+
+// SPECIFIC CLINICAL/ADMIN RECOMMENDATIONS PER DENIAL CODE
+const DENIAL_RECOMMENDATIONS = {
+    'MNEC-003': {
+        clinical: 'Compare ICD-10 diagnosis vs CPT procedure — ensure medical necessity link is documented. Add clinical rationale in progress note: "Procedure X indicated due to Diagnosis Y because [clinical reasoning]."',
+        admin: 'Query provider: "Does medical record clearly support necessity of [CPT] for [ICD-10]?" Update record if missing.',
+        prevention: 'Implement smart phrases/templates linking common ICD-10/CPT pairs with necessity language.',
+        urgency: 'high'
+    },
+    'MNEC-004': {
+        clinical: 'Verify if service truly meets emergency criteria (life/limb threat). If not emergency, obtain retro-auth or appeal with "urgent care" justification.',
+        admin: 'Train front desk to flag non-emergency ER visits. Ensure ER physician documents acuity level.',
+        prevention: 'Add ER triage acuity to charge capture workflow.',
+        urgency: 'medium'
+    },
+    'MNEC-005': {
+        clinical: 'Review frequency limits: e.g., E/M 99213 max 1/day, therapy 97110 max 3/week. Document medical necessity for excess units.',
+        admin: 'Set up claim edits to flag units > payer limits before submission.',
+        prevention: 'Build frequency rules into EHR charge capture.',
+        urgency: 'medium'
+    },
+    'PRCE-001': {
+        clinical: '',
+        admin: 'Compare paid amount vs contract rate for this CTP/TPA. Appeal with contract page screenshot showing agreed rate.',
+        prevention: 'Load all TPA contract rates into system; enable auto-flag on import (already built).',
+        urgency: 'high'
+    },
+    'PRCE-008': {
+        clinical: 'Verify if procedures are truly separate (different sites/sessions) or bundled per NCCI. Apply correct modifier (59, XS, 51, 76-79).',
+        admin: 'Use Bundling/NCCI Editor tab to validate CPT pairs before submission.',
+        prevention: 'Integrate NCCI edit check into claim scrubber.',
+        urgency: 'high'
+    },
+    'CODE-001': {
+        clinical: 'Ensure primary ICD-10 is valid, specific (not "unspecified"), and matches clinical picture. Add secondary diagnoses.',
+        admin: 'Coder to review claim before submission — require primary dx validation.',
+        prevention: 'EHR dx validation rules (no R69, no unspecified as primary).',
+        urgency: 'high'
+    },
+    'CODE-010': {
+        clinical: 'Confirm provider specialty matches procedure (e.g., cardiologist doing 93000 OK, dermatologist doing 93000 needs justification).',
+        admin: 'Map provider specialty in system; flag mismatches.',
+        prevention: 'Specialty-procedure mapping table.',
+        urgency: 'medium'
+    },
+    'CODE-014': {
+        clinical: 'Check age/gender edits: e.g., pediatric codes on adults, maternity codes on males. Correct ICD-10 or CPT.',
+        admin: 'Demographic validation in claim scrubber.',
+        prevention: 'EHR age/gender alerts at charge entry.',
+        urgency: 'medium'
+    },
+    'AUTH-001': {
+        clinical: 'Determine if service requires prior auth per TPA policy. If emergency, document acuity for exemption.',
+        admin: 'Pre-auth checklist by CPT/TPA. Flag at scheduling.',
+        prevention: 'Real-time auth check at order entry via TPA portal/API.',
+        urgency: 'high'
+    },
+    'AUTH-002': {
+        clinical: 'Ensure clinical details in auth request match claim (same CPT, ICD, units, provider).',
+        admin: 'Auth-tracking log: link auth number to claim at submission.',
+        prevention: 'Auto-populate claim from approved auth.',
+        urgency: 'high'
+    },
+    'AUTH-004': {
+        clinical: 'Verify service date falls within auth validity window. If expired, obtain new auth.',
+        admin: 'Track auth expiry dates; alert 7 days before expiry.',
+        prevention: 'Calendar alerts for auth windows.',
+        urgency: 'high'
+    },
+    'ELIG-001': {
+        clinical: '',
+        admin: 'Verify Emirates ID at check-in. Confirm active coverage with TPA portal. Collect copay upfront.',
+        prevention: 'Real-time EID check at registration (already in NABIDH tab).',
+        urgency: 'critical'
+    },
+    'ELIG-005': {
+        clinical: '',
+        admin: 'Check policy expiry date. Contact patient for renewed card before visit.',
+        prevention: 'Monthly eligibility batch run for active patients.',
+        urgency: 'critical'
+    },
+    'ELIG-007': {
+        clinical: '',
+        admin: 'Confirm provider is in-network for this plan. If OON, obtain GAP exception or redirect patient.',
+        prevention: 'Network status check at scheduling.',
+        urgency: 'critical'
+    },
+    'BENX-001': {
+        clinical: 'Review benefit limits (visits, $ caps). Document medical necessity for exceptions.',
+        admin: 'Track utilization vs benefit limits per member. Alert at 80% utilization.',
+        prevention: 'Benefit tracker in EHR.',
+        urgency: 'medium'
+    },
+    'COPY-001': {
+        clinical: '',
+        admin: 'Collect copay/deductible at time of service. Post payment to claim before submission.',
+        prevention: 'POS collection workflow + copay estimator.',
+        urgency: 'critical'
+    },
+    'DUPL-002': {
+        clinical: '',
+        admin: 'Check if claim already paid/processed. Search by member + DOS + CPT. Void duplicate.',
+        prevention: 'Duplicate claim edit in scrubber.',
+        urgency: 'high'
+    },
+    'NCOV-001': {
+        clinical: 'Verify if diagnosis/service is truly excluded (cosmetic, experimental). If covered, appeal with policy citation.',
+        admin: 'Maintain TPA exclusion lists. Pre-check at scheduling.',
+        prevention: 'Exclusion list database per TPA.',
+        urgency: 'medium'
+    },
+    'TIME-001': {
+        clinical: '',
+        admin: 'Submit within 30 days of DOS. Track submission timestamps. Appeal with clearinghouse receipt.',
+        prevention: 'Daily claim submission job; aging report at 20 days.',
+        urgency: 'critical'
+    },
+    'TIME-003': {
+        clinical: '',
+        admin: 'File appeal within TPA deadline (usually 30-60 days from denial). Track appeal deadlines.',
+        prevention: 'Appeal deadline calendar from denial date.',
+        urgency: 'critical'
+    },
+    'CLAI-012': {
+        clinical: '',
+        admin: 'Ensure network procedures/contract terms applied. Verify TPA-specific billing rules.',
+        prevention: 'TPA rule engine per contract.',
+        urgency: 'high'
+    }
+};
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
 // NEW: TPA Contract Rates
@@ -894,6 +1024,7 @@ function renderTable() {
             <td>
                 <div style="display:flex; gap:4px; flex-wrap:wrap;">
                     ${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}
+                    ${x.status==='denied' && x.code && DENIAL_RECOMMENDATIONS[x.code] ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="showCodeRec('${x.code}')" title="Clinical/Admin Recommendation">💡 Fix</button>` : ''}
                     <button class="btn btn-sm" style="background:var(--primary-light);" onclick="copyClaimId('${x.id}')" title="Copy Claim ID">📋</button>
                 </div>
             </td>
@@ -954,8 +1085,19 @@ window.exportAudit = function() {
 
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
-    let adminFrontDesk = 0; let clinicalCoding = 0; let medicalNecessity = 0; let timelyFiling = 0; let preAuth = 0;
     
+    // Aggregate by code for specific recommendations
+    const codeStats = {};
+    denied.forEach(d => {
+        if (!d.code) return;
+        if (!codeStats[d.code]) codeStats[d.code] = { count: 0, amount: 0, codes: [] };
+        codeStats[d.code].count++;
+        codeStats[d.code].amount += d.amt;
+        codeStats[d.code].codes.push(d);
+    });
+    
+    // Also keep category aggregates for high-level view
+    let adminFrontDesk = 0, clinicalCoding = 0, medicalNecessity = 0, timelyFiling = 0, preAuth = 0;
     denied.forEach(d => {
         if(d.code.startsWith('ELIG') || d.code.startsWith('COPY')) adminFrontDesk++;
         if(d.code.startsWith('CODE') || d.code.startsWith('PRCE')) clinicalCoding++;
@@ -963,26 +1105,64 @@ function renderRecs() {
         if(d.code.startsWith('TIME')) timelyFiling++;
         if(d.code.startsWith('AUTH')) preAuth++;
     });
-
+    
     const physDenials = {};
     denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
     const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
 
     const list = [];
 
-    if (adminFrontDesk > 3) list.push({title:'Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
-    if (clinicalCoding > 3) list.push({title:'Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
-    if (medicalNecessity > 2) list.push({title:'Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
-    if (timelyFiling > 0) list.push({title:'Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
-    if (preAuth > 3) list.push({title:'Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
-    if (topPhys !== 'N/A') list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
+    // Category-level alerts (existing)
+    if (adminFrontDesk > 3) list.push({title:'🚨 Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
+    if (clinicalCoding > 3) list.push({title:'💰 Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
+    if (medicalNecessity > 2) list.push({title:'🩺 Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
+    if (timelyFiling > 0) list.push({title:'⏰ Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
+    if (preAuth > 3) list.push({title:'🔐 Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
+    if (topPhys !== 'N/A') list.push({title:'👨‍⚕️ Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
+
+    // CODE-SPECIFIC RECOMMENDATIONS (NEW)
+    const sortedCodes = Object.entries(codeStats)
+        .sort((a, b) => b[1].amount - a[1].amount)
+        .slice(0, 10); // Top 10 denial codes by amount
     
-    document.getElementById('recList').innerHTML = list.map(x => `
-        <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
-            <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
-            <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
-        </div>
-    `).join('');
+    if (sortedCodes.length > 0) {
+        list.push({title:'🎯 Top Denial Codes — Specific Actions',impact:`${sortedCodes.length} codes analyzed`,body:'',type:'info', isCodeSection: true, codes: sortedCodes});
+    }
+    
+    document.getElementById('recList').innerHTML = list.map(x => {
+        if (x.isCodeSection) {
+            return `
+                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:15px;">
+                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-info">${x.type.toUpperCase()}</span></div>
+                    <div style="margin-top:15px;">
+                        ${x.codes.map(([code, data]) => {
+                            const rec = DENIAL_RECOMMENDATIONS[code] || { clinical: '', admin: 'Review denial reason and appeal with supporting documentation.', prevention: '', urgency: 'medium' };
+                            const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
+                            return `
+                                <div style="background:var(--bg-dark);padding:15px;border-radius:8px;margin-bottom:10px;border-left:3px solid ${urgencyColor};">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                        <strong style="color:var(--accent);">${code}</strong>
+                                        <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};">${rec.urgency.toUpperCase()}</span>
+                                    </div>
+                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Reason:</strong> ${DENIAL_MAP[code] || 'Unknown'}</div>
+                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Count:</strong> ${data.count} | <strong>Amount:</strong> AED ${data.amount.toLocaleString()}</div>
+                                    ${rec.clinical ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(34,197,94,0.1);border-radius:4px;"><strong>🩺 Clinical:</strong> ${rec.clinical}</div>` : ''}
+                                    ${rec.admin ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(56,189,248,0.1);border-radius:4px;"><strong>📋 Admin:</strong> ${rec.admin}</div>` : ''}
+                                    ${rec.prevention ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(245,158,11,0.1);border-radius:4px;"><strong>🛡️ Prevention:</strong> ${rec.prevention}</div>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        return `
+            <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
+                <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
+                <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
+            </div>
+        `;
+    }).join('');
 }
 
 window.genAppeal = function(id, p, code, a){
@@ -1211,6 +1391,67 @@ function openModal(html) {
 window.closeModal = function() {
     const m = document.getElementById('dynamicModal');
     if(m) m.remove();
+};
+
+window.showCodeRec = function(code) {
+    const rec = DENIAL_RECOMMENDATIONS[code];
+    if (!rec) {
+        window.showToast('❌ No specific recommendation for ' + code);
+        return;
+    }
+    const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
+    
+    const html = `
+        <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:700px;margin:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <h4 style="color:var(--accent);">${code} — ${DENIAL_MAP[code] || 'Unknown Denial'}</h4>
+                <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};font-size:12px;padding:6px 12px;">${rec.urgency.toUpperCase()} PRIORITY</span>
+            </div>
+            
+            ${rec.clinical ? `
+                <div style="background:rgba(34,197,94,0.1);border:1px solid var(--success);padding:15px;border-radius:8px;margin-bottom:15px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="font-size:18px;">🩺</span>
+                        <strong style="color:var(--success);">Clinical Action Required</strong>
+                    </div>
+                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.clinical}</p>
+                </div>
+            ` : ''}
+            
+            ${rec.admin ? `
+                <div style="background:rgba(56,189,248,0.1);border:1px solid var(--accent);padding:15px;border-radius:8px;margin-bottom:15px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="font-size:18px;">📋</span>
+                        <strong style="color:var(--accent);">Administrative Action Required</strong>
+                    </div>
+                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.admin}</p>
+                </div>
+            ` : ''}
+            
+            ${rec.prevention ? `
+                <div style="background:rgba(245,158,11,0.1);border:1px solid var(--warning);padding:15px;border-radius:8px;margin-bottom:15px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="font-size:18px;">🛡️</span>
+                        <strong style="color:var(--warning);">Prevention / System Fix</strong>
+                    </div>
+                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.prevention}</p>
+                </div>
+            ` : ''}
+            
+            <div style="background:var(--bg-dark);padding:15px;border-radius:8px;font-size:12px;">
+                <strong>Appeal Justification Template:</strong>
+                <p style="margin-top:8px;font-style:italic;color:var(--text-secondary);">
+                    ${rec.clinical ? 'Clinical: ' + rec.clinical.substring(0, 150) + '...' : rec.admin ? 'Admin: ' + rec.admin.substring(0, 150) + '...' : 'Standard appeal with supporting documentation.'}
+                </p>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Close</button>
+                <button class="btn btn-pro" onclick="window.closeModal(); window.showToast('Copied to clipboard'); navigator.clipboard.writeText(\`Denial: ${code} - ${DENIAL_MAP[code]}\\nClinical: ${rec.clinical || 'N/A'}\\nAdmin: ${rec.admin || 'N/A'}\\nPrevention: ${rec.prevention || 'N/A'}\`)">📋 Copy All</button>
+            </div>
+        </div>
+    `;
+    openModal(html);
 };
 
 function renderNabidhTable() {
