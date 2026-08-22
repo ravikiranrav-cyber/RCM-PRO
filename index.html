@@ -515,6 +515,30 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
 </div>
 
 <script>
+// Global error handler - catch and display any JS errors
+window.addEventListener('error', function(e) {
+    console.error('RCM Pro Error:', e.message, 'at', e.filename, ':', e.lineno);
+    if (typeof showToast === 'function') {
+        showToast('⚠️ Error: ' + e.message);
+    }
+});
+
+// Check CDN libraries loaded
+console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅' : '❌ MISSING');
+console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅' : '❌ MISSING');
+console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
+console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
+
+// Ensure DOM ready before initializing
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready, initializing RCM Pro...');
+
+    // Verify critical elements exist
+    const critical = ['fileIn', 'analysisBody', 'mainChart', 'sideRecovered'];
+    critical.forEach(id => {
+        if (!document.getElementById(id)) console.warn('Missing element:', id);
+    });
+
 let DATA = [];
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
@@ -2138,6 +2162,8 @@ function searchCrosswalk() {
 }
 
 setTimeout(searchCrosswalk, 500);
+
+}); // End DOMContentLoaded
 
 </script>
 </body>
