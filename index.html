@@ -604,15 +604,24 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <h2>Import Clinic Data</h2>
                 <p style="color:var(--text-secondary);margin-bottom:20px;">Upload Excel (XLSX) or CSV Remittances</p>
                 
-                <label style="display:inline-block;cursor:pointer;">
+                <!-- Primary: Hidden input with label (most reliable) -->
+                <label for="fileIn" style="display:inline-block;cursor:pointer;margin-bottom:10px;">
                     <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" 
                            style="display:none"
-                           onchange="console.log('File selected via label:', this.files[0]?.name)">
-                    <span style="display:inline-block;padding:15px 30px;background:var(--gradient-pro);color:white;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;transition:transform 0.2s;"
+                           onchange="console.log('File selected:', this.files[0]?.name); handleFileSelect(this)">
+                    <span style="display:inline-block;padding:15px 30px;background:var(--gradient-pro);color:white;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;transition:transform 0.2s;box-shadow:0 4px 15px rgba(56,189,248,0.3);"
                           onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                         📁 Choose File (CSV/XLSX)
                     </span>
                 </label>
+                
+                <!-- Fallback: Visible file input (always works) -->
+                <div style="margin-top:15px;padding:15px;background:var(--bg-dark);border-radius:10px;border:1px solid var(--border);">
+                    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">If button above doesn't work, use this:</p>
+                    <input type="file" id="fileInFallback" accept=".csv, .xlsx, .xls" 
+                           style="display:block;width:100%;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:white;"
+                           onchange="console.log('Fallback file selected:', this.files[0]?.name); handleFileSelect(this)">
+                </div>
                 
                 <p style="margin-top:15px;color:var(--text-secondary);font-size:13px;">or drag & drop file above</p>
             </div>
@@ -764,9 +773,65 @@ window.testLibraries = function() {
         fileInDirect.setAttribute('data-listener-attached', 'true');
         fileInDirect.addEventListener('change', function(e) {
             console.log('Direct fileIn change:', e.target.files[0]?.name);
-            // The main handler above will also fire, but this ensures it works even if label click fails
         });
     }
+
+    // Also attach to fallback input
+    const fileInFallback = document.getElementById('fileInFallback');
+    if (fileInFallback) {
+        fileInFallback.addEventListener('change', function(e) {
+            console.log('Fallback fileIn change:', e.target.files[0]?.name);
+        });
+    }
+
+    // Unified file handler
+    window.handleFileSelect = function(input) {
+        const file = input.files[0];
+        console.log('handleFileSelect called:', file?.name, file?.type, file?.size);
+        if (!file) return;
+        
+        // Add quick header check for CSV files
+        if (file.name.endsWith('.csv')) {
+            console.log('Parsing CSV with PapaParse...');
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    console.log('PapaParse complete:', results.data?.length, 'rows,', results.errors?.length, 'errors');
+                    if (results.errors.length > 0) {
+                         console.warn("CSV Parsing Errors:", results.errors);
+                    }
+                    const scrubbedData = scrubPHIAdvanced(results.data);
+                    logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+                    processImportedData(scrubbedData);
+                }
+            });
+        } else {
+            console.log('Reading Excel file with XLSX...');
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                console.log('FileReader onload, parsing with XLSX...');
+                try {
+                    const data = evt.target.result;
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const wsname = wb.SheetNames[0];
+                    const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+                    console.log('XLSX parsed:', rawParsedData?.length, 'rows');
+                    
+                    const scrubbedData = scrubPHIAdvanced(rawParsedData);
+                    logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+                    processImportedData(scrubbedData);
+                } catch (err) {
+                    console.error('XLSX parse error:', err);
+                    window.showToast('❌ Excel parse error: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
+        // Clear the input so same file can be re-uploaded
+        input.value = '';
+    };
 
     // Auto-dismiss welcome modal after 5 seconds if not dismissed
     setTimeout(() => {
@@ -3431,74 +3496,4 @@ window.generateBulkAppeals = function() {
         link.download = `Bulk_Appeals_${selected.length}_Claims_${new Date().toISOString().split('T')[0]}.pdf`;
         link.click();
         
-        const totalAmt = selected.reduce((s,c)=>s+c.amt,0);
-        RECOVERED += totalAmt;
-        document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
-        saveState();
-        logAudit('BULK_APPEAL', `Generated bulk appeal for ${selected.length} claims, AED ${totalAmt.toLocaleString()}`);
-        window.closeModal();
-        window.showToast(`📄 Bulk appeal PDF generated for ${selected.length} claims!`);
-    } catch(e) {
-        window.showToast('❌ PDF generation failed');
-    }
-};
-
-// ============================================
-// COPY CLAIM ID HELPER
-// ============================================
-window.copyClaimId = function(id) {
-    navigator.clipboard.writeText(id).then(() => window.showToast(`📋 Copied: ${id}`));
-};
-
-// ============================================
-// UTILITY: DOWNLOAD CSV
-// ============================================
-function downloadCSV(csv, filename) {
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-const CROSSWALK_DB = [
-    { dsl: 'DHA-ENDO-05', cpt: '83036', icd: 'E11.9', desc: 'HbA1c test (Endocrine)', rule: 'Max 1 per 90 days for Type 2 Diabetes without complications.' },
-    { dsl: 'DHA-CARD-10', cpt: '93000', icd: 'I50.9', desc: 'Electrocardiogram, routine (Cardiology)', rule: 'Requires primary symptom diagnosis; Auth needed > AED 500.' },
-    { dsl: 'DHA-ENT-22', cpt: '31575', icd: 'J38.01', desc: 'Laryngoscopy, flexible (ENT)', rule: 'Modifier 25 required if billed with same-day E/M.' },
-    { dsl: 'DHA-E/M-03', cpt: '99213', icd: 'R05.9', desc: 'Outpatient Visit - Level 3 (Cough)', rule: 'DHA standard documentation (vitals, history) mandatory.' },
-    { dsl: 'DHA-CARD-15', cpt: '93306', icd: 'I51.9', desc: 'Echocardiography (Cardiology)', rule: 'Prior authorization required by most top-tier TPAs.' },
-    { dsl: 'DHA-E/M-04', cpt: '99214', icd: 'R50.9', desc: 'Outpatient Visit - Level 4 (Fever)', rule: 'Requires moderate medical decision making. Document vitals.' },
-    { dsl: 'DHA-LAB-12', cpt: '85025', icd: 'R50.9', desc: 'Complete Blood Count (CBC)', rule: 'Medical necessity met for fever of unknown origin.' },
-    { dsl: 'DHA-ORTHO-01', cpt: '99203', icd: 'M54.5', desc: 'New Patient Visit (Low Back Pain)', rule: 'Require pain scale documentation.' },
-    { dsl: 'DHA-RAD-08', cpt: '72100', icd: 'M54.5', desc: 'X-ray exam of lower spine', rule: 'Step-therapy: Conservative treatment failed.' }
-];
-
-window.searchCrosswalk = function() {
-    const query = document.getElementById('crosswalkSearch').value.toLowerCase();
-    
-    const results = CROSSWALK_DB.filter(item => 
-        item.cpt.toLowerCase().includes(query) || 
-        item.icd.toLowerCase().includes(query) || 
-        item.dsl.toLowerCase().includes(query) ||
-        item.desc.toLowerCase().includes(query)
-    );
-    
-    document.getElementById('crosswalkBody').innerHTML = results.map(x => `
-        <tr>
-            <td><span class="badge badge-success">${x.dsl}</span></td>
-            <td><strong>${x.cpt}</strong></td>
-            <td>${x.icd}</td>
-            <td>${x.desc}</td>
-            <td style="color:var(--text-secondary); font-size:11px;">${x.rule}</td>
-        </tr>
-    `).join('');
-};
-
-setTimeout(window.searchCrosswalk, 500);
-
-}); // End DOMContentLoaded
-</script>
-</body>
-</html>
+        const totalAmt = selected.redu
