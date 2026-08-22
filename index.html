@@ -517,6 +517,8 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
                 <button class="btn" onclick="exportFullBackup()">💾 Export Full Backup (JSON)</button>
                 <button class="btn" onclick="importFullBackup()">📥 Import Full Backup (JSON)</button>
+                <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="exportFullBackupExcel()">📊 Export Full Backup (Excel)</button>
+                <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="importFullBackupExcel()">📥 Import Full Backup (Excel)</button>
             </div>
         </div>
 
@@ -2085,6 +2087,250 @@ window.importFullBackup = function() {
             }
         };
         reader.readAsText(file);
+    };
+    input.click();
+};
+
+// ============================================
+// EXPORT/IMPORT EXCEL BACKUP (Multi-sheet)
+// ============================================
+window.exportFullBackupExcel = function() {
+    const wb = XLSX.utils.book_new();
+    
+    // Claims sheet
+    if(DATA.length > 0) {
+        const claimsData = DATA.map(d => ({
+            Claim_ID: d.id,
+            Physician: d.physician,
+            CPT: d.cpt,
+            ICD: d.icd,
+            TPA: d.payer,
+            Amount_AED: d.amt,
+            Status: d.status,
+            Denial_Code: d.code,
+            Root_Cause: DENIAL_MAP[d.code] || '',
+            Assignee: d.assignee,
+            Batch: d.batch,
+            Service_Date: d.serviceDate || ''
+        }));
+        const ws1 = XLSX.utils.json_to_sheet(claimsData);
+        XLSX.utils.book_append_sheet(wb, ws1, 'Claims');
+    }
+    
+    // NABIDH Logs sheet
+    if(NABIDH_LOGS.length > 0) {
+        const nabidhData = NABIDH_LOGS.map(l => ({
+            Batch_ID: l.batchId,
+            Clearinghouse: l.clearinghouse,
+            Submitted: l.submitted,
+            Claims_Count: l.claimCount,
+            Status: l.status,
+            ACK_Ref: l.ackRef,
+            Deadline: l.deadline,
+            Days_Left: Math.ceil((new Date(l.deadline) - new Date()) / (1000*60*60*24)),
+            Notes: l.notes
+        }));
+        const ws2 = XLSX.utils.json_to_sheet(nabidhData);
+        XLSX.utils.book_append_sheet(wb, ws2, 'NABIDH_Logs');
+    }
+    
+    // Eligibility Logs sheet
+    if(ELIG_LOGS.length > 0) {
+        const eligData = ELIG_LOGS.map(l => ({
+            Patient_Ref: l.patientRef,
+            EID_Masked: l.eidMasked,
+            TPA: l.tpa,
+            Checked: l.checked,
+            Status: l.status,
+            Benefit: l.benefit,
+            Copay: l.copay,
+            Notes: l.notes
+        }));
+        const ws3 = XLSX.utils.json_to_sheet(eligData);
+        XLSX.utils.book_append_sheet(wb, ws3, 'Eligibility_Logs');
+    }
+    
+    // Contract Rates sheet
+    if(CONTRACT_RATES.length > 0) {
+        const contractData = CONTRACT_RATES.map(c => ({
+            TPA: c.tpa,
+            CPT: c.cpt,
+            Rate_AED: c.rate,
+            Effective: c.effective,
+            Expiry: c.expiry,
+            Notes: c.notes
+        }));
+        const ws4 = XLSX.utils.json_to_sheet(contractData);
+        XLSX.utils.book_append_sheet(wb, ws4, 'Contract_Rates');
+    }
+    
+    // Capitation Budgets sheet
+    if(CAPITATION_BUDGETS.length > 0) {
+        const capData = CAPITATION_BUDGETS.map(c => ({
+            TPA: c.tpa,
+            Type: c.type,
+            Period_Start: c.periodStart,
+            Period_End: c.periodEnd,
+            Annual_Cap_AED: c.annualCap,
+            YTD_Utilized_AED: c.utilized,
+            Remaining_AED: c.annualCap - c.utilized,
+            Pct_Used: c.annualCap > 0 ? ((c.utilized / c.annualCap) * 100).toFixed(1) : 0
+        }));
+        const ws5 = XLSX.utils.json_to_sheet(capData);
+        XLSX.utils.book_append_sheet(wb, ws5, 'Capitation_Budgets');
+    }
+    
+    // Audit Trail sheet
+    if(AUDIT_TRAIL.length > 0) {
+        const auditData = AUDIT_TRAIL.map(a => ({
+            Timestamp: a.timestamp,
+            Action: a.action,
+            Details: a.details,
+            User: a.user
+        }));
+        const ws6 = XLSX.utils.json_to_sheet(auditData);
+        XLSX.utils.book_append_sheet(wb, ws6, 'Audit_Trail');
+    }
+    
+    // Metadata sheet
+    const metaData = [{
+        Version: '5.0',
+        Export_Date: new Date().toISOString(),
+        Total_Claims: DATA.length,
+        Total_Recovered: RECOVERED
+    }];
+    const wsMeta = XLSX.utils.json_to_sheet(metaData);
+    XLSX.utils.book_append_sheet(wb, wsMeta, 'Metadata');
+    
+    const filename = `RCMPRO_Full_Backup_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, filename);
+    logAudit('BACKUP_EXPORT_EXCEL', 'Full system backup exported to Excel');
+    window.showToast('📊 Full backup exported to Excel!');
+};
+
+window.importFullBackupExcel = function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls';
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                const data = new Uint8Array(evt.target.result);
+                const wb = XLSX.read(data, { type: 'array' });
+                
+                // Import Claims
+                if(wb.SheetNames.includes('Claims')) {
+                    const ws = wb.Sheets['Claims'];
+                    const claims = XLSX.utils.sheet_to_json(ws);
+                    DATA = claims.map(c => ({
+                        id: c.Claim_ID || `IMP-${Math.floor(Math.random()*90000)}`,
+                        physician: c.Physician || '',
+                        cpt: c.CPT || '',
+                        icd: c.ICD || '',
+                        payer: c.TPA || '',
+                        amt: parseFloat(c.Amount_AED) || 0,
+                        status: c.Status || 'paid',
+                        code: c.Denial_Code || '',
+                        assignee: c.Assignee || '',
+                        batch: parseInt(c.Batch) || 1,
+                        serviceDate: c.Service_Date || null
+                    })).filter(x => x.amt > 0);
+                }
+                
+                // Import NABIDH Logs
+                if(wb.SheetNames.includes('NABIDH_Logs')) {
+                    const ws = wb.Sheets['NABIDH_Logs'];
+                    NABIDH_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
+                        id: 'NB-' + Date.now() + Math.random(),
+                        batchId: l.Batch_ID,
+                        clearinghouse: l.Clearinghouse,
+                        submitted: l.Submitted,
+                        claimCount: parseInt(l.Claims_Count) || 0,
+                        status: l.Status,
+                        ackRef: l.ACK_Ref,
+                        deadline: l.Deadline,
+                        notes: l.Notes,
+                        createdAt: new Date().toISOString()
+                    }));
+                }
+                
+                // Import Eligibility Logs
+                if(wb.SheetNames.includes('Eligibility_Logs')) {
+                    const ws = wb.Sheets['Eligibility_Logs'];
+                    ELIG_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
+                        id: 'EG-' + Date.now() + Math.random(),
+                        patientRef: l.Patient_Ref,
+                        eidMasked: l.EID_Masked,
+                        tpa: l.TPA,
+                        checked: l.Checked,
+                        status: l.Status,
+                        benefit: l.Benefit,
+                        copay: parseFloat(l.Copay) || 0,
+                        notes: l.Notes,
+                        createdAt: new Date().toISOString()
+                    }));
+                }
+                
+                // Import Contract Rates
+                if(wb.SheetNames.includes('Contract_Rates')) {
+                    const ws = wb.Sheets['Contract_Rates'];
+                    CONTRACT_RATES = XLSX.utils.sheet_to_json(ws).map(c => ({
+                        id: 'CT-' + Date.now() + Math.random(),
+                        tpa: c.TPA,
+                        cpt: c.CPT,
+                        rate: parseFloat(c.Rate_AED) || 0,
+                        effective: c.Effective,
+                        expiry: c.Expiry,
+                        notes: c.Notes,
+                        createdAt: new Date().toISOString()
+                    }));
+                }
+                
+                // Import Capitation Budgets
+                if(wb.SheetNames.includes('Capitation_Budgets')) {
+                    const ws = wb.Sheets['Capitation_Budgets'];
+                    CAPITATION_BUDGETS = XLSX.utils.sheet_to_json(ws).map(c => ({
+                        id: 'CAP-' + Date.now() + Math.random(),
+                        tpa: c.TPA,
+                        type: c.Type,
+                        periodStart: c.Period_Start,
+                        periodEnd: c.Period_End,
+                        annualCap: parseFloat(c.Annual_Cap_AED) || 0,
+                        utilized: parseFloat(c.YTD_Utilized_AED) || 0,
+                        createdAt: new Date().toISOString()
+                    }));
+                }
+                
+                // Import Audit Trail
+                if(wb.SheetNames.includes('Audit_Trail')) {
+                    const ws = wb.Sheets['Audit_Trail'];
+                    AUDIT_TRAIL = XLSX.utils.sheet_to_json(ws).map(a => ({
+                        id: 'AUD-' + Date.now() + Math.random(),
+                        timestamp: a.Timestamp,
+                        action: a.Action,
+                        details: a.Details,
+                        user: a.User || 'Imported'
+                    }));
+                }
+                
+                saveState();
+                updateUI();
+                renderContracts();
+                renderCapitation();
+                renderNabidhTable();
+                renderEligTable();
+                if(typeof renderAuditTrail === 'function') renderAuditTrail();
+                logAudit('BACKUP_IMPORT_EXCEL', 'Full system backup imported from Excel');
+                window.showToast('📥 Full backup imported from Excel successfully!');
+            } catch(err) {
+                console.error(err);
+                window.showToast('❌ Invalid Excel backup file');
+            }
+        };
+        reader.readAsArrayBuffer(file);
     };
     input.click();
 };
