@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RCM Pro UAE v5.0 — Official Coding Edition</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https: data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: blob:;">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -67,7 +67,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <p style="color:var(--text-secondary);margin-bottom:25px;font-size:14px;line-height:1.6;">
             This is a secure, localized environment tailored for UAE clinics. To ensure complete compliance, no real Patient Health Information (PHI) is required to test the Engine. Everything is processed locally on your device.
         </p>
-        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="document.getElementById('welcomeModal').style.display='none'; console.log('Welcome modal dismissed via inline onclick');">Enter the Dashboard</button>
+        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="document.getElementById('welcomeModal').style.display='none'; console.log('Welcome modal dismissed');">Enter the Dashboard</button>
     </div>
 </div>
 
@@ -117,36 +117,10 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <div class="bench-selector">
             <span>📍 <strong>Clinic Specialty:</strong></span>
             <select id="specSelect" onchange="updateBenchmark()" style="background:#0f172a;color:white;border:1px solid var(--border);padding:5px;border-radius:5px;">
-                <optgroup label="🏥 Primary Care">
-                    <option value="gp">General Practice / EBP Center</option>
-                    <option value="pediatrics">Pediatrics</option>
-                    <option value="internal">Internal Medicine</option>
-                    <option value="polyclinic">Multi-Specialty / Polyclinic</option>
-                </optgroup>
-                <optgroup label="🫀 Medical Specialties">
-                    <option value="cardiology">Cardiology</option>
-                    <option value="gastro">Gastroenterology</option>
-                    <option value="oncology">Oncology / Hematology</option>
-                    <option value="neuro">Neurology</option>
-                    <option value="psych">Psychiatry / Mental Health</option>
-                    <option value="derma">Dermatology</option>
-                </optgroup>
-                <optgroup label="🔪 Surgical Specialties">
-                    <option value="ortho">Orthopedics / Sports Medicine</option>
-                    <option value="obgyn">OB/GYN</option>
-                    <option value="urology">Urology</option>
-                    <option value="ent">ENT</option>
-                    <option value="asc">Day Surgery / ASC</option>
-                </optgroup>
-                <optgroup label="🦷 Dental & Allied">
-                    <option value="dental">Dental / Oral Surgery</option>
-                    <option value="physio">Physiotherapy / Rehab</option>
-                </optgroup>
-                <optgroup label="🔬 Diagnostic">
-                    <option value="radiology">Radiology / Imaging</option>
-                    <option value="lab">Laboratory / Pathology</option>
-                    <option value="ophthalmo">Ophthalmology</option>
-                </optgroup>
+                <option value="gp">GP / EBP Center</option>
+                <option value="dental">Dental</option>
+                <option value="ortho">Ortho / Physio</option>
+                <option value="derma">Dermatology</option>
             </select>
             <div id="benchInfo" style="font-size:12px;color:var(--text-secondary);">Market Benchmark: 18%</div>
         </div>
@@ -505,72 +479,6 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 </div>
                 <div style="height:300px;"><canvas id="forecastChart"></canvas></div>
             </div>
-
-            <div style="background:var(--bg-card);padding:25px;border-radius:16px;margin-top:20px;">
-                <h4 class="card-title">📊 Appeal Success Rate Tracking</h4>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Track appeal outcomes by TPA, denial code, and physician. Optimize appeal effort where success rate is highest.</h4>
-                <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-                    <button class="btn btn-pro" onclick="renderAppealAnalytics()">🔄 Refresh</button>
-                    <button class="btn" onclick="exportAppealAnalytics()">📤 Export CSV</button>
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                    <div style="height:300px;">
-                        <canvas id="appealSuccessChart1"></canvas>
-                    </div>
-                    <div style="height:300px;">
-                        <canvas id="appealSuccessChart2"></canvas>
-                    </div>
-                </div>
-                <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:400px;overflow-y:auto;margin-top:20px;">
-                    <table id="appealAnalyticsTable">
-                        <thead>
-                            <tr>
-                                <th>Dimension</th>
-                                <th>Total Appeals</th>
-                                <th>Won</th>
-                                <th>Lost</th>
-                                <th>Pending</th>
-                                <th>Win Rate</th>
-                                <th>Recovered (AED)</th>
-                                <th>Avg Days to Resolve</th>
-                            </tr>
-                        </thead>
-                        <tbody id="appealAnalyticsBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div style="background:var(--bg-card);padding:25px;border-radius:16px;margin-top:20px;">
-                <h4 class="card-title">👨‍⚕️ Provider Productivity Dashboard</h4>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Claims/day, denial %, $/claim per physician with trend. Identify top performers and coaching opportunities.</p>
-                <button class="btn btn-pro" onclick="renderProviderProductivity()" style="margin-bottom:20px;">🔄 Refresh</button>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                    <div style="height:300px;">
-                        <canvas id="providerProdChart1"></canvas>
-                    </div>
-                    <div style="height:300px;">
-                        <canvas id="providerProdChart2"></canvas>
-                    </div>
-                </div>
-                <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:400px;overflow-y:auto;margin-top:20px;">
-                    <table id="providerProdTable">
-                        <thead>
-                            <tr>
-                                <th>Physician</th>
-                                <th>Total Claims</th>
-                                <th>Paid Claims</th>
-                                <th>Denied Claims</th>
-                                <th>Denial Rate</th>
-                                <th>Total Amt (AED)</th>
-                                <th>Avg $/Claim</th>
-                                <th>Claims/Day*</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="providerProdBody"></tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <div id="page-audit" class="page">
@@ -578,8 +486,8 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
                     <h4 class="card-title">📋 Audit Trail Log</h4>
                     <div style="display:flex; gap:10px;">
-                        <button class="btn" onclick="exportAuditTrail()">📤 Export CSV</button>
-                        <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="clearAuditTrail()">🗑️ Clear Logs</button>
+                        <button class="btn" onclick="window.exportAuditTrail()">📤 Export CSV</button>
+                        <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.clearAuditTrail()">🗑️ Clear Logs</button>
                     </div>
                 </div>
                 <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:600px;overflow-y:auto;">
@@ -609,8 +517,6 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
                 <button class="btn" onclick="exportFullBackup()">💾 Export Full Backup (JSON)</button>
                 <button class="btn" onclick="importFullBackup()">📥 Import Full Backup (JSON)</button>
-                <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="exportFullBackupExcel()">📊 Export Full Backup (Excel)</button>
-                <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="importFullBackupExcel()">📥 Import Full Backup (Excel)</button>
             </div>
         </div>
 
@@ -661,69 +567,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
     console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
 
-    // Dismiss welcome modal
-    window.dismissWelcome = function() {
-        const modal = document.getElementById('welcomeModal');
-        if (modal) {
-            modal.style.display = 'none';
-            console.log('Welcome modal dismissed');
-        }
-    };
-
-    // File input handler with debugging
-    const fileIn = document.getElementById('fileIn');
-    console.log('fileIn element found:', !!fileIn);
-    
-    if (fileIn) {
-        fileIn.addEventListener('change', function(e) {
-            console.log('fileIn change event fired');
-            const file = e.target.files[0];
-            console.log('File selected:', file?.name, file?.type, file?.size);
-            if (!file) return;
-            
-            // Add quick header check for CSV files
-            if (file.name.endsWith('.csv')) {
-                console.log('Parsing CSV with PapaParse...');
-                Papa.parse(file, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        console.log('PapaParse complete:', results.data?.length, 'rows,', results.errors?.length, 'errors');
-                        if (results.errors.length > 0) {
-                             console.warn("CSV Parsing Errors:", results.errors);
-                        }
-                        const scrubbedData = scrubPHIAdvanced(results.data);
-                        logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
-                        processImportedData(scrubbedData);
-                    }
-                });
-            } else {
-                console.log('Reading Excel file with XLSX...');
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    console.log('FileReader onload, parsing with XLSX...');
-                    try {
-                        const data = evt.target.result;
-                        const wb = XLSX.read(data, { type: 'array' });
-                        const wsname = wb.SheetNames[0];
-                        const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-                        console.log('XLSX parsed:', rawParsedData?.length, 'rows');
-                        
-                        const scrubbedData = scrubPHIAdvanced(rawParsedData);
-                        logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
-                        processImportedData(scrubbedData);
-                    } catch (err) {
-                        console.error('XLSX parse error:', err);
-                        window.showToast('❌ Excel parse error: ' + err.message);
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-    } else {
-        console.error('fileIn element NOT FOUND!');
-    }
-
     // Auto-dismiss welcome modal after 5 seconds if not dismissed
     setTimeout(() => {
         const modal = document.getElementById('welcomeModal');
@@ -754,121 +597,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+
+let DATA = [];
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
 let ELIG_LOGS = [];
-const BENCHMARKS = {
-    gp: 18, pediatrics: 16, internal: 20, cardiology: 22,
-    gastro: 24, oncology: 28, ortho: 15, derma: 28,
-    dental: 22, obgyn: 18, ophthalmo: 20, ent: 17,
-    neuro: 22, urology: 20, psych: 25, physio: 14,
-    radiology: 12, lab: 10, asc: 18, polyclinic: 19
-};
-
-// Expected denial code frequency per specialty (for "unusual denial" flagging)
-// HIGH = common for this specialty, MEDIUM = occasional, LOW = rare/unusual
-const SPECIALTY_DENIAL_PROFILE = {
-    gp: {
-        HIGH: ['ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'PRCE-001', 'AUTH-001', 'BENX-001'],
-        MEDIUM: ['CODE-010', 'CODE-014', 'AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008']
-    },
-    pediatrics: {
-        HIGH: ['CODE-014', 'ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'VFC', 'BENX-001'],
-        MEDIUM: ['AUTH-001', 'AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'NCOV-001']
-    },
-    internal: {
-        HIGH: ['MNEC-003', 'CODE-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'PRCE-001', 'TIME-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012']
-    },
-    cardiology: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'PRCE-008', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'CODE-010', 'MNEC-005', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    gastro: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    oncology: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-001', 'BENX-001', 'TIME-001', 'ELIG-001', 'CODE-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014', 'COPY-001']
-    },
-    ortho: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
-    },
-    derma: {
-        HIGH: ['MNEC-003', 'NCOV-001', 'CODE-001', 'AUTH-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001'],
-        MEDIUM: ['MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'AUTH-002', 'CODE-014']
-    },
-    dental: {
-        HIGH: ['BENX-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'CODE-001', 'COPY-001', 'TIME-001', 'MNEC-003'],
-        MEDIUM: ['AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
-    },
-    obgyn: {
-        HIGH: ['AUTH-001', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    ophthalmo: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    ent: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    neuro: {
-        HIGH: ['MNEC-003', 'AUTH-001', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005', 'PRCE-008'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    urology: {
-        HIGH: ['AUTH-001', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    psych: {
-        HIGH: ['BENX-001', 'MNEC-003', 'CODE-001', 'TIME-001', 'ELIG-001', 'COPY-001', 'AUTH-001', 'PRCE-001'],
-        MEDIUM: ['MNEC-005', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'AUTH-002'],
-        LOW: ['CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
-    },
-    physio: {
-        HIGH: ['MNEC-005', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-001', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'PRCE-008'],
-        LOW: ['CLAI-012', 'CODE-010', 'CODE-014', 'AUTH-002']
-    },
-    radiology: {
-        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'PRCE-008', 'DUPL-002'],
-        MEDIUM: ['AUTH-001', 'MNEC-005', 'BENX-001', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    lab: {
-        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'DUPL-002', 'BENX-001'],
-        MEDIUM: ['AUTH-001', 'MNEC-005', 'PRCE-008', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    asc: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'AUTH-002', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    polyclinic: {
-        HIGH: ['ELIG-001', 'ELIG-005', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'COPY-001', 'AUTH-001', 'BENX-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
-    }
-};
+const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
 
 const DENIAL_MAP = {
     'AUTH-001': 'Prior approval is required and was not obtained.',
@@ -894,136 +629,6 @@ const DENIAL_MAP = {
     'PRCE-008': 'Multiple procedure payment rules incorrectly applied (Bundling).',
     'TIME-001': 'Claim Received After Cut-Off Period (Timely Filing).',
     'TIME-003': 'Appeal procedures not followed or time limits not met.'
-};
-
-// SPECIFIC CLINICAL/ADMIN RECOMMENDATIONS PER DENIAL CODE
-const DENIAL_RECOMMENDATIONS = {
-    'MNEC-003': {
-        clinical: 'Compare ICD-10 diagnosis vs CPT procedure — ensure medical necessity link is documented. Add clinical rationale in progress note: "Procedure X indicated due to Diagnosis Y because [clinical reasoning]."',
-        admin: 'Query provider: "Does medical record clearly support necessity of [CPT] for [ICD-10]?" Update record if missing.',
-        prevention: 'Implement smart phrases/templates linking common ICD-10/CPT pairs with necessity language.',
-        urgency: 'high'
-    },
-    'MNEC-004': {
-        clinical: 'Verify if service truly meets emergency criteria (life/limb threat). If not emergency, obtain retro-auth or appeal with "urgent care" justification.',
-        admin: 'Train front desk to flag non-emergency ER visits. Ensure ER physician documents acuity level.',
-        prevention: 'Add ER triage acuity to charge capture workflow.',
-        urgency: 'medium'
-    },
-    'MNEC-005': {
-        clinical: 'Review frequency limits: e.g., E/M 99213 max 1/day, therapy 97110 max 3/week. Document medical necessity for excess units.',
-        admin: 'Set up claim edits to flag units > payer limits before submission.',
-        prevention: 'Build frequency rules into EHR charge capture.',
-        urgency: 'medium'
-    },
-    'PRCE-001': {
-        clinical: '',
-        admin: 'Compare paid amount vs contract rate for this CTP/TPA. Appeal with contract page screenshot showing agreed rate.',
-        prevention: 'Load all TPA contract rates into system; enable auto-flag on import (already built).',
-        urgency: 'high'
-    },
-    'PRCE-008': {
-        clinical: 'Verify if procedures are truly separate (different sites/sessions) or bundled per NCCI. Apply correct modifier (59, XS, 51, 76-79).',
-        admin: 'Use Bundling/NCCI Editor tab to validate CPT pairs before submission.',
-        prevention: 'Integrate NCCI edit check into claim scrubber.',
-        urgency: 'high'
-    },
-    'CODE-001': {
-        clinical: 'Ensure primary ICD-10 is valid, specific (not "unspecified"), and matches clinical picture. Add secondary diagnoses.',
-        admin: 'Coder to review claim before submission — require primary dx validation.',
-        prevention: 'EHR dx validation rules (no R69, no unspecified as primary).',
-        urgency: 'high'
-    },
-    'CODE-010': {
-        clinical: 'Confirm provider specialty matches procedure (e.g., cardiologist doing 93000 OK, dermatologist doing 93000 needs justification).',
-        admin: 'Map provider specialty in system; flag mismatches.',
-        prevention: 'Specialty-procedure mapping table.',
-        urgency: 'medium'
-    },
-    'CODE-014': {
-        clinical: 'Check age/gender edits: e.g., pediatric codes on adults, maternity codes on males. Correct ICD-10 or CPT.',
-        admin: 'Demographic validation in claim scrubber.',
-        prevention: 'EHR age/gender alerts at charge entry.',
-        urgency: 'medium'
-    },
-    'AUTH-001': {
-        clinical: 'Determine if service requires prior auth per TPA policy. If emergency, document acuity for exemption.',
-        admin: 'Pre-auth checklist by CPT/TPA. Flag at scheduling.',
-        prevention: 'Real-time auth check at order entry via TPA portal/API.',
-        urgency: 'high'
-    },
-    'AUTH-002': {
-        clinical: 'Ensure clinical details in auth request match claim (same CPT, ICD, units, provider).',
-        admin: 'Auth-tracking log: link auth number to claim at submission.',
-        prevention: 'Auto-populate claim from approved auth.',
-        urgency: 'high'
-    },
-    'AUTH-004': {
-        clinical: 'Verify service date falls within auth validity window. If expired, obtain new auth.',
-        admin: 'Track auth expiry dates; alert 7 days before expiry.',
-        prevention: 'Calendar alerts for auth windows.',
-        urgency: 'high'
-    },
-    'ELIG-001': {
-        clinical: '',
-        admin: 'Verify Emirates ID at check-in. Confirm active coverage with TPA portal. Collect copay upfront.',
-        prevention: 'Real-time EID check at registration (already in NABIDH tab).',
-        urgency: 'critical'
-    },
-    'ELIG-005': {
-        clinical: '',
-        admin: 'Check policy expiry date. Contact patient for renewed card before visit.',
-        prevention: 'Monthly eligibility batch run for active patients.',
-        urgency: 'critical'
-    },
-    'ELIG-007': {
-        clinical: '',
-        admin: 'Confirm provider is in-network for this plan. If OON, obtain GAP exception or redirect patient.',
-        prevention: 'Network status check at scheduling.',
-        urgency: 'critical'
-    },
-    'BENX-001': {
-        clinical: 'Review benefit limits (visits, $ caps). Document medical necessity for exceptions.',
-        admin: 'Track utilization vs benefit limits per member. Alert at 80% utilization.',
-        prevention: 'Benefit tracker in EHR.',
-        urgency: 'medium'
-    },
-    'COPY-001': {
-        clinical: '',
-        admin: 'Collect copay/deductible at time of service. Post payment to claim before submission.',
-        prevention: 'POS collection workflow + copay estimator.',
-        urgency: 'critical'
-    },
-    'DUPL-002': {
-        clinical: '',
-        admin: 'Check if claim already paid/processed. Search by member + DOS + CPT. Void duplicate.',
-        prevention: 'Duplicate claim edit in scrubber.',
-        urgency: 'high'
-    },
-    'NCOV-001': {
-        clinical: 'Verify if diagnosis/service is truly excluded (cosmetic, experimental). If covered, appeal with policy citation.',
-        admin: 'Maintain TPA exclusion lists. Pre-check at scheduling.',
-        prevention: 'Exclusion list database per TPA.',
-        urgency: 'medium'
-    },
-    'TIME-001': {
-        clinical: '',
-        admin: 'Submit within 30 days of DOS. Track submission timestamps. Appeal with clearinghouse receipt.',
-        prevention: 'Daily claim submission job; aging report at 20 days.',
-        urgency: 'critical'
-    },
-    'TIME-003': {
-        clinical: '',
-        admin: 'File appeal within TPA deadline (usually 30-60 days from denial). Track appeal deadlines.',
-        prevention: 'Appeal deadline calendar from denial date.',
-        urgency: 'critical'
-    },
-    'CLAI-012': {
-        clinical: '',
-        admin: 'Ensure network procedures/contract terms applied. Verify TPA-specific billing rules.',
-        prevention: 'TPA rule engine per contract.',
-        urgency: 'high'
-    }
 };
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
 
@@ -1113,7 +718,7 @@ function nav(p, el) {
     if(p==='contracts') renderContracts();
     if(p==='ar') { refreshAR(); populateARTPAFilter(); }
     if(p==='capitation') renderCapitation();
-    if(p==='analytics') { setDefaultDateRange(); window.renderAnalytics(); window.renderAppealAnalytics(); window.renderProviderProductivity(); }
+    if(p==='analytics') { setDefaultDateRange(); window.renderAnalytics(); }
     if(p==='audit') window.renderAuditTrail();
 }
 
@@ -1186,7 +791,6 @@ function processImportedData(rawData) {
         const amt = parseFloat(row.Amount || row.Billed || 0);
         const status = (row.Status || '').toLowerCase().includes('denied') ? 'denied' : 'paid';
         
-        // Parse service date from common column names
         let serviceDate = null;
         const dateKeys = ['Date_of_Service', 'Service_Date', 'DOS', 'ServiceDate', 'Date of Service', 'DOS_Date'];
         for (const k of dateKeys) {
@@ -1204,26 +808,17 @@ function processImportedData(rawData) {
             assignee: row.Assignee || '',
             cpt: row.CPT || row.ProcedureCode || '',
             icd: row.ICD || row.DiagnosisCode || '',
-            serviceDate: serviceDate,
-            // NEW FIELDS FOR TIER 1/2
-            copayExpected: parseFloat(row.Copay_Expected || row.CopayExpected || row.Copay || 0) || 0,
-            copayCollected: parseFloat(row.Copay_Collected || row.CopayCollected || 0) || 0,
-            appealStatus: row.Appeal_Status || row.AppealStatus || '', // '', 'submitted', 'under_review', 'paid', 'denied', 'written_off'
-            appealSubmittedDate: row.Appeal_Submitted_Date || row.AppealSubmittedDate || '',
-            appealResolvedDate: row.Appeal_Resolved_Date || row.AppealResolvedDate || '',
-            appealAmount: parseFloat(row.Appeal_Amount || row.AppealAmount || 0) || 0
+            serviceDate: serviceDate
         };
     }).filter(x => x.amt > 0); 
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
     
-    // AUTO-RUN PRCE-001 CHECK AFTER IMPORT
     if (CONTRACT_RATES.length > 0) {
         setTimeout(() => window.runPRCECheck(), 500);
     }
     
-    // AUTO-CALC CAPITATION UTILIZATION
     updateCapitationFromClaims();
     
     window.showToast('✅ De-identified Data Imported Successfully!');
@@ -1233,13 +828,11 @@ window.loadSample = function(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
     const mockCpts=['99213', '99214', '93000', '83036'];
-    const specialties = Object.keys(BENCHMARKS);
     
     let tmp=[];
     for(let i=0;i<n;i++){
         const amt=Math.floor(Math.random()*1200)+100;
         const status=Math.random()>0.7?'denied':'paid';
-        const specialty = specialties[Math.floor(Math.random()*specialties.length)];
         tmp.push({
             id: 'UAE-'+Math.floor(Math.random()*90000),
             payer: tpals[Math.floor(Math.random()*tpals.length)],
@@ -1250,21 +843,10 @@ window.loadSample = function(n=100) {
             batch: Math.floor(Math.random() * 10) + 1,
             assignee: '',
             cpt: mockCpts[Math.floor(Math.random()*mockCpts.length)],
-            icd: 'I50.9',
-            specialty: specialty,
-            // NEW FIELDS
-            copayExpected: status === 'paid' ? (Math.random() > 0.7 ? Math.floor(Math.random()*100) + 20 : 0) : 0,
-            copayCollected: status === 'paid' ? (Math.random() > 0.3 ? Math.floor(Math.random()*100) + 20 : 0) : 0,
-            appealStatus: '',
-            appealSubmittedDate: '',
-            appealResolvedDate: '',
-            appealAmount: 0
+            icd: 'I50.9'
         });
     }
     DATA=tmp;
-    
-    // Set default specialty to gp for demo
-    document.getElementById('specSelect').value = 'gp';
     
     // Sample NABIDH logs
     NABIDH_LOGS = [
@@ -1318,47 +900,14 @@ function updateUI() {
 }
 
 function renderTable() {
-    document.getElementById('analysisBody').innerHTML = DATA.map(x => {
-        // Calculate aging for denied claims
-        let agingBadge = '';
-        if (x.status === 'denied' && x.serviceDate) {
-            const dos = new Date(x.serviceDate);
-            const today = new Date();
-            const ageDays = Math.floor((today - dos) / (1000*60*60*24));
-            if (ageDays > 90) agingBadge = '<span class="badge badge-danger" title=">90 days">⏰ ' + ageDays + 'd</span>';
-            else if (ageDays > 60) agingBadge = '<span class="badge badge-warning" title="61-90 days">⏰ ' + ageDays + 'd</span>';
-            else if (ageDays > 30) agingBadge = '<span class="badge badge-accent" title="31-60 days">⏰ ' + ageDays + 'd</span>';
-            else agingBadge = '<span class="badge badge-success" title="0-30 days">' + ageDays + 'd</span>';
-        }
-        
-        // Copay status for paid claims
-        let copayStatus = '';
-        if (x.status === 'paid' && x.copayExpected > 0) {
-            const collected = x.copayCollected || 0;
-            const expected = x.copayExpected || 0;
-            const pct = expected > 0 ? Math.round((collected/expected)*100) : 100;
-            if (collected >= expected) copayStatus = '<span class="badge badge-success" title="Copay fully collected">💰 ' + pct + '%</span>';
-            else if (collected > 0) copayStatus = '<span class="badge badge-warning" title="Partial copay collected">💰 ' + pct + '%</span>';
-            else copayStatus = '<span class="badge badge-danger" title="Copay NOT collected">💰 0%</span>';
-        }
-        
-        // Appeal status badge
-        let appealBadge = '';
-        if (x.status === 'denied' && x.appealStatus) {
-            const appealColors = { submitted: 'accent', under_review: 'warning', paid: 'success', denied: 'danger', written_off: 'text-secondary' };
-            const appealIcons = { submitted: '📤', under_review: '👁️', paid: '✅', denied: '❌', written_off: '🗑️' };
-            const color = appealColors[x.appealStatus] || 'text-secondary';
-            appealBadge = `<span class="badge badge-${color}" title="Appeal: ${x.appealStatus}">${appealIcons[x.appealStatus] || '📄'} ${x.appealStatus}</span>`;
-        }
-        
-        return `
+    document.getElementById('analysisBody').innerHTML = DATA.map(x => `
         <tr>
             <td>${x.id}</td>
             <td>${x.physician}</td>
             <td style="font-size:11px;">CPT: ${x.cpt || '-'}<br>ICD: ${x.icd || '-'}</td>
             <td>${x.payer}</td>
             <td>AED ${x.amt}</td>
-            <td><span class="status-${x.status}">${x.status.toUpperCase()}</span>${agingBadge}</td>
+            <td><span class="status-${x.status}">${x.status.toUpperCase()}</span></td>
             <td style="font-size:11px;"><strong>${x.code}</strong><br><span style="color:var(--text-secondary)">${DENIAL_MAP[x.code]||'-'}</span></td>
             <td>
                 <select class="assign-select" onchange="assignTask('${x.id}', this.value)">
@@ -1370,13 +919,9 @@ function renderTable() {
                 </select>
             </td>
             <td>
-                <div style="display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
+                <div style="display:flex; gap:4px; flex-wrap:wrap;">
                     ${x.status==='denied'?`<button class="btn btn-pro btn-sm" onclick="genAppeal('${x.id}','${x.payer}','${x.code}',${x.amt})">📄 Appeal</button>`:'✅'}
-                    ${x.status==='denied' && x.code && DENIAL_RECOMMENDATIONS[x.code] ? `<button class="btn btn-sm" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="showCodeRec('${x.code}')" title="Clinical/Admin Recommendation">💡 Fix</button>` : ''}
-                    ${x.status==='denied' && x.appealStatus ? `<button class="btn btn-sm" style="background:rgba(129,140,248,0.2); color:#818cf8;" onclick="updateAppealStatus('${x.id}')" title="Update Appeal Status">📋 ${x.appealStatus}</button>` : ''}
                     <button class="btn btn-sm" style="background:var(--primary-light);" onclick="copyClaimId('${x.id}')" title="Copy Claim ID">📋</button>
-                    ${copayStatus}
-                    ${appealBadge}
                 </div>
             </td>
         </tr>
@@ -1386,57 +931,6 @@ function renderTable() {
 window.assignTask = function(id, person) {
     const claim = DATA.find(c => c.id === id);
     if(claim) claim.assignee = person;
-};
-
-window.updateAppealStatus = function(id) {
-    const claim = DATA.find(c => c.id === id);
-    if(!claim) return;
-    
-    const statuses = ['', 'submitted', 'under_review', 'paid', 'denied', 'written_off'];
-    const labels = ['Clear Status', '📤 Submitted', '👁️ Under Review', '✅ Paid', '❌ Denied', '🗑️ Written Off'];
-    const currentIdx = statuses.indexOf(claim.appealStatus || '');
-    
-    let html = `
-        <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:500px;margin:auto;">
-            <h4>📋 Update Appeal Status: ${id}</h4>
-            <div style="display:grid; gap:10px; margin-top:20px;">
-                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">New Status</label>
-                <select id="newAppealStatus" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;">
-                    ${statuses.map((s, i) => `<option value="${s}" ${i===currentIdx?'selected':''}>${labels[i]}</option>`).join('')}
-                </select>
-                <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Appeal Amount (AED)</label>
-                    <input type="number" id="newAppealAmount" step="0.01" min="0" value="${claim.appealAmount || claim.amt}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;">
-                </div>
-                <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Submitted Date</label>
-                    <input type="date" id="newAppealSubmitted" value="${claim.appealSubmittedDate || ''}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;">
-                </div>
-                <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Resolved Date</label>
-                    <input type="date" id="newAppealResolved" value="${claim.appealResolvedDate || ''}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;">
-                </div>
-            </div>
-            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="saveAppealStatus('${id}')">Save Status</button>
-            </div>
-        </div>
-    `;
-    openModal(html);
-};
-
-window.saveAppealStatus = function(id) {
-    const claim = DATA.find(c => c.id === id);
-    if(!claim) return;
-    
-    claim.appealStatus = document.getElementById('newAppealStatus').value;
-    claim.appealAmount = parseFloat(document.getElementById('newAppealAmount').value) || 0;
-    claim.appealSubmittedDate = document.getElementById('newAppealSubmitted').value;
-    claim.appealResolvedDate = document.getElementById('newAppealResolved').value;
-    
-    saveState();
-    renderTable();
-    closeModal();
-    window.showToast('📋 Appeal status updated!');
-    logAudit('APPEAL_STATUS_UPDATE', `Claim ${id}: ${claim.appealStatus} (AED ${claim.appealAmount})`);
 };
 
 window.filterTable = function(viewType) {
@@ -1472,7 +966,8 @@ window.exportAudit = function() {
         csvRows.push(rowData.join(','));
     });
     
-    const csvString = csvRows.join('\n');
+    const csvString = csvRows.join('
+');
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1487,31 +982,8 @@ window.exportAudit = function() {
 
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
-    const currentSpecialty = document.getElementById('specSelect')?.value || 'gp';
-    const specialtyProfile = SPECIALTY_DENIAL_PROFILE[currentSpecialty] || { HIGH: [], MEDIUM: [], LOW: [] };
+    let adminFrontDesk = 0; let clinicalCoding = 0; let medicalNecessity = 0; let timelyFiling = 0; let preAuth = 0;
     
-    // Aggregate by code for specific recommendations
-    const codeStats = {};
-    denied.forEach(d => {
-        if (!d.code) return;
-        if (!codeStats[d.code]) codeStats[d.code] = { count: 0, amount: 0, codes: [] };
-        codeStats[d.code].count++;
-        codeStats[d.code].amount += d.amt;
-        codeStats[d.code].codes.push(d);
-    });
-    
-    // DETECT UNUSUAL DENIALS FOR THIS SPECIALTY
-    const unusualDenials = [];
-    Object.entries(codeStats).forEach(([code, data]) => {
-        const expectedLevel = specialtyProfile.HIGH.includes(code) ? 'HIGH' : 
-                             specialtyProfile.MEDIUM.includes(code) ? 'MEDIUM' : 'LOW';
-        if (expectedLevel === 'LOW' && data.count > 0) {
-            unusualDenials.push({ code, count: data.count, amount: data.amount, reason: `Rare for ${currentSpecialty.toUpperCase()}` });
-        }
-    });
-    
-    // Also keep category aggregates for high-level view
-    let adminFrontDesk = 0, clinicalCoding = 0, medicalNecessity = 0, timelyFiling = 0, preAuth = 0;
     denied.forEach(d => {
         if(d.code.startsWith('ELIG') || d.code.startsWith('COPY')) adminFrontDesk++;
         if(d.code.startsWith('CODE') || d.code.startsWith('PRCE')) clinicalCoding++;
@@ -1519,106 +991,26 @@ function renderRecs() {
         if(d.code.startsWith('TIME')) timelyFiling++;
         if(d.code.startsWith('AUTH')) preAuth++;
     });
-    
+
     const physDenials = {};
     denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
     const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
 
     const list = [];
 
-    // Category-level alerts (existing)
-    if (adminFrontDesk > 3) list.push({title:'🚨 Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
-    if (clinicalCoding > 3) list.push({title:'💰 Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
-    if (medicalNecessity > 2) list.push({title:'🩺 Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
-    if (timelyFiling > 0) list.push({title:'⏰ Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
-    if (preAuth > 3) list.push({title:'🔐 Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
-    if (topPhys !== 'N/A') list.push({title:'👨‍⚕️ Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
-
-    // UNUSUAL DENIALS ALERT (NEW)
-    if (unusualDenials.length > 0) {
-        list.unshift({
-            title: `⚠️ Unusual Denials for ${currentSpecialty.toUpperCase()}`,
-            impact: `${unusualDenials.length} code(s) flagged`,
-            body: unusualDenials.map(u => 
-                `<strong>${u.code}</strong> (${u.count} claims, AED ${u.amount.toLocaleString()}) — ${u.reason}. <em>Verify specialty coding accuracy or check for misclassified claims.</em>`
-            ).join('<br>'),
-            type: 'warning',
-            isUnusual: true
-        });
-    }
-
-    // CODE-SPECIFIC RECOMMENDATIONS (NEW)
-    const sortedCodes = Object.entries(codeStats)
-        .sort((a, b) => b[1].amount - a[1].amount)
-        .slice(0, 10); // Top 10 denial codes by amount
+    if (adminFrontDesk > 3) list.push({title:'Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
+    if (clinicalCoding > 3) list.push({title:'Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
+    if (medicalNecessity > 2) list.push({title:'Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
+    if (timelyFiling > 0) list.push({title:'Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
+    if (preAuth > 3) list.push({title:'Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
+    if (topPhys !== 'N/A') list.push({title:'Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
     
-    if (sortedCodes.length > 0) {
-        list.push({title:'🎯 Top Denial Codes — Specific Actions',impact:`${sortedCodes.length} codes analyzed`,body:'',type:'info', isCodeSection: true, codes: sortedCodes});
-    }
-    
-    // COPAY COLLECTION SUMMARY (NEW)
-    const paidWithCopay = DATA.filter(d => d.status === 'paid' && d.copayExpected > 0);
-    if (paidWithCopay.length > 0) {
-        const totalExpected = paidWithCopay.reduce((s, d) => s + (d.copayExpected || 0), 0);
-        const totalCollected = paidWithCopay.reduce((s, d) => s + (d.copayCollected || 0), 0);
-        const uncollected = totalExpected - totalCollected;
-        const uncollectedCount = paidWithCopay.filter(d => (d.copayCollected || 0) < (d.copayExpected || 0)).length;
-        const collectionRate = totalExpected > 0 ? Math.round((totalCollected / totalExpected) * 100) : 100;
-        
-        if (uncollected > 0) {
-            list.push({
-                title: '💰 Copay Collection Gap',
-                impact: `${uncollectedCount} claims | AED ${uncollected.toLocaleString()} uncollected`,
-                body: `Collection rate: ${collectionRate}%. ${uncollectedCount} paid claims have uncollected copays. Front desk must collect at time of service to avoid COPY-001 denials and revenue leakage.`,
-                type: collectionRate < 80 ? 'critical' : 'high'
-            });
-        }
-    }
-    
-    document.getElementById('recList').innerHTML = list.map(x => {
-        if (x.isUnusual) {
-            return `
-                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--warning);margin-bottom:15px;background:rgba(245,158,11,0.05);">
-                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-warning">${x.type.toUpperCase()}</span></div>
-                    <div style="margin-top:10px;font-size:13px;line-height:1.8;color:var(--text-secondary)">${x.body}</div>
-                </div>
-            `;
-        }
-        if (x.isCodeSection) {
-            return `
-                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:15px;">
-                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-info">${x.type.toUpperCase()}</span></div>
-                    <div style="margin-top:15px;">
-                        ${x.codes.map(([code, data]) => {
-                            const rec = DENIAL_RECOMMENDATIONS[code] || { clinical: '', admin: 'Review denial reason and appeal with supporting documentation.', prevention: '', urgency: 'medium' };
-                            const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
-                            // Flag if unusual for this specialty
-                            const isUnusual = specialtyProfile.LOW.includes(code) ? ' ⚠️ <span class="badge badge-warning">UNUSUAL FOR THIS SPECIALTY</span>' : '';
-                            return `
-                                <div style="background:var(--bg-dark);padding:15px;border-radius:8px;margin-bottom:10px;border-left:3px solid ${urgencyColor};">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                                        <strong style="color:var(--accent);">${code}${isUnusual}</strong>
-                                        <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};">${rec.urgency.toUpperCase()}</span>
-                                    </div>
-                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Reason:</strong> ${DENIAL_MAP[code] || 'Unknown'}</div>
-                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Count:</strong> ${data.count} | <strong>Amount:</strong> AED ${data.amount.toLocaleString()}</div>
-                                    ${rec.clinical ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(34,197,94,0.1);border-radius:4px;"><strong>🩺 Clinical:</strong> ${rec.clinical}</div>` : ''}
-                                    ${rec.admin ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(56,189,248,0.1);border-radius:4px;"><strong>📋 Admin:</strong> ${rec.admin}</div>` : ''}
-                                    ${rec.prevention ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(245,158,11,0.1);border-radius:4px;"><strong>🛡️ Prevention:</strong> ${rec.prevention}</div>` : ''}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-        return `
-            <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
-                <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
-                <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
-            </div>
-        `;
-    }).join('');
+    document.getElementById('recList').innerHTML = list.map(x => `
+        <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
+            <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
+            <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
+        </div>
+    `).join('');
 }
 
 window.genAppeal = function(id, p, code, a){
@@ -1670,7 +1062,6 @@ window.renderChart = function() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     if(window.c) window.c.destroy();
     
-    // Date range filter - uses serviceDate if present, else falls back to batch
     const startDate = document.getElementById('chartStartDate')?.value;
     const endDate = document.getElementById('chartEndDate')?.value;
     
@@ -1678,17 +1069,14 @@ window.renderChart = function() {
     for (let i = 1; i <= 10; i++) batchStats[i] = { total: 0, paid: 0 };
     
     DATA.forEach(row => {
-        // Use serviceDate if available, else derive from batch (1=oldest, 10=newest)
         let rowDate;
         if (row.serviceDate) {
             rowDate = new Date(row.serviceDate);
         } else {
-            // Fallback: batch 1 = ~90 days ago, batch 10 = today
             rowDate = new Date();
             rowDate.setDate(rowDate.getDate() - (11 - row.batch) * 9);
         }
         
-        // Filter by date range if set
         if (startDate && rowDate < new Date(startDate)) return;
         if (endDate && rowDate > new Date(endDate)) return;
         
@@ -1849,67 +1237,6 @@ window.closeModal = function() {
     if(m) m.remove();
 };
 
-window.showCodeRec = function(code) {
-    const rec = DENIAL_RECOMMENDATIONS[code];
-    if (!rec) {
-        window.showToast('❌ No specific recommendation for ' + code);
-        return;
-    }
-    const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
-    
-    const html = `
-        <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:700px;margin:auto;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h4 style="color:var(--accent);">${code} — ${DENIAL_MAP[code] || 'Unknown Denial'}</h4>
-                <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};font-size:12px;padding:6px 12px;">${rec.urgency.toUpperCase()} PRIORITY</span>
-            </div>
-            
-            ${rec.clinical ? `
-                <div style="background:rgba(34,197,94,0.1);border:1px solid var(--success);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">🩺</span>
-                        <strong style="color:var(--success);">Clinical Action Required</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.clinical}</p>
-                </div>
-            ` : ''}
-            
-            ${rec.admin ? `
-                <div style="background:rgba(56,189,248,0.1);border:1px solid var(--accent);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">📋</span>
-                        <strong style="color:var(--accent);">Administrative Action Required</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.admin}</p>
-                </div>
-            ` : ''}
-            
-            ${rec.prevention ? `
-                <div style="background:rgba(245,158,11,0.1);border:1px solid var(--warning);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">🛡️</span>
-                        <strong style="color:var(--warning);">Prevention / System Fix</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.prevention}</p>
-                </div>
-            ` : ''}
-            
-            <div style="background:var(--bg-dark);padding:15px;border-radius:8px;font-size:12px;">
-                <strong>Appeal Justification Template:</strong>
-                <p style="margin-top:8px;font-style:italic;color:var(--text-secondary);">
-                    ${rec.clinical ? 'Clinical: ' + rec.clinical.substring(0, 150) + '...' : rec.admin ? 'Admin: ' + rec.admin.substring(0, 150) + '...' : 'Standard appeal with supporting documentation.'}
-                </p>
-            </div>
-            
-            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Close</button>
-                <button class="btn btn-pro" onclick="window.closeModal(); window.showToast('Copied to clipboard'); navigator.clipboard.writeText(\`Denial: ${code} - ${DENIAL_MAP[code]}\\nClinical: ${rec.clinical || 'N/A'}\\nAdmin: ${rec.admin || 'N/A'}\\nPrevention: ${rec.prevention || 'N/A'}\`)">📋 Copy All</button>
-            </div>
-        </div>
-    `;
-    openModal(html);
-};
-
 function renderNabidhTable() {
     const filter = window.nabidhFilter || 'all';
     const filtered = filter === 'all' ? NABIDH_LOGS : NABIDH_LOGS.filter(x => x.status === filter);
@@ -2026,7 +1353,8 @@ window.exportNabidh = function() {
         const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24));
         return [x.batchId, x.clearinghouse, x.submitted, x.claimCount, x.status, x.ackRef, x.deadline, daysLeft, x.notes.replace(/,/g, ';')];
     });
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const csv = [headers, ...rows].map(r => r.join(',')).join('
+');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2142,70 +1470,20 @@ window.updateContract = function(id) {
 };
 
 function renderContracts() {
-    const today = new Date();
-    document.getElementById('contractBody').innerHTML = CONTRACT_RATES.map(c => {
-        const expiryDate = new Date(c.expiry);
-        const daysToExpiry = Math.ceil((expiryDate - today) / (1000*60*60*24));
-        let expiryBadge = '';
-        if (daysToExpiry < 0) expiryBadge = '<span class="badge badge-danger">EXPIRED ' + Math.abs(daysToExpiry) + 'd ago</span>';
-        else if (daysToExpiry <= 30) expiryBadge = '<span class="badge badge-danger">⏰ ' + daysToExpiry + 'd left</span>';
-        else if (daysToExpiry <= 60) expiryBadge = '<span class="badge badge-warning">⏰ ' + daysToExpiry + 'd left</span>';
-        else if (daysToExpiry <= 90) expiryBadge = '<span class="badge badge-accent">📅 ' + daysToExpiry + 'd left</span>';
-        else expiryBadge = '<span class="badge badge-success">' + daysToExpiry + 'd left</span>';
-        
-        return `
-        <tr style="${daysToExpiry < 0 ? 'background:rgba(239,68,68,0.1);' : daysToExpiry <= 30 ? 'background:rgba(239,68,68,0.05);' : daysToExpiry <= 60 ? 'background:rgba(245,158,11,0.05);' : ''}">
+    document.getElementById('contractBody').innerHTML = CONTRACT_RATES.map(c => `
+        <tr>
             <td>${c.tpa}</td>
             <td><strong>${c.cpt}</strong></td>
             <td>AED ${c.rate.toFixed(2)}</td>
             <td>${c.effective}</td>
-            <td>${c.expiry} ${expiryBadge}</td>
+            <td>${c.expiry}</td>
             <td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.notes || '-'}</td>
             <td>
                 <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showContractModal('${c.id}')">✏️</button>
                 <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteContract('${c.id}')">🗑️</button>
             </td>
-        </tr>`;
-    }).join('');
-    
-    // Update header alert for expiring contracts
-    updateContractExpiryAlert();
-}
-
-function updateContractExpiryAlert() {
-    const today = new Date();
-    const expiring = CONTRACT_RATES.filter(c => {
-        const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24));
-        return days <= 90 && days >= 0;
-    });
-    const expired = CONTRACT_RATES.filter(c => {
-        const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24));
-        return days < 0;
-    });
-    
-    let alertEl = document.getElementById('contractExpiryAlert');
-    if (!alertEl) {
-        alertEl = document.createElement('div');
-        alertEl.id = 'contractExpiryAlert';
-        alertEl.style.cssText = 'position:fixed;top:70px;right:20px;z-index:9999;max-width:350px;';
-        document.body.appendChild(alertEl);
-    }
-    
-    if (expired.length > 0 || expiring.length > 0) {
-        alertEl.innerHTML = `
-            <div style="background:var(--bg-card);border:1px solid var(--warning);border-radius:12px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:slideIn 0.3s ease;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                    <strong style="color:var(--warning);">⏰ Contract Expiry Alert</strong>
-                    <button onclick="this.parentElement.parentElement.style.display='none'" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;">✕</button>
-                </div>
-                ${expired.length > 0 ? `<div style="margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:6px;"><strong style="color:var(--danger);">${expired.length} EXPIRED</strong> — Rates no longer valid for PRCE checks</div>` : ''}
-                ${expiring.length > 0 ? `<div style="padding:8px;background:rgba(245,158,11,0.1);border-radius:6px;"><strong style="color:var(--warning);">${expiring.length} EXPIRING ≤90d</strong> — Renew to avoid PRCE-001 misses</div>` : ''}
-                <button class="btn btn-sm" style="width:100%;margin-top:10px;background:var(--warning);color:var(--bg-dark);" onclick="nav('contracts', document.querySelector('[onclick*=\"contracts\"])')">View Contracts Tab</button>
-            </div>`;
-        alertEl.style.display = 'block';
-    } else {
-        alertEl.style.display = 'none';
-    }
+        </tr>
+    `).join('');
 }
 
 window.deleteContract = function(id) {
@@ -2264,7 +1542,8 @@ window.runPRCECheck = function() {
 window.exportContracts = function() {
     if(CONTRACT_RATES.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'CPT', 'Rate_AED', 'Effective', 'Expiry', 'Notes'];
-    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'TPA_Contract_Rates.csv');
     window.showToast('📤 Contract rates exported!');
 };
@@ -2279,7 +1558,8 @@ window.handleContractImport = function(e) {
     const reader = new FileReader();
     reader.onload = function(evt) {
         const csv = evt.target.result;
-        const lines = csv.split('\n').filter(l=>l.trim());
+        const lines = csv.split('
+').filter(l=>l.trim());
         const headers = lines[0].split(',');
         let added = 0;
         for(let i=1;i<lines.length;i++) {
@@ -2438,7 +1718,8 @@ window.exportAR = function() {
     });
     
     const headers = ['TPA', '0-30_Days', '31-60_Days', '61-90_Days', '90+_Days', 'Total'];
-    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'AR_Aging_Report.csv');
     window.showToast('📤 AR Aging exported!');
 };
@@ -2532,19 +1813,6 @@ function renderCapitation() {
         if(pctUsed >= 90) { statusClass = 'danger'; statusText = 'Critical'; }
         else if(pctUsed >= 75) { statusClass = 'warning'; statusText = 'Warning'; }
         
-        // Calculate days to cap exhaustion based on current burn rate
-        const periodStart = new Date(c.periodStart);
-        const periodEnd = new Date(c.periodEnd);
-        const daysElapsed = Math.max(1, Math.floor((today - periodStart) / (1000*60*60*24)));
-        const daysRemaining = Math.max(0, Math.floor((periodEnd - today) / (1000*60*60*24)));
-        const dailyBurnRate = daysElapsed > 0 ? c.utilized / daysElapsed : 0;
-        const daysToExhaustion = dailyBurnRate > 0 ? Math.floor(remaining / dailyBurnRate) : Infinity;
-        const exhaustionDate = daysToExhaustion !== Infinity ? new Date(today.getTime() + daysToExhaustion * 24*60*60*1000) : null;
-        
-        // Gauge color
-        const gaugeColor = pctUsed >= 90 ? 'var(--danger)' : pctUsed >= 75 ? 'var(--warning)' : pctUsed >= 50 ? 'var(--accent)' : 'var(--success)';
-        const gaugeBg = pctUsed >= 90 ? 'rgba(239,68,68,0.2)' : pctUsed >= 75 ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.2)';
-        
         return `
             <tr style="${pctUsed >= 90 ? 'background:rgba(239,68,68,0.1);' : pctUsed >= 75 ? 'background:rgba(245,158,11,0.1);' : ''}">
                 <td>${c.tpa}</td>
@@ -2553,22 +1821,8 @@ function renderCapitation() {
                 <td>AED ${c.annualCap.toLocaleString()}</td>
                 <td>AED ${c.utilized.toLocaleString()}</td>
                 <td style="color:${remaining>=0?'var(--success)':'var(--danger)'}">AED ${remaining.toLocaleString()}</td>
-                <td>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <div style="flex:1;height:8px;background:var(--bg-dark);border-radius:4px;overflow:hidden;">
-                            <div style="width:${Math.min(100, pctUsed)}%;height:100%;background:${gaugeColor};border-radius:4px;transition:width 0.3s;"></div>
-                        </div>
-                        <strong style="color:${gaugeColor};min-width:50px;">${pctUsed}%</strong>
-                    </div>
-                </td>
+                <td><strong>${pctUsed}%</strong></td>
                 <td><span class="badge badge-${statusClass}">${statusText}</span></td>
-                <td style="font-size:11px;">
-                    ${daysToExhaustion !== Infinity ? 
-                        `<div style="color:${daysToExhaustion <= daysRemaining ? 'var(--success)' : 'var(--danger)'}">⏱ ${daysToExhaustion}d left</div>
-                         <div style="color:var(--text-secondary);">Exhaust: ${exhaustionDate.toLocaleDateString()}</div>` 
-                        : '<span style="color:var(--success)">∞ (no burn)</span>'}
-                    ${daysRemaining > 0 ? `<div style="color:var(--text-secondary);">${daysRemaining}d in period</div>` : ''}
-                </td>
                 <td>
                     <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showCapitationModal('${c.id}')">✏️</button>
                     <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteCapitation('${c.id}')">🗑️</button>
@@ -2590,7 +1844,8 @@ window.deleteCapitation = function(id) {
 window.exportCapitation = function() {
     if(CAPITATION_BUDGETS.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'Type', 'Period_Start', 'Period_End', 'Annual_Cap_AED', 'YTD_Utilized_AED', 'Remaining_AED', 'Pct_Used'];
-    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'Capitation_Budgets.csv');
     window.showToast('📤 Capitation exported!');
 };
@@ -2598,7 +1853,6 @@ window.exportCapitation = function() {
 function updateCapitationFromClaims() {
     if (CAPITATION_BUDGETS.length === 0) return;
     
-    // Sum paid claims per TPA that match capitation budgets
     const paidByTpa = {};
     DATA.filter(d => d.status === 'paid').forEach(d => {
         paidByTpa[d.payer] = (paidByTpa[d.payer] || 0) + d.amt;
@@ -2776,179 +2030,12 @@ window.exportAnalytics = function() {
         const total = amountData.paid[i] + amountData.denied[i];
         const rate = total > 0 ? ((amountData.denied[i] / total) * 100).toFixed(1) : 0;
         return [label, amountData.paid[i], amountData.denied[i], total, rate];
-    })].map(r=>r.join(',')).join('\n');
+    })].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, `Analytics_${groupBy}.csv`);
     window.showToast('📤 Analytics exported!');
 };
 
-let appealSuccessChart1 = null, appealSuccessChart2 = null;
-
-window.renderAppealAnalytics = function() {
-    const deniedWithAppeals = DATA.filter(d => d.status === 'denied' && d.appealStatus);
-    
-    // Group by TPA
-    const tpaStats = {};
-    deniedWithAppeals.forEach(d => {
-        if(!tpaStats[d.payer]) tpaStats[d.payer] = { total: 0, won: 0, lost: 0, pending: 0, recovered: 0, days: [] };
-        tpaStats[d.payer].total++;
-        if(d.appealStatus === 'paid') { tpaStats[d.payer].won++; tpaStats[d.payer].recovered += d.appealAmount || d.amt; }
-        else if(d.appealStatus === 'denied' || d.appealStatus === 'written_off') tpaStats[d.payer].lost++;
-        else tpaStats[d.payer].pending++;
-        if(d.appealSubmittedDate && d.appealResolvedDate) {
-            const days = Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24));
-            if(days > 0) tpaStats[d.payer].days.push(days);
-        }
-    });
-    
-    // Group by Denial Code
-    const codeStats = {};
-    deniedWithAppeals.forEach(d => {
-        if(!d.code) return;
-        if(!codeStats[d.code]) codeStats[d.code] = { total: 0, won: 0, lost: 0, pending: 0, recovered: 0 };
-        codeStats[d.code].total++;
-        if(d.appealStatus === 'paid') { codeStats[d.code].won++; codeStats[d.code].recovered += d.appealAmount || d.amt; }
-        else if(d.appealStatus === 'denied' || d.appealStatus === 'written_off') codeStats[d.code].lost++;
-        else codeStats[d.code].pending++;
-    });
-    
-    // Chart 1: Win Rate by TPA
-    const tpaLabels = Object.keys(tpaStats).sort();
-    const tpaWinRates = tpaLabels.map(tpa => {
-        const s = tpaStats[tpa];
-        return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0;
-    });
-    
-    if(appealSuccessChart1) appealSuccessChart1.destroy();
-    const ctx1 = document.getElementById('appealSuccessChart1').getContext('2d');
-    appealSuccessChart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: { labels: tpaLabels, datasets: [{ label: 'Win Rate %', data: tpaWinRates, backgroundColor: 'rgba(34,197,94,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by TPA', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Chart 2: Win Rate by Denial Code
-    const codeLabels = Object.keys(codeStats).sort();
-    const codeWinRates = codeLabels.map(code => {
-        const s = codeStats[code];
-        return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0;
-    });
-    
-    if(appealSuccessChart2) appealSuccessChart2.destroy();
-    const ctx2 = document.getElementById('appealSuccessChart2').getContext('2d');
-    appealSuccessChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: codeLabels, datasets: [{ label: 'Win Rate %', data: codeWinRates, backgroundColor: 'rgba(56,189,248,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by Denial Code', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Table
-    document.getElementById('appealAnalyticsBody').innerHTML = [...new Set([...Object.keys(tpaStats), ...Object.keys(codeStats)])].map(dim => {
-        const isTPA = tpaStats[dim];
-        const isCode = codeStats[dim];
-        const s = isTPA || isCode;
-        if(!s) return '';
-        const winRate = s.total > 0 ? ((s.won / s.total) * 100).toFixed(1) : 0;
-        const avgDays = s.days && s.days.length > 0 ? Math.round(s.days.reduce((a,b)=>a+b,0)/s.days.length) : 'N/A';
-        return `
-            <tr style="${dim.length > 10 ? 'background:rgba(56,189,248,0.05);' : ''}">
-                <td><strong>${dim}</strong> ${isTPA ? '<span class="badge badge-accent">TPA</span>' : '<span class="badge badge-warning">Code</span>'}</td>
-                <td>${s.total}</td>
-                <td style="color:var(--success)">${s.won}</td>
-                <td style="color:var(--danger)">${s.lost}</td>
-                <td style="color:var(--warning)">${s.pending}</td>
-                <td><strong style="color:${winRate >= 50 ? 'var(--success)' : winRate >= 25 ? 'var(--warning)' : 'var(--danger)'}">${winRate}%</strong></td>
-                <td style="color:var(--success)">AED ${(s.recovered || 0).toLocaleString()}</td>
-                <td>${avgDays}</td>
-            </tr>
-        `;
-    }).join('');
-};
-
-window.exportAppealAnalytics = function() {
-    const deniedWithAppeals = DATA.filter(d => d.status === 'denied' && d.appealStatus);
-    if(deniedWithAppeals.length === 0) { window.showToast('❌ No appeal data'); return; }
-    
-    const headers = ['Claim_ID', 'TPA', 'Denial_Code', 'Physician', 'Original_Amt', 'Appeal_Amt', 'Appeal_Status', 'Submitted_Date', 'Resolved_Date', 'Days_to_Resolve'];
-    const csv = [headers, ...deniedWithAppeals.map(d => {
-        const days = (d.appealSubmittedDate && d.appealResolvedDate) ? Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24)) : '';
-        return [d.id, d.payer, d.code, d.physician, d.amt, d.appealAmount || d.amt, d.appealStatus, d.appealSubmittedDate, d.appealResolvedDate, days];
-    })].map(r=>r.join(',')).join('\n');
-    downloadCSV(csv, 'Appeal_Analytics.csv');
-    window.showToast('📤 Appeal analytics exported!');
-};
-
-let providerProdChart1 = null, providerProdChart2 = null;
-
-window.renderProviderProductivity = function() {
-    // Group by physician
-    const physStats = {};
-    DATA.forEach(d => {
-        if(!physStats[d.physician]) physStats[d.physician] = { total: 0, paid: 0, denied: 0, totalAmt: 0, deniedAmt: 0, batches: new Set() };
-        physStats[d.physician].total++;
-        physStats[d.physician].batches.add(d.batch);
-        if(d.status === 'paid') { physStats[d.physician].paid++; physStats[d.physician].totalAmt += d.amt; }
-        else { physStats[d.physician].denied++; physStats[d.physician].deniedAmt += d.amt; }
-    });
-    
-    const physicians = Object.keys(physStats).sort();
-    const labels = physicians;
-    const denialRates = labels.map(p => {
-        const s = physStats[p];
-        return s.total > 0 ? ((s.denied / s.total) * 100).toFixed(1) : 0;
-    });
-    const avgPerClaim = labels.map(p => {
-        const s = physStats[p];
-        return s.total > 0 ? Math.round(s.totalAmt / s.total) : 0;
-    });
-    const claimsPerDay = labels.map(p => {
-        const s = physStats[p];
-        const days = s.batches.size * 3; // Assume 3 days per batch
-        return days > 0 ? (s.total / days).toFixed(1) : 0;
-    });
-    
-    // Chart 1: Denial Rate by Physician
-    if(providerProdChart1) providerProdChart1.destroy();
-    const ctx1 = document.getElementById('providerProdChart1').getContext('2d');
-    providerProdChart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Denial Rate %', data: denialRates, backgroundColor: denialRates.map(r => r > 20 ? 'rgba(239,68,68,0.7)' : r > 10 ? 'rgba(245,158,11,0.7)' : 'rgba(34,197,94,0.7)') }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Denial Rate by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Chart 2: Avg $/Claim by Physician
-    if(providerProdChart2) providerProdChart2.destroy();
-    const ctx2 = document.getElementById('providerProdChart2').getContext('2d');
-    providerProdChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Avg $/Claim', data: avgPerClaim, backgroundColor: 'rgba(56,189,248,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Average $/Claim by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Table
-    document.getElementById('providerProdBody').innerHTML = physicians.map(p => {
-        const s = physStats[p];
-        const denialRate = s.total > 0 ? ((s.denied / s.total) * 100).toFixed(1) : 0;
-        const avgClaim = s.total > 0 ? Math.round(s.totalAmt / s.total) : 0;
-        const claimsPerDayVal = s.batches.size > 0 ? (s.total / (s.batches.size * 3)).toFixed(1) : 0;
-        let status = '🟢 On Track';
-        if(denialRate > 20) status = '🔴 High Denials';
-        else if(denialRate > 15) status = '🟡 Watch';
-        
-        return `
-            <tr>
-                <td><strong>${p}</strong></td>
-                <td>${s.total}</td>
-                <td style="color:var(--success)">${s.paid}</td>
-                <td style="color:var(--danger)">${s.denied}</td>
-                <td><strong style="color:${denialRate > 20 ? 'var(--danger)' : denialRate > 15 ? 'var(--warning)' : 'var(--success)'}">${denialRate}%</strong></td>
-                <td>AED ${s.totalAmt.toLocaleString()}</td>
-                <td>AED ${avgClaim.toLocaleString()}</td>
-                <td>${claimsPerDayVal}</td>
-                <td>${status}</td>
-            </tr>
-        `;
-    }).join('');
-};
 
 window.renderAuditTrail = function() {
     document.getElementById('auditBody').innerHTML = AUDIT_TRAIL.map(a => `
@@ -2964,7 +2051,8 @@ window.renderAuditTrail = function() {
 window.exportAuditTrail = function() {
     if(AUDIT_TRAIL.length === 0) { window.showToast('❌ No audit data'); return; }
     const headers = ['Timestamp', 'Action', 'Details', 'User'];
-    const csv = [headers, ...AUDIT_TRAIL.map(a => [a.timestamp, a.action, a.details.replace(/,/g,';'), a.user])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...AUDIT_TRAIL.map(a => [a.timestamp, a.action, a.details.replace(/,/g,';'), a.user])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'Audit_Trail_Export.csv');
     window.showToast('📤 Audit trail exported!');
 };
@@ -2973,7 +2061,7 @@ window.clearAuditTrail = function() {
     if(confirm('Clear all audit logs? This cannot be undone.')) {
         AUDIT_TRAIL = [];
         saveState();
-        renderAuditTrail();
+        window.renderAuditTrail();
         window.showToast('🗑️ Audit trail cleared');
     }
 };
@@ -3030,250 +2118,6 @@ window.importFullBackup = function() {
             }
         };
         reader.readAsText(file);
-    };
-    input.click();
-};
-
-// ============================================
-// EXPORT/IMPORT EXCEL BACKUP (Multi-sheet)
-// ============================================
-window.exportFullBackupExcel = function() {
-    const wb = XLSX.utils.book_new();
-    
-    // Claims sheet
-    if(DATA.length > 0) {
-        const claimsData = DATA.map(d => ({
-            Claim_ID: d.id,
-            Physician: d.physician,
-            CPT: d.cpt,
-            ICD: d.icd,
-            TPA: d.payer,
-            Amount_AED: d.amt,
-            Status: d.status,
-            Denial_Code: d.code,
-            Root_Cause: DENIAL_MAP[d.code] || '',
-            Assignee: d.assignee,
-            Batch: d.batch,
-            Service_Date: d.serviceDate || ''
-        }));
-        const ws1 = XLSX.utils.json_to_sheet(claimsData);
-        XLSX.utils.book_append_sheet(wb, ws1, 'Claims');
-    }
-    
-    // NABIDH Logs sheet
-    if(NABIDH_LOGS.length > 0) {
-        const nabidhData = NABIDH_LOGS.map(l => ({
-            Batch_ID: l.batchId,
-            Clearinghouse: l.clearinghouse,
-            Submitted: l.submitted,
-            Claims_Count: l.claimCount,
-            Status: l.status,
-            ACK_Ref: l.ackRef,
-            Deadline: l.deadline,
-            Days_Left: Math.ceil((new Date(l.deadline) - new Date()) / (1000*60*60*24)),
-            Notes: l.notes
-        }));
-        const ws2 = XLSX.utils.json_to_sheet(nabidhData);
-        XLSX.utils.book_append_sheet(wb, ws2, 'NABIDH_Logs');
-    }
-    
-    // Eligibility Logs sheet
-    if(ELIG_LOGS.length > 0) {
-        const eligData = ELIG_LOGS.map(l => ({
-            Patient_Ref: l.patientRef,
-            EID_Masked: l.eidMasked,
-            TPA: l.tpa,
-            Checked: l.checked,
-            Status: l.status,
-            Benefit: l.benefit,
-            Copay: l.copay,
-            Notes: l.notes
-        }));
-        const ws3 = XLSX.utils.json_to_sheet(eligData);
-        XLSX.utils.book_append_sheet(wb, ws3, 'Eligibility_Logs');
-    }
-    
-    // Contract Rates sheet
-    if(CONTRACT_RATES.length > 0) {
-        const contractData = CONTRACT_RATES.map(c => ({
-            TPA: c.tpa,
-            CPT: c.cpt,
-            Rate_AED: c.rate,
-            Effective: c.effective,
-            Expiry: c.expiry,
-            Notes: c.notes
-        }));
-        const ws4 = XLSX.utils.json_to_sheet(contractData);
-        XLSX.utils.book_append_sheet(wb, ws4, 'Contract_Rates');
-    }
-    
-    // Capitation Budgets sheet
-    if(CAPITATION_BUDGETS.length > 0) {
-        const capData = CAPITATION_BUDGETS.map(c => ({
-            TPA: c.tpa,
-            Type: c.type,
-            Period_Start: c.periodStart,
-            Period_End: c.periodEnd,
-            Annual_Cap_AED: c.annualCap,
-            YTD_Utilized_AED: c.utilized,
-            Remaining_AED: c.annualCap - c.utilized,
-            Pct_Used: c.annualCap > 0 ? ((c.utilized / c.annualCap) * 100).toFixed(1) : 0
-        }));
-        const ws5 = XLSX.utils.json_to_sheet(capData);
-        XLSX.utils.book_append_sheet(wb, ws5, 'Capitation_Budgets');
-    }
-    
-    // Audit Trail sheet
-    if(AUDIT_TRAIL.length > 0) {
-        const auditData = AUDIT_TRAIL.map(a => ({
-            Timestamp: a.timestamp,
-            Action: a.action,
-            Details: a.details,
-            User: a.user
-        }));
-        const ws6 = XLSX.utils.json_to_sheet(auditData);
-        XLSX.utils.book_append_sheet(wb, ws6, 'Audit_Trail');
-    }
-    
-    // Metadata sheet
-    const metaData = [{
-        Version: '5.0',
-        Export_Date: new Date().toISOString(),
-        Total_Claims: DATA.length,
-        Total_Recovered: RECOVERED
-    }];
-    const wsMeta = XLSX.utils.json_to_sheet(metaData);
-    XLSX.utils.book_append_sheet(wb, wsMeta, 'Metadata');
-    
-    const filename = `RCMPRO_Full_Backup_${new Date().toISOString().split('T')[0]}.xlsx`;
-    XLSX.writeFile(wb, filename);
-    logAudit('BACKUP_EXPORT_EXCEL', 'Full system backup exported to Excel');
-    window.showToast('📊 Full backup exported to Excel!');
-};
-
-window.importFullBackupExcel = function() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.xlsx,.xls';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            try {
-                const data = new Uint8Array(evt.target.result);
-                const wb = XLSX.read(data, { type: 'array' });
-                
-                // Import Claims
-                if(wb.SheetNames.includes('Claims')) {
-                    const ws = wb.Sheets['Claims'];
-                    const claims = XLSX.utils.sheet_to_json(ws);
-                    DATA = claims.map(c => ({
-                        id: c.Claim_ID || `IMP-${Math.floor(Math.random()*90000)}`,
-                        physician: c.Physician || '',
-                        cpt: c.CPT || '',
-                        icd: c.ICD || '',
-                        payer: c.TPA || '',
-                        amt: parseFloat(c.Amount_AED) || 0,
-                        status: c.Status || 'paid',
-                        code: c.Denial_Code || '',
-                        assignee: c.Assignee || '',
-                        batch: parseInt(c.Batch) || 1,
-                        serviceDate: c.Service_Date || null
-                    })).filter(x => x.amt > 0);
-                }
-                
-                // Import NABIDH Logs
-                if(wb.SheetNames.includes('NABIDH_Logs')) {
-                    const ws = wb.Sheets['NABIDH_Logs'];
-                    NABIDH_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
-                        id: 'NB-' + Date.now() + Math.random(),
-                        batchId: l.Batch_ID,
-                        clearinghouse: l.Clearinghouse,
-                        submitted: l.Submitted,
-                        claimCount: parseInt(l.Claims_Count) || 0,
-                        status: l.Status,
-                        ackRef: l.ACK_Ref,
-                        deadline: l.Deadline,
-                        notes: l.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
-                }
-                
-                // Import Eligibility Logs
-                if(wb.SheetNames.includes('Eligibility_Logs')) {
-                    const ws = wb.Sheets['Eligibility_Logs'];
-                    ELIG_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
-                        id: 'EG-' + Date.now() + Math.random(),
-                        patientRef: l.Patient_Ref,
-                        eidMasked: l.EID_Masked,
-                        tpa: l.TPA,
-                        checked: l.Checked,
-                        status: l.Status,
-                        benefit: l.Benefit,
-                        copay: parseFloat(l.Copay) || 0,
-                        notes: l.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
-                }
-                
-                // Import Contract Rates
-                if(wb.SheetNames.includes('Contract_Rates')) {
-                    const ws = wb.Sheets['Contract_Rates'];
-                    CONTRACT_RATES = XLSX.utils.sheet_to_json(ws).map(c => ({
-                        id: 'CT-' + Date.now() + Math.random(),
-                        tpa: c.TPA,
-                        cpt: c.CPT,
-                        rate: parseFloat(c.Rate_AED) || 0,
-                        effective: c.Effective,
-                        expiry: c.Expiry,
-                        notes: c.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
-                }
-                
-                // Import Capitation Budgets
-                if(wb.SheetNames.includes('Capitation_Budgets')) {
-                    const ws = wb.Sheets['Capitation_Budgets'];
-                    CAPITATION_BUDGETS = XLSX.utils.sheet_to_json(ws).map(c => ({
-                        id: 'CAP-' + Date.now() + Math.random(),
-                        tpa: c.TPA,
-                        type: c.Type,
-                        periodStart: c.Period_Start,
-                        periodEnd: c.Period_End,
-                        annualCap: parseFloat(c.Annual_Cap_AED) || 0,
-                        utilized: parseFloat(c.YTD_Utilized_AED) || 0,
-                        createdAt: new Date().toISOString()
-                    }));
-                }
-                
-                // Import Audit Trail
-                if(wb.SheetNames.includes('Audit_Trail')) {
-                    const ws = wb.Sheets['Audit_Trail'];
-                    AUDIT_TRAIL = XLSX.utils.sheet_to_json(ws).map(a => ({
-                        id: 'AUD-' + Date.now() + Math.random(),
-                        timestamp: a.Timestamp,
-                        action: a.Action,
-                        details: a.Details,
-                        user: a.User || 'Imported'
-                    }));
-                }
-                
-                saveState();
-                updateUI();
-                renderContracts();
-                renderCapitation();
-                renderNabidhTable();
-                renderEligTable();
-                if(typeof renderAuditTrail === 'function') renderAuditTrail();
-                logAudit('BACKUP_IMPORT_EXCEL', 'Full system backup imported from Excel');
-                window.showToast('📥 Full backup imported from Excel successfully!');
-            } catch(err) {
-                console.error(err);
-                window.showToast('❌ Invalid Excel backup file');
-            }
-        };
-        reader.readAsArrayBuffer(file);
     };
     input.click();
 };
