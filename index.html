@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RCM Pro UAE v5.0 — Official Coding Edition</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https: data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: blob:;">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -109,7 +109,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
 <div class="main-content">
     <header class="top-header">
         <h3 id="pageTitle">Executive Summary</h3>
-        <button class="btn btn-pro" onclick="showToast('📥 Master Report Generation Started...')">📥 Download Master Report</button>
+        <button class="btn btn-pro" onclick="window.showToast('📥 Master Report Generation Started...')">📥 Download Master Report</button>
     </header>
 
     <div class="page-content">
@@ -193,10 +193,10 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
                     <button class="btn btn-pro" onclick="showNabidhModal()">➕ Log Submission</button>
                     <button class="btn" onclick="exportNabidh()">📤 Export CSV</button>
-                    <button class="btn" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="filterNabidh('pending')">⏳ Pending ACK</button>
-                    <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="filterNabidh('acknowledged')">✅ Acknowledged</button>
-                    <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="filterNabidh('rejected')">❌ Rejected</button>
-                    <button class="btn" style="background:rgba(56,189,248,0.2); color:var(--accent);" onclick="filterNabidh('all')">📋 All</button>
+                    <button class="btn" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="filterNabidh('pending', event)">⏳ Pending ACK</button>
+                    <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="filterNabidh('acknowledged', event)">✅ Acknowledged</button>
+                    <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="filterNabidh('rejected', event)">❌ Rejected</button>
+                    <button class="btn" style="background:rgba(56,189,248,0.2); color:var(--accent);" onclick="filterNabidh('all', event)">📋 All</button>
                 </div>
 
                 <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:500px;overflow-y:auto;">
@@ -223,10 +223,10 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Log Emirates ID verifications. Even without API access, tracking *when* and *what* you checked creates defensible documentation for ELIG denials.</p>
                 <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
                     <button class="btn btn-pro" onclick="showEligModal()">➕ Log EID Check</button>
-                    <button class="btn" onclick="filterElig('all')">📋 All</button>
-                    <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="filterElig('active')">✅ Active</button>
-                    <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="filterElig('inactive')">❌ Inactive</button>
-                    <button class="btn" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="filterElig('expired')">⚠️ Expired</button>
+                    <button class="btn" onclick="filterElig('all', event)">📋 All</button>
+                    <button class="btn" style="background:rgba(34,197,94,0.2); color:var(--success);" onclick="filterElig('active', event)">✅ Active</button>
+                    <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="filterElig('inactive', event)">❌ Inactive</button>
+                    <button class="btn" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="filterElig('expired', event)">⚠️ Expired</button>
                 </div>
                 <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:400px;overflow-y:auto;">
                     <table id="eligTable">
@@ -517,20 +517,6 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
 </div>
 
 <script>
-// Global error handler - catch and display any JS errors
-window.addEventListener('error', function(e) {
-    console.error('RCM Pro Error:', e.message, 'at', e.filename, ':', e.lineno);
-    if (typeof showToast === 'function') {
-        showToast('⚠️ Error: ' + e.message);
-    }
-});
-
-// Check CDN libraries loaded
-console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅' : '❌ MISSING');
-console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅' : '❌ MISSING');
-console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
-console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
-
 // Ensure DOM ready before initializing
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM ready, initializing RCM Pro...');
@@ -540,6 +526,20 @@ document.addEventListener('DOMContentLoaded', function() {
     critical.forEach(id => {
         if (!document.getElementById(id)) console.warn('Missing element:', id);
     });
+
+    // Global error handler - catch and display any JS errors
+    window.addEventListener('error', function(e) {
+        console.error('RCM Pro Error:', e.message, 'at', e.filename, ':', e.lineno);
+        if (typeof window.showToast === 'function') {
+            window.showToast('⚠️ Error: ' + e.message);
+        }
+    });
+
+    // Check CDN libraries loaded
+    console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅' : '❌ MISSING');
+    console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅' : '❌ MISSING');
+    console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
+    console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
 
 let DATA = [];
 let RECOVERED = 0;
@@ -592,7 +592,9 @@ const NCCI_EDITS = {
     '99203': { bundles: ['99213', '99214'], modifier: '59', description: 'New vs established patient' }
 };
 
-// NEW: UAE-specific PHI regex patterns
+// PRE-COMPILED REGEX AND SETS FOR PERFORMANCE
+const PHI_KEY_SET = new Set(['name', 'patient', 'dob', 'emirates', 'eid', 'phone', 'member', 'policy', 'mobile', 'email', 'passport', 'mrn']);
+
 const PHI_PATTERNS = [
     { name: 'Emirates ID', regex: /784-\d{4}-\d{7}-\d/ },
     { name: 'UAE Phone', regex: /05\d{8}/ },
@@ -602,20 +604,32 @@ const PHI_PATTERNS = [
     { name: 'Email', regex: /[\w\.-]+@[\w\.-]+\.\w+/ }
 ];
 
+const PHI_REGEX_COMBINED = new RegExp(PHI_PATTERNS.map(p => p.regex.source).join('|'), 'i');
+
 const STORAGE_KEY = 'rcmpro_data_v1';
 
-function showToast(message) {
+window.showToast = function(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.style.bottom = '30px'; 
     setTimeout(() => {
         toast.style.bottom = '-100px'; 
     }, 3000);
-}
+};
 
 function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({DATA, RECOVERED, NABIDH_LOGS, ELIG_LOGS, CONTRACT_RATES, CAPITATION_BUDGETS, AUDIT_TRAIL}));
+    try {
+        const payload = JSON.stringify({DATA, RECOVERED, NABIDH_LOGS, ELIG_LOGS, CONTRACT_RATES, CAPITATION_BUDGETS, AUDIT_TRAIL});
+        if (payload.length > 4.5 * 1024 * 1024) {  // 4.5MB safety margin
+            console.warn('State too large for localStorage, skipping save');
+            return;
+        }
+        localStorage.setItem(STORAGE_KEY, payload);
+    } catch (e) {
+        console.error('localStorage save failed:', e);
+    }
 }
+
 function loadState() {
     const s = localStorage.getItem(STORAGE_KEY);
     if(s) {
@@ -646,7 +660,7 @@ function nav(p, el) {
     if(p==='contracts') renderContracts();
     if(p==='ar') { refreshAR(); populateARTPAFilter(); }
     if(p==='capitation') renderCapitation();
-    if(p==='analytics') { setDefaultDateRange(); renderAnalytics(); }
+    if(p==='analytics') { setDefaultDateRange(); window.renderAnalytics(); }
 }
 
 function logAudit(action, details) {
@@ -663,19 +677,16 @@ function logAudit(action, details) {
 
 function scrubPHIAdvanced(rawData) {
     return rawData.map(row => {
-        let cleanRow = {};
-        for (let key in row) {
-            let keyLower = key.toLowerCase();
-            let value = String(row[key] || '');
+        const cleanRow = {};
+        for (const [key, val] of Object.entries(row)) {
+            const keyLower = key.toLowerCase();
+            const strVal = String(val ?? '');
             
-            // Check key against keyword list
-            let isPHIKey = ['name', 'patient', 'dob', 'emirates', 'eid', 'phone', 'member', 'policy', 'mobile', 'email', 'passport', 'mrn'].some(phi => keyLower.includes(phi));
-            
-            // Check value against regex patterns
-            let isPHIValue = PHI_PATTERNS.some(p => p.regex.test(value));
+            const isPHIKey = [...PHI_KEY_SET].some(phi => keyLower.includes(phi));
+            const isPHIValue = PHI_REGEX_COMBINED.test(strVal);
             
             if (!isPHIKey && !isPHIValue) {
-                cleanRow[key] = row[key];
+                cleanRow[key] = val;
             }
         }
         return cleanRow;
@@ -685,25 +696,35 @@ function scrubPHIAdvanced(rawData) {
 document.getElementById('fileIn').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        const data = evt.target.result;
-        let rawParsedData = [];
-        
-        if (file.name.endsWith('.csv')) {
-            const csv = Papa.parse(data, { header: true });
-            rawParsedData = csv.data;
-        } else {
-            const wb = XLSX.read(data, { type: 'binary' });
+    
+    // Add quick header check for CSV files
+    if (file.name.endsWith('.csv')) {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                if (results.errors.length > 0) {
+                     console.warn("CSV Parsing Errors:", results.errors);
+                }
+                const scrubbedData = scrubPHIAdvanced(results.data);
+                logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+                processImportedData(scrubbedData);
+            }
+        });
+    } else {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const data = evt.target.result;
+            const wb = XLSX.read(data, { type: 'array' });
             const wsname = wb.SheetNames[0];
-            rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-        }
-        
-        const scrubbedData = scrubPHIAdvanced(rawParsedData);
-        logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
-        processImportedData(scrubbedData);
-    };
-    reader.readAsBinaryString(file);
+            const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+            
+            const scrubbedData = scrubPHIAdvanced(rawParsedData);
+            logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+            processImportedData(scrubbedData);
+        };
+        reader.readAsArrayBuffer(file);
+    }
 });
 
 function processImportedData(rawData) {
@@ -726,7 +747,7 @@ function processImportedData(rawData) {
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
-    showToast('✅ De-identified Data Imported Successfully!');
+    window.showToast('✅ De-identified Data Imported Successfully!');
 }
 
 window.loadSample = function(n=100) {
@@ -786,7 +807,7 @@ window.loadSample = function(n=100) {
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
-    showToast('✅ Official Sample Data Loaded (including NABIDH/Elig logs, Contracts, Capitation)!');
+    window.showToast('✅ Official Sample Data Loaded (including NABIDH/Elig logs, Contracts, Capitation)!');
 };
 
 function updateUI() {
@@ -800,8 +821,8 @@ function updateUI() {
     document.getElementById('mPotential').textContent='AED '+Math.floor(den*0.62).toLocaleString();
     
     renderTable();
-    renderChart();
-    updateBenchmark();
+    window.renderChart();
+    window.updateBenchmark();
 }
 
 function renderTable() {
@@ -856,7 +877,7 @@ window.filterTable = function(viewType) {
 
 window.exportAudit = function() {
     if(DATA.length === 0) {
-        showToast('❌ No data to export!');
+        window.showToast('❌ No data to export!');
         return;
     }
     const csvRows = [];
@@ -871,7 +892,8 @@ window.exportAudit = function() {
         csvRows.push(rowData.join(','));
     });
     
-    const csvString = csvRows.join('\n');
+    const csvString = csvRows.join('
+');
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -881,7 +903,7 @@ window.exportAudit = function() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    showToast('📤 Audit Exported Successfully!');
+    window.showToast('📤 Audit Exported Successfully!');
 };
 
 function renderRecs() {
@@ -950,9 +972,9 @@ window.genAppeal = function(id, p, code, a){
         
         RECOVERED += a;
         document.getElementById('sideRecovered').textContent = 'AED '+RECOVERED.toLocaleString();
-        showToast('📄 Appeal PDF Generated Successfully!');
+        window.showToast('📄 Appeal PDF Generated Successfully!');
     } catch(e) {
-        showToast('❌ PDF Generator blocked by browser.');
+        window.showToast('❌ PDF Generator blocked by browser.');
     }
 };
 
@@ -1045,8 +1067,8 @@ window.showNabidhModal = function() {
                 <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Notes</label><textarea id="nbNotes" rows="3" placeholder="Rejection reasons, follow-up needed..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;"></textarea></div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="saveNabidhLog()">Save Submission</button>
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Cancel</button>
+                <button class="btn btn-pro" onclick="window.saveNabidhLog()">Save Submission</button>
             </div>
         </div>
     `;
@@ -1067,10 +1089,10 @@ window.saveNabidhLog = function() {
         createdAt: new Date().toISOString()
     };
     NABIDH_LOGS.unshift(log);
-    closeModal();
+    window.closeModal();
     renderNabidhTable();
     saveState();
-    showToast('📤 Submission logged!');
+    window.showToast('📤 Submission logged!');
 };
 
 window.showEligModal = function() {
@@ -1089,8 +1111,8 @@ window.showEligModal = function() {
                 <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Notes</label><textarea id="egNotes" rows="2" placeholder="Pre-existing exclusions, visit limits..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;"></textarea></div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="saveEligLog()">Save Check</button>
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Cancel</button>
+                <button class="btn btn-pro" onclick="window.saveEligLog()">Save Check</button>
             </div>
         </div>
     `;
@@ -1111,10 +1133,10 @@ window.saveEligLog = function() {
         createdAt: new Date().toISOString()
     };
     ELIG_LOGS.unshift(log);
-    closeModal();
+    window.closeModal();
     renderEligTable();
     saveState();
-    showToast('🆔 Eligibility check logged!');
+    window.showToast('🆔 Eligibility check logged!');
 };
 
 function openModal(html) {
@@ -1150,19 +1172,19 @@ function renderNabidhTable() {
                 <td>${x.ackRef || '-'}</td>
                 <td><span class="badge badge-${deadlineClass}">${deadlineText}</span></td>
                 <td>
-                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="editNabidh('${x.id}')">✏️</button>
-                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="deleteNabidh('${x.id}')">🗑️</button>
+                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.editNabidh('${x.id}')">✏️</button>
+                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteNabidh('${x.id}')">🗑️</button>
                 </td>
             </tr>
         `;
     }).join('');
 }
 
-window.filterNabidh = function(type) {
+window.filterNabidh = function(type, e) {
     window.nabidhFilter = type;
     renderNabidhTable();
     document.querySelectorAll('#page-nabidh .btn').forEach(b => b.style.opacity = '0.5');
-    event.target.style.opacity = '1';
+    if (e) e.target.style.opacity = '1';
 };
 
 function renderEligTable() {
@@ -1185,7 +1207,7 @@ function renderEligTable() {
     `).join('');
 }
 
-window.filterElig = function(type) {
+window.filterElig = function(type, e) {
     window.eligFilter = type;
     renderEligTable();
     document.querySelectorAll('#page-nabidh .btn:nth-child(n+6)').forEach((b, i) => {
@@ -1197,7 +1219,7 @@ window.filterElig = function(type) {
 window.editNabidh = function(id) {
     const log = NABIDH_LOGS.find(x => x.id === id);
     if(!log) return;
-    showNabidhModal();
+    window.showNabidhModal();
     setTimeout(() => {
         document.getElementById('nbBatchId').value = log.batchId;
         document.getElementById('nbClearinghouse').value = log.clearinghouse;
@@ -1207,7 +1229,7 @@ window.editNabidh = function(id) {
         document.getElementById('nbAckRef').value = log.ackRef;
         document.getElementById('nbDeadline').value = log.deadline;
         document.getElementById('nbNotes').value = log.notes;
-        document.querySelector('#dynamicModal .btn-pro').onclick = () => updateNabidhLog(id);
+        document.querySelector('#dynamicModal .btn-pro').onclick = () => window.updateNabidhLog(id);
     }, 50);
 };
 
@@ -1225,10 +1247,10 @@ window.updateNabidhLog = function(id) {
         deadline: document.getElementById('nbDeadline').value,
         notes: document.getElementById('nbNotes').value
     };
-    closeModal();
+    window.closeModal();
     renderNabidhTable();
     saveState();
-    showToast('✅ Submission updated!');
+    window.showToast('✅ Submission updated!');
 };
 
 window.deleteNabidh = function(id) {
@@ -1236,18 +1258,19 @@ window.deleteNabidh = function(id) {
         NABIDH_LOGS = NABIDH_LOGS.filter(x => x.id !== id);
         renderNabidhTable();
         saveState();
-        showToast('🗑️ Deleted');
+        window.showToast('🗑️ Deleted');
     }
 };
 
 window.exportNabidh = function() {
-    if(NABIDH_LOGS.length === 0) { showToast('❌ No data to export!'); return; }
+    if(NABIDH_LOGS.length === 0) { window.showToast('❌ No data to export!'); return; }
     const headers = ['Batch_ID', 'Clearinghouse', 'Submitted_Date', 'Claims_Count', 'Status', 'ACK_Reference', 'Deadline', 'Days_Left', 'Notes'];
     const rows = NABIDH_LOGS.map(x => {
         const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24));
         return [x.batchId, x.clearinghouse, x.submitted, x.claimCount, x.status, x.ackRef, x.deadline, daysLeft, x.notes.replace(/,/g, ';')];
     });
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const csv = [headers, ...rows].map(r => r.join(',')).join('
+');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1255,7 +1278,7 @@ window.exportNabidh = function() {
     a.download = 'NABIDH_Submission_Log.csv';
     a.click();
     URL.revokeObjectURL(url);
-    showToast('📤 NABIDH Log Exported!');
+    window.showToast('📤 NABIDH Log Exported!');
 };
 
 // Auto-render when nav to nabidh page
@@ -1303,8 +1326,8 @@ window.showContractModal = function(editId = null) {
                 <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">Notes</label><textarea id="ctNotes" rows="2" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;">${existing ? existing.notes : ''}</textarea></div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="${existing ? `updateContract('${editId}')` : 'saveContract()'}">${existing ? 'Update' : 'Save'} Rate</button>
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Cancel</button>
+                <button class="btn btn-pro" onclick="${existing ? `window.updateContract('${editId}')` : 'window.saveContract()'}">${existing ? 'Update' : 'Save'} Rate</button>
             </div>
         </div>
     `;
@@ -1322,7 +1345,7 @@ window.showContractModal = function(editId = null) {
 window.saveContract = function() {
     const tpa = document.getElementById('ctTPA').value === '__NEW__' ? document.getElementById('ctTPANew').value : document.getElementById('ctTPA').value;
     const cpt = document.getElementById('ctCPT').value === '__NEW__' ? document.getElementById('ctCPTNew').value : document.getElementById('ctCPT').value;
-    if(!tpa || !cpt) { showToast('❌ TPA and CPT required'); return; }
+    if(!tpa || !cpt) { window.showToast('❌ TPA and CPT required'); return; }
     
     const contract = {
         id: 'CT-' + Date.now(),
@@ -1334,11 +1357,11 @@ window.saveContract = function() {
         createdAt: new Date().toISOString()
     };
     CONTRACT_RATES.push(contract);
-    closeModal();
+    window.closeModal();
     renderContracts();
     saveState();
     logAudit('CONTRACT_ADD', `Added rate for ${tpa} / ${cpt}: AED ${contract.rate}`);
-    showToast('💰 Contract rate saved!');
+    window.showToast('💰 Contract rate saved!');
 };
 
 window.updateContract = function(id) {
@@ -1355,11 +1378,11 @@ window.updateContract = function(id) {
         expiry: document.getElementById('ctExpiry').value,
         notes: document.getElementById('ctNotes').value
     };
-    closeModal();
+    window.closeModal();
     renderContracts();
     saveState();
     logAudit('CONTRACT_UPDATE', `Updated rate for ${tpa} / ${cpt}`);
-    showToast('✅ Contract rate updated!');
+    window.showToast('✅ Contract rate updated!');
 };
 
 function renderContracts() {
@@ -1372,8 +1395,8 @@ function renderContracts() {
             <td>${c.expiry}</td>
             <td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.notes || '-'}</td>
             <td>
-                <button class="btn btn-sm" style="background:var(--primary-light);" onclick="showContractModal('${c.id}')">✏️</button>
-                <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="deleteContract('${c.id}')">🗑️</button>
+                <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showContractModal('${c.id}')">✏️</button>
+                <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteContract('${c.id}')">🗑️</button>
             </td>
         </tr>
     `).join('');
@@ -1386,13 +1409,13 @@ window.deleteContract = function(id) {
         renderContracts();
         saveState();
         logAudit('CONTRACT_DELETE', `Deleted rate for ${c?.tpa} / ${c?.cpt}`);
-        showToast('🗑️ Deleted');
+        window.showToast('🗑️ Deleted');
     }
 };
 
 window.runPRCECheck = function() {
-    if(CONTRACT_RATES.length === 0) { showToast('❌ No contract rates defined'); return; }
-    if(DATA.length === 0) { showToast('❌ No claims data'); return; }
+    if(CONTRACT_RATES.length === 0) { window.showToast('❌ No contract rates defined'); return; }
+    if(DATA.length === 0) { window.showToast('❌ No claims data'); return; }
     
     const paidClaims = DATA.filter(d => d.status === 'paid');
     const results = [];
@@ -1424,20 +1447,21 @@ window.runPRCECheck = function() {
             <td>AED ${r.contractedRate.toFixed(2)}</td>
             <td>AED ${r.paidAmount.toFixed(2)}</td>
             <td style="color:var(--danger);font-weight:bold;">AED ${r.shortfall.toFixed(2)}</td>
-            <td><button class="btn btn-pro btn-sm" onclick="genAppeal('${r.claimId}','${r.tpa}','PRCE-001',${r.shortfall})">📄 Appeal</button></td>
+            <td><button class="btn btn-pro btn-sm" onclick="window.genAppeal('${r.claimId}','${r.tpa}','PRCE-001',${r.shortfall})">📄 Appeal</button></td>
         </tr>
     `).join('');
     
     const totalShortfall = results.reduce((s, r) => s + r.shortfall, 0);
-    showToast(`🔍 Found ${results.length} underpaid claims. Total shortfall: AED ${totalShortfall.toFixed(2)}`);
+    window.showToast(`🔍 Found ${results.length} underpaid claims. Total shortfall: AED ${totalShortfall.toFixed(2)}`);
 };
 
 window.exportContracts = function() {
-    if(CONTRACT_RATES.length === 0) { showToast('❌ No data'); return; }
+    if(CONTRACT_RATES.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'CPT', 'Rate_AED', 'Effective', 'Expiry', 'Notes'];
-    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'TPA_Contract_Rates.csv');
-    showToast('📤 Contract rates exported!');
+    window.showToast('📤 Contract rates exported!');
 };
 
 window.importContracts = function() {
@@ -1450,7 +1474,8 @@ window.handleContractImport = function(e) {
     const reader = new FileReader();
     reader.onload = function(evt) {
         const csv = evt.target.result;
-        const lines = csv.split('\n').filter(l=>l.trim());
+        const lines = csv.split('
+').filter(l=>l.trim());
         const headers = lines[0].split(',');
         let added = 0;
         for(let i=1;i<lines.length;i++) {
@@ -1472,7 +1497,7 @@ window.handleContractImport = function(e) {
         renderContracts();
         saveState();
         logAudit('CONTRACT_IMPORT', `Imported ${added} contract rates`);
-        showToast(`📥 Imported ${added} contract rates!`);
+        window.showToast(`📥 Imported ${added} contract rates!`);
         e.target.value = '';
     };
     reader.readAsText(file);
@@ -1486,7 +1511,7 @@ window.checkBundling = function() {
     const secondary = document.getElementById('bunSecondaryCPT').value.trim();
     const modifier = document.getElementById('bunModifier').value;
     
-    if(!primary || !secondary) { showToast('❌ Enter both CPT codes'); return; }
+    if(!primary || !secondary) { window.showToast('❌ Enter both CPT codes'); return; }
     
     let result = { bundles: false, requiredModifier: '', message: '', severity: 'info' };
     
@@ -1537,8 +1562,8 @@ window.populateARTPAFilter = function() {
 };
 
 window.refreshAR = function() {
-    renderAR();
-    showToast('🔄 AR Aging refreshed from current claims');
+    window.renderAR();
+    window.showToast('🔄 AR Aging refreshed from current claims');
 };
 
 window.renderAR = function() {
@@ -1595,7 +1620,7 @@ window.renderAR = function() {
 window.exportAR = function() {
     const filter = document.getElementById('arTPAFilter').value;
     const deniedClaims = DATA.filter(d => d.status === 'denied' && (filter === 'all' || d.payer === filter));
-    if(deniedClaims.length === 0) { showToast('❌ No AR data'); return; }
+    if(deniedClaims.length === 0) { window.showToast('❌ No AR data'); return; }
     
     const tpaGroups = {};
     deniedClaims.forEach(claim => {
@@ -1609,9 +1634,10 @@ window.exportAR = function() {
     });
     
     const headers = ['TPA', '0-30_Days', '31-60_Days', '61-90_Days', '90+_Days', 'Total'];
-    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'AR_Aging_Report.csv');
-    showToast('📤 AR Aging exported!');
+    window.showToast('📤 AR Aging exported!');
 };
 
 // ============================================
@@ -1648,8 +1674,8 @@ window.showCapitationModal = function(editId = null) {
                 <div><label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:5px;">YTD Utilized (AED)</label><input type="number" id="capUtilized" step="100" min="0" value="${existing ? existing.utilized : '0'}" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:white;"></div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="${existing ? `updateCapitation('${editId}')` : 'saveCapitation()'}">${existing ? 'Update' : 'Save'} Budget</button>
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Cancel</button>
+                <button class="btn btn-pro" onclick="${existing ? `window.updateCapitation('${editId}')` : 'window.saveCapitation()'}">${existing ? 'Update' : 'Save'} Budget</button>
             </div>
         </div>
     `;
@@ -1668,11 +1694,11 @@ window.saveCapitation = function() {
         createdAt: new Date().toISOString()
     };
     CAPITATION_BUDGETS.push(cap);
-    closeModal();
+    window.closeModal();
     renderCapitation();
     saveState();
     logAudit('CAPITATION_ADD', `Added ${cap.type} budget for ${cap.tpa}: AED ${cap.annualCap.toLocaleString()}`);
-    showToast('🏦 Capitation budget saved!');
+    window.showToast('🏦 Capitation budget saved!');
 };
 
 window.updateCapitation = function(id) {
@@ -1687,11 +1713,11 @@ window.updateCapitation = function(id) {
         annualCap: parseFloat(document.getElementById('capAnnual').value) || 0,
         utilized: parseFloat(document.getElementById('capUtilized').value) || 0
     };
-    closeModal();
+    window.closeModal();
     renderCapitation();
     saveState();
     logAudit('CAPITATION_UPDATE', `Updated budget for ${CAPITATION_BUDGETS[idx].tpa}`);
-    showToast('✅ Capitation budget updated!');
+    window.showToast('✅ Capitation budget updated!');
 };
 
 function renderCapitation() {
@@ -1714,8 +1740,8 @@ function renderCapitation() {
                 <td><strong>${pctUsed}%</strong></td>
                 <td><span class="badge badge-${statusClass}">${statusText}</span></td>
                 <td>
-                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="showCapitationModal('${c.id}')">✏️</button>
-                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="deleteCapitation('${c.id}')">🗑️</button>
+                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showCapitationModal('${c.id}')">✏️</button>
+                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteCapitation('${c.id}')">🗑️</button>
                 </td>
             </tr>
         `;
@@ -1727,16 +1753,17 @@ window.deleteCapitation = function(id) {
         CAPITATION_BUDGETS = CAPITATION_BUDGETS.filter(x => x.id !== id);
         renderCapitation();
         saveState();
-        showToast('🗑️ Deleted');
+        window.showToast('🗑️ Deleted');
     }
 };
 
 window.exportCapitation = function() {
-    if(CAPITATION_BUDGETS.length === 0) { showToast('❌ No data'); return; }
+    if(CAPITATION_BUDGETS.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'Type', 'Period_Start', 'Period_End', 'Annual_Cap_AED', 'YTD_Utilized_AED', 'Remaining_AED', 'Pct_Used'];
-    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, 'Capitation_Budgets.csv');
-    showToast('📤 Capitation exported!');
+    window.showToast('📤 Capitation exported!');
 };
 
 // ============================================
@@ -1895,9 +1922,10 @@ window.exportAnalytics = function() {
         const total = amountData.paid[i] + amountData.denied[i];
         const rate = total > 0 ? ((amountData.denied[i] / total) * 100).toFixed(1) : 0;
         return [label, amountData.paid[i], amountData.denied[i], total, rate];
-    })].map(r=>r.join(',')).join('\n');
+    })].map(r=>r.join(',')).join('
+');
     downloadCSV(csv, `Analytics_${groupBy}.csv`);
-    showToast('📤 Analytics exported!');
+    window.showToast('📤 Analytics exported!');
 };
 
 // ============================================
@@ -1917,7 +1945,7 @@ window.exportFullBackup = function() {
     a.click();
     URL.revokeObjectURL(url);
     logAudit('BACKUP_EXPORT', 'Full system backup exported');
-    showToast('💾 Full backup exported!');
+    window.showToast('💾 Full backup exported!');
 };
 
 window.importFullBackup = function() {
@@ -1946,9 +1974,9 @@ window.importFullBackup = function() {
                 renderNabidhTable();
                 renderEligTable();
                 logAudit('BACKUP_IMPORT', 'Full system backup imported');
-                showToast('📥 Full backup imported successfully!');
+                window.showToast('📥 Full backup imported successfully!');
             } catch(err) {
-                showToast('❌ Invalid backup file');
+                window.showToast('❌ Invalid backup file');
             }
         };
         reader.readAsText(file);
@@ -1982,7 +2010,7 @@ function runDataRetention() {
     if(purged > 0) {
         saveState();
         logAudit('RETENTION_PURGE', `Auto-purged ${purged} records older than 90 days`);
-        showToast(`🧹 Purged ${purged} old records (90-day retention)`);
+        window.showToast(`🧹 Purged ${purged} old records (90-day retention)`);
     }
 }
 
@@ -1994,17 +2022,17 @@ setTimeout(runDataRetention, 1000);
 // ============================================
 window.showBulkAppealModal = function() {
     const deniedClaims = DATA.filter(d => d.status === 'denied');
-    if(deniedClaims.length === 0) { showToast('❌ No denied claims'); return; }
+    if(deniedClaims.length === 0) { window.showToast('❌ No denied claims'); return; }
     
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:700px;margin:auto;max-height:80vh;overflow-y:auto;">
             <h4>📄 Bulk Appeal Generator</h4>
             <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Select claims to generate a combined appeal PDF bundle.</p>
             <div style="display:flex; gap:10px; margin-bottom:15px;">
-                <button class="btn btn-sm" onclick="toggleAllBulk(true)">☑️ Select All</button>
-                <button class="btn btn-sm" onclick="toggleAllBulk(false)">☐ Deselect All</button>
-                <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="toggleByCode('MNEC')">MNEC Only</button>
-                <button class="btn btn-sm" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="toggleByCode('AUTH')">AUTH Only</button>
+                <button class="btn btn-sm" onclick="window.toggleAllBulk(true)">☑️ Select All</button>
+                <button class="btn btn-sm" onclick="window.toggleAllBulk(false)">☐ Deselect All</button>
+                <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.toggleByCode('MNEC')">MNEC Only</button>
+                <button class="btn btn-sm" style="background:rgba(245,158,11,0.2); color:var(--warning);" onclick="window.toggleByCode('AUTH')">AUTH Only</button>
             </div>
             <div style="max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
                 <table style="width:100%;">
@@ -2024,8 +2052,8 @@ window.showBulkAppealModal = function() {
                 </table>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                <button class="btn" style="background:var(--primary-light);" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-pro" onclick="generateBulkAppeals()">📄 Generate Combined PDF</button>
+                <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Cancel</button>
+                <button class="btn btn-pro" onclick="window.generateBulkAppeals()">📄 Generate Combined PDF</button>
             </div>
         </div>
     `;
@@ -2050,7 +2078,7 @@ window.generateBulkAppeals = function() {
         payer: cb.dataset.payer
     }));
     
-    if(selected.length === 0) { showToast('❌ No claims selected'); return; }
+    if(selected.length === 0) { window.showToast('❌ No claims selected'); return; }
     
     try {
         const {jsPDF} = window.jspdf;
@@ -2100,10 +2128,10 @@ window.generateBulkAppeals = function() {
         document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
         saveState();
         logAudit('BULK_APPEAL', `Generated bulk appeal for ${selected.length} claims, AED ${totalAmt.toLocaleString()}`);
-        closeModal();
-        showToast(`📄 Bulk appeal PDF generated for ${selected.length} claims!`);
+        window.closeModal();
+        window.showToast(`📄 Bulk appeal PDF generated for ${selected.length} claims!`);
     } catch(e) {
-        showToast('❌ PDF generation failed');
+        window.showToast('❌ PDF generation failed');
     }
 };
 
@@ -2111,7 +2139,7 @@ window.generateBulkAppeals = function() {
 // COPY CLAIM ID HELPER
 // ============================================
 window.copyClaimId = function(id) {
-    navigator.clipboard.writeText(id).then(() => showToast(`📋 Copied: ${id}`));
+    navigator.clipboard.writeText(id).then(() => window.showToast(`📋 Copied: ${id}`));
 };
 
 // ============================================
@@ -2160,7 +2188,7 @@ window.searchCrosswalk = function() {
     `).join('');
 };
 
-setTimeout(searchCrosswalk, 500);
+setTimeout(window.searchCrosswalk, 500);
 
 }); // End DOMContentLoaded
 </script>
