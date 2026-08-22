@@ -89,6 +89,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <div class="nav-item" onclick="nav('ar',this)">📊 AR Aging</div>
         <div class="nav-item" onclick="nav('capitation',this)">🏦 Capitation Tracker</div>
         <div class="nav-item" onclick="nav('analytics',this)">📈 Advanced Analytics</div>
+        <div class="nav-item" onclick="nav('audit',this)">📋 Audit Trail</div>
     </div>
     
     <div style="padding:15px; margin:15px; background:rgba(255,255,255,0.05); border-radius:10px; font-size:11px;">
@@ -480,6 +481,31 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
             </div>
         </div>
 
+        <div id="page-audit" class="page">
+            <div style="background:var(--bg-card);padding:25px;border-radius:16px;margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+                    <h4 class="card-title">📋 Audit Trail Log</h4>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn" onclick="exportAuditTrail()">📤 Export CSV</button>
+                        <button class="btn" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="clearAuditTrail()">🗑️ Clear Logs</button>
+                    </div>
+                </div>
+                <div style="background:var(--bg-dark);border-radius:12px;overflow:hidden;max-height:600px;overflow-y:auto;">
+                    <table id="auditTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div id="page-upload" class="page">
             <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
                 <h1 style="font-size:50px;">☁️</h1>
@@ -661,6 +687,7 @@ function nav(p, el) {
     if(p==='ar') { refreshAR(); populateARTPAFilter(); }
     if(p==='capitation') renderCapitation();
     if(p==='analytics') { setDefaultDateRange(); window.renderAnalytics(); }
+    if(p==='audit') window.renderAuditTrail();
 }
 
 function logAudit(action, details) {
@@ -731,6 +758,14 @@ function processImportedData(rawData) {
     DATA = rawData.map((row, idx) => {
         const amt = parseFloat(row.Amount || row.Billed || 0);
         const status = (row.Status || '').toLowerCase().includes('denied') ? 'denied' : 'paid';
+        
+        // Parse service date from common column names
+        let serviceDate = null;
+        const dateKeys = ['Date_of_Service', 'Service_Date', 'DOS', 'ServiceDate', 'Date of Service', 'DOS_Date'];
+        for (const k of dateKeys) {
+            if (row[k]) { serviceDate = row[k]; break; }
+        }
+        
         return {
             id: row.ClaimID || row.ID || `IMP-${Math.floor(Math.random()*90000)}`,
             payer: row.Payer || row.TPA || 'Unknown TPA',
@@ -741,12 +776,22 @@ function processImportedData(rawData) {
             batch: row.Batch || Math.floor(Math.random() * 10) + 1,
             assignee: row.Assignee || '',
             cpt: row.CPT || row.ProcedureCode || '',
-            icd: row.ICD || row.DiagnosisCode || ''
+            icd: row.ICD || row.DiagnosisCode || '',
+            serviceDate: serviceDate  // NEW: store parsed date
         };
     }).filter(x => x.amt > 0); 
     
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
+    
+    // AUTO-RUN PRCE-001 CHECK AFTER IMPORT
+    if (CONTRACT_RATES.length > 0) {
+        setTimeout(() => window.runPRCECheck(), 500);
+    }
+    
+    // AUTO-CALC CAPITATION UTILIZATION
+    updateCapitationFromClaims();
+    
     window.showToast('✅ De-identified Data Imported Successfully!');
 }
 
@@ -892,8 +937,7 @@ window.exportAudit = function() {
         csvRows.push(rowData.join(','));
     });
     
-    const csvString = csvRows.join('
-');
+    const csvString = csvRows.join('\n');
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -988,7 +1032,7 @@ window.renderChart = function() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     if(window.c) window.c.destroy();
     
-    // Date range filter (using batch as proxy since no real dates in demo data)
+    // Date range filter - uses serviceDate if present, else falls back to batch
     const startDate = document.getElementById('chartStartDate')?.value;
     const endDate = document.getElementById('chartEndDate')?.value;
     
@@ -996,6 +1040,20 @@ window.renderChart = function() {
     for (let i = 1; i <= 10; i++) batchStats[i] = { total: 0, paid: 0 };
     
     DATA.forEach(row => {
+        // Use serviceDate if available, else derive from batch (1=oldest, 10=newest)
+        let rowDate;
+        if (row.serviceDate) {
+            rowDate = new Date(row.serviceDate);
+        } else {
+            // Fallback: batch 1 = ~90 days ago, batch 10 = today
+            rowDate = new Date();
+            rowDate.setDate(rowDate.getDate() - (11 - row.batch) * 9);
+        }
+        
+        // Filter by date range if set
+        if (startDate && rowDate < new Date(startDate)) return;
+        if (endDate && rowDate > new Date(endDate)) return;
+        
         if (row.batch >= 1 && row.batch <= 10) {
             batchStats[row.batch].total++;
             if (row.status === 'paid') batchStats[row.batch].paid++;
@@ -1269,8 +1327,7 @@ window.exportNabidh = function() {
         const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24));
         return [x.batchId, x.clearinghouse, x.submitted, x.claimCount, x.status, x.ackRef, x.deadline, daysLeft, x.notes.replace(/,/g, ';')];
     });
-    const csv = [headers, ...rows].map(r => r.join(',')).join('
-');
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1458,8 +1515,7 @@ window.runPRCECheck = function() {
 window.exportContracts = function() {
     if(CONTRACT_RATES.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'CPT', 'Rate_AED', 'Effective', 'Expiry', 'Notes'];
-    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('
-');
+    const csv = [headers, ...CONTRACT_RATES.map(c => [c.tpa, c.cpt, c.rate, c.effective, c.expiry, c.notes.replace(/,/g,';')])].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, 'TPA_Contract_Rates.csv');
     window.showToast('📤 Contract rates exported!');
 };
@@ -1474,8 +1530,7 @@ window.handleContractImport = function(e) {
     const reader = new FileReader();
     reader.onload = function(evt) {
         const csv = evt.target.result;
-        const lines = csv.split('
-').filter(l=>l.trim());
+        const lines = csv.split('\n').filter(l=>l.trim());
         const headers = lines[0].split(',');
         let added = 0;
         for(let i=1;i<lines.length;i++) {
@@ -1634,8 +1689,7 @@ window.exportAR = function() {
     });
     
     const headers = ['TPA', '0-30_Days', '31-60_Days', '61-90_Days', '90+_Days', 'Total'];
-    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('
-');
+    const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, 'AR_Aging_Report.csv');
     window.showToast('📤 AR Aging exported!');
 };
@@ -1760,11 +1814,35 @@ window.deleteCapitation = function(id) {
 window.exportCapitation = function() {
     if(CAPITATION_BUDGETS.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'Type', 'Period_Start', 'Period_End', 'Annual_Cap_AED', 'YTD_Utilized_AED', 'Remaining_AED', 'Pct_Used'];
-    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('
-');
+    const csv = [headers, ...CAPITATION_BUDGETS.map(c => [c.tpa, c.type, c.periodStart, c.periodEnd, c.annualCap, c.utilized, c.annualCap-c.utilized, ((c.utilized/c.annualCap)*100).toFixed(1)])].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, 'Capitation_Budgets.csv');
     window.showToast('📤 Capitation exported!');
 };
+
+function updateCapitationFromClaims() {
+    if (CAPITATION_BUDGETS.length === 0) return;
+    
+    // Sum paid claims per TPA that match capitation budgets
+    const paidByTpa = {};
+    DATA.filter(d => d.status === 'paid').forEach(d => {
+        paidByTpa[d.payer] = (paidByTpa[d.payer] || 0) + d.amt;
+    });
+    
+    let updated = false;
+    CAPITATION_BUDGETS.forEach(budget => {
+        const tpaPaid = paidByTpa[budget.tpa] || 0;
+        if (tpaPaid > 0 && tpaPaid !== budget.utilized) {
+            budget.utilized = tpaPaid;
+            updated = true;
+        }
+    });
+    
+    if (updated) {
+        renderCapitation();
+        saveState();
+        logAudit('CAPITATION_AUTO_UPDATE', 'Utilization recalculated from paid claims');
+    }
+}
 
 // ============================================
 // ADVANCED ANALYTICS
@@ -1922,10 +2000,37 @@ window.exportAnalytics = function() {
         const total = amountData.paid[i] + amountData.denied[i];
         const rate = total > 0 ? ((amountData.denied[i] / total) * 100).toFixed(1) : 0;
         return [label, amountData.paid[i], amountData.denied[i], total, rate];
-    })].map(r=>r.join(',')).join('
-');
+    })].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, `Analytics_${groupBy}.csv`);
     window.showToast('📤 Analytics exported!');
+};
+
+window.renderAuditTrail = function() {
+    document.getElementById('auditBody').innerHTML = AUDIT_TRAIL.map(a => `
+        <tr>
+            <td>${new Date(a.timestamp).toLocaleString()}</td>
+            <td><span class="badge badge-${a.action.includes('DELETE')||a.action.includes('PURGE')?'danger':a.action.includes('IMPORT')?'success':'accent'}">${a.action}</span></td>
+            <td style="font-size:11px;color:var(--text-secondary);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.details}</td>
+            <td>${a.user}</td>
+        </tr>
+    `).join('');
+};
+
+window.exportAuditTrail = function() {
+    if(AUDIT_TRAIL.length === 0) { window.showToast('❌ No audit data'); return; }
+    const headers = ['Timestamp', 'Action', 'Details', 'User'];
+    const csv = [headers, ...AUDIT_TRAIL.map(a => [a.timestamp, a.action, a.details.replace(/,/g,';'), a.user])].map(r=>r.join(',')).join('\n');
+    downloadCSV(csv, 'Audit_Trail_Export.csv');
+    window.showToast('📤 Audit trail exported!');
+};
+
+window.clearAuditTrail = function() {
+    if(confirm('Clear all audit logs? This cannot be undone.')) {
+        AUDIT_TRAIL = [];
+        saveState();
+        renderAuditTrail();
+        window.showToast('🗑️ Audit trail cleared');
+    }
 };
 
 // ============================================
