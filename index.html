@@ -605,7 +605,11 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <p>Upload Excel (XLSX) or CSV Remittances</p>
                 <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" style="display:none">
             </div>
-            <button class="btn btn-pro" style="margin:20px auto;" onclick="loadSample()">Load Official UAE Network Sample</button>
+            <div style="margin-top:15px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn btn-pro" onclick="loadSample()">Load Official UAE Network Sample</button>
+                <button class="btn" onclick="document.getElementById('fileIn').click()" style="background:var(--accent);">📁 Direct File Select</button>
+                <button class="btn" onclick="testLibraries()" style="background:var(--warning);">🔧 Test Libraries</button>
+            </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
                 <button class="btn" onclick="exportFullBackup()">💾 Export Full Backup (JSON)</button>
                 <button class="btn" onclick="importFullBackup()">📥 Import Full Backup (JSON)</button>
@@ -669,6 +673,26 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Welcome modal dismissed');
         }
     };
+
+window.testLibraries = function() {
+    console.log('Testing libraries...');
+    console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+    console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+    console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+    console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
+    console.log('fileIn element:', document.getElementById('fileIn') ? '✅ FOUND' : '❌ MISSING');
+    
+    const msg = [
+        'PapaParse: ' + (typeof Papa !== 'undefined' ? '✅' : '❌'),
+        'Chart.js: ' + (typeof Chart !== 'undefined' ? '✅' : '❌'),
+        'XLSX: ' + (typeof XLSX !== 'undefined' ? '✅' : '❌'),
+        'jsPDF: ' + (typeof jspdf !== 'undefined' ? '✅' : '❌'),
+        'fileIn: ' + (document.getElementById('fileIn') ? '✅' : '❌')
+    ].join('\n');
+    
+    window.showToast('Check console (F12) for library status');
+    alert('Library Status:\n' + msg);
+};
 
     // File input handler with debugging
     const fileIn = document.getElementById('fileIn');
