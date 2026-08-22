@@ -599,15 +599,25 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         </div>
 
         <div id="page-upload" class="page">
-            <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
+            <div style="border:2px dashed var(--border);padding:80px;text-align:center;border-radius:20px;background:var(--bg-card);">
                 <h1 style="font-size:50px;">☁️</h1>
                 <h2>Import Clinic Data</h2>
-                <p>Upload Excel (XLSX) or CSV Remittances</p>
-                <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" style="display:none">
+                <p style="color:var(--text-secondary);margin-bottom:20px;">Upload Excel (XLSX) or CSV Remittances</p>
+                
+                <label style="display:inline-block;cursor:pointer;">
+                    <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" 
+                           style="display:none"
+                           onchange="console.log('File selected via label:', this.files[0]?.name)">
+                    <span style="display:inline-block;padding:15px 30px;background:var(--gradient-pro);color:white;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;transition:transform 0.2s;"
+                          onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        📁 Choose File (CSV/XLSX)
+                    </span>
+                </label>
+                
+                <p style="margin-top:15px;color:var(--text-secondary);font-size:13px;">or drag & drop file above</p>
             </div>
             <div style="margin-top:15px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
                 <button class="btn btn-pro" onclick="loadSample()">Load Official UAE Network Sample</button>
-                <button class="btn" onclick="document.getElementById('fileIn').click()" style="background:var(--accent);">📁 Direct File Select</button>
                 <button class="btn" onclick="testLibraries()" style="background:var(--warning);">🔧 Test Libraries</button>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
@@ -746,6 +756,16 @@ window.testLibraries = function() {
         });
     } else {
         console.error('fileIn element NOT FOUND!');
+    }
+
+    // Also add direct onchange handler as backup
+    const fileInDirect = document.getElementById('fileIn');
+    if (fileInDirect && !fileInDirect.hasAttribute('data-listener-attached')) {
+        fileInDirect.setAttribute('data-listener-attached', 'true');
+        fileInDirect.addEventListener('change', function(e) {
+            console.log('Direct fileIn change:', e.target.files[0]?.name);
+            // The main handler above will also fire, but this ensures it works even if label click fails
+        });
     }
 
     // Auto-dismiss welcome modal after 5 seconds if not dismissed
