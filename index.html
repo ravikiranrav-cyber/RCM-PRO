@@ -117,10 +117,36 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <div class="bench-selector">
             <span>📍 <strong>Clinic Specialty:</strong></span>
             <select id="specSelect" onchange="updateBenchmark()" style="background:#0f172a;color:white;border:1px solid var(--border);padding:5px;border-radius:5px;">
-                <option value="gp">GP / EBP Center</option>
-                <option value="dental">Dental</option>
-                <option value="ortho">Ortho / Physio</option>
-                <option value="derma">Dermatology</option>
+                <optgroup label="🏥 Primary Care">
+                    <option value="gp">General Practice / EBP Center</option>
+                    <option value="pediatrics">Pediatrics</option>
+                    <option value="internal">Internal Medicine</option>
+                    <option value="polyclinic">Multi-Specialty / Polyclinic</option>
+                </optgroup>
+                <optgroup label="🫀 Medical Specialties">
+                    <option value="cardiology">Cardiology</option>
+                    <option value="gastro">Gastroenterology</option>
+                    <option value="oncology">Oncology / Hematology</option>
+                    <option value="neuro">Neurology</option>
+                    <option value="psych">Psychiatry / Mental Health</option>
+                    <option value="derma">Dermatology</option>
+                </optgroup>
+                <optgroup label="🔪 Surgical Specialties">
+                    <option value="ortho">Orthopedics / Sports Medicine</option>
+                    <option value="obgyn">OB/GYN</option>
+                    <option value="urology">Urology</option>
+                    <option value="ent">ENT</option>
+                    <option value="asc">Day Surgery / ASC</option>
+                </optgroup>
+                <optgroup label="🦷 Dental & Allied">
+                    <option value="dental">Dental / Oral Surgery</option>
+                    <option value="physio">Physiotherapy / Rehab</option>
+                </optgroup>
+                <optgroup label="🔬 Diagnostic">
+                    <option value="radiology">Radiology / Imaging</option>
+                    <option value="lab">Laboratory / Pathology</option>
+                    <option value="ophthalmo">Ophthalmology</option>
+                </optgroup>
             </select>
             <div id="benchInfo" style="font-size:12px;color:var(--text-secondary);">Market Benchmark: 18%</div>
         </div>
@@ -573,7 +599,118 @@ let DATA = [];
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
 let ELIG_LOGS = [];
-const BENCHMARKS = { gp: 18, dental: 22, ortho: 15, derma: 28 };
+const BENCHMARKS = {
+    gp: 18, pediatrics: 16, internal: 20, cardiology: 22,
+    gastro: 24, oncology: 28, ortho: 15, derma: 28,
+    dental: 22, obgyn: 18, ophthalmo: 20, ent: 17,
+    neuro: 22, urology: 20, psych: 25, physio: 14,
+    radiology: 12, lab: 10, asc: 18, polyclinic: 19
+};
+
+// Expected denial code frequency per specialty (for "unusual denial" flagging)
+// HIGH = common for this specialty, MEDIUM = occasional, LOW = rare/unusual
+const SPECIALTY_DENIAL_PROFILE = {
+    gp: {
+        HIGH: ['ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'PRCE-001', 'AUTH-001', 'BENX-001'],
+        MEDIUM: ['CODE-010', 'CODE-014', 'AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008']
+    },
+    pediatrics: {
+        HIGH: ['CODE-014', 'ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'VFC', 'BENX-001'],
+        MEDIUM: ['AUTH-001', 'AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002'],
+        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'NCOV-001']
+    },
+    internal: {
+        HIGH: ['MNEC-003', 'CODE-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'PRCE-001', 'TIME-001', 'BENX-001', 'COPY-001'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012']
+    },
+    cardiology: {
+        HIGH: ['AUTH-001', 'AUTH-002', 'PRCE-008', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
+        MEDIUM: ['AUTH-004', 'CODE-010', 'MNEC-005', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    gastro: {
+        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
+        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    oncology: {
+        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-001', 'BENX-001', 'TIME-001', 'ELIG-001', 'CODE-001'],
+        MEDIUM: ['AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014', 'COPY-001']
+    },
+    ortho: {
+        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
+    },
+    derma: {
+        HIGH: ['MNEC-003', 'NCOV-001', 'CODE-001', 'AUTH-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001'],
+        MEDIUM: ['MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'AUTH-002', 'CODE-014']
+    },
+    dental: {
+        HIGH: ['BENX-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'CODE-001', 'COPY-001', 'TIME-001', 'MNEC-003'],
+        MEDIUM: ['AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
+    },
+    obgyn: {
+        HIGH: ['AUTH-001', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
+    },
+    ophthalmo: {
+        HIGH: ['PRCE-008', 'AUTH-001', 'PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001'],
+        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    ent: {
+        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
+        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    neuro: {
+        HIGH: ['MNEC-003', 'AUTH-001', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005', 'PRCE-008'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    urology: {
+        HIGH: ['AUTH-001', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    psych: {
+        HIGH: ['BENX-001', 'MNEC-003', 'CODE-001', 'TIME-001', 'ELIG-001', 'COPY-001', 'AUTH-001', 'PRCE-001'],
+        MEDIUM: ['MNEC-005', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'AUTH-002'],
+        LOW: ['CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
+    },
+    physio: {
+        HIGH: ['MNEC-005', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
+        MEDIUM: ['AUTH-001', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'PRCE-008'],
+        LOW: ['CLAI-012', 'CODE-010', 'CODE-014', 'AUTH-002']
+    },
+    radiology: {
+        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'PRCE-008', 'DUPL-002'],
+        MEDIUM: ['AUTH-001', 'MNEC-005', 'BENX-001', 'COPY-001', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
+    },
+    lab: {
+        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'DUPL-002', 'BENX-001'],
+        MEDIUM: ['AUTH-001', 'MNEC-005', 'PRCE-008', 'COPY-001', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
+    },
+    asc: {
+        HIGH: ['PRCE-008', 'AUTH-001', 'AUTH-002', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
+        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
+    },
+    polyclinic: {
+        HIGH: ['ELIG-001', 'ELIG-005', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'COPY-001', 'AUTH-001', 'BENX-001'],
+        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
+        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
+    }
+};
 
 const DENIAL_MAP = {
     'AUTH-001': 'Prior approval is required and was not obtained.',
@@ -931,11 +1068,13 @@ window.loadSample = function(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
     const mockCpts=['99213', '99214', '93000', '83036'];
+    const specialties = Object.keys(BENCHMARKS);
     
     let tmp=[];
     for(let i=0;i<n;i++){
         const amt=Math.floor(Math.random()*1200)+100;
         const status=Math.random()>0.7?'denied':'paid';
+        const specialty = specialties[Math.floor(Math.random()*specialties.length)];
         tmp.push({
             id: 'UAE-'+Math.floor(Math.random()*90000),
             payer: tpals[Math.floor(Math.random()*tpals.length)],
@@ -946,10 +1085,14 @@ window.loadSample = function(n=100) {
             batch: Math.floor(Math.random() * 10) + 1,
             assignee: '',
             cpt: mockCpts[Math.floor(Math.random()*mockCpts.length)],
-            icd: 'I50.9'
+            icd: 'I50.9',
+            specialty: specialty
         });
     }
     DATA=tmp;
+    
+    // Set default specialty to gp for demo
+    document.getElementById('specSelect').value = 'gp';
     
     // Sample NABIDH logs
     NABIDH_LOGS = [
@@ -1085,6 +1228,8 @@ window.exportAudit = function() {
 
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
+    const currentSpecialty = document.getElementById('specSelect')?.value || 'gp';
+    const specialtyProfile = SPECIALTY_DENIAL_PROFILE[currentSpecialty] || { HIGH: [], MEDIUM: [], LOW: [] };
     
     // Aggregate by code for specific recommendations
     const codeStats = {};
@@ -1094,6 +1239,16 @@ function renderRecs() {
         codeStats[d.code].count++;
         codeStats[d.code].amount += d.amt;
         codeStats[d.code].codes.push(d);
+    });
+    
+    // DETECT UNUSUAL DENIALS FOR THIS SPECIALTY
+    const unusualDenials = [];
+    Object.entries(codeStats).forEach(([code, data]) => {
+        const expectedLevel = specialtyProfile.HIGH.includes(code) ? 'HIGH' : 
+                             specialtyProfile.MEDIUM.includes(code) ? 'MEDIUM' : 'LOW';
+        if (expectedLevel === 'LOW' && data.count > 0) {
+            unusualDenials.push({ code, count: data.count, amount: data.amount, reason: `Rare for ${currentSpecialty.toUpperCase()}` });
+        }
     });
     
     // Also keep category aggregates for high-level view
@@ -1120,6 +1275,19 @@ function renderRecs() {
     if (preAuth > 3) list.push({title:'🔐 Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
     if (topPhys !== 'N/A') list.push({title:'👨‍⚕️ Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
 
+    // UNUSUAL DENIALS ALERT (NEW)
+    if (unusualDenials.length > 0) {
+        list.unshift({
+            title: `⚠️ Unusual Denials for ${currentSpecialty.toUpperCase()}`,
+            impact: `${unusualDenials.length} code(s) flagged`,
+            body: unusualDenials.map(u => 
+                `<strong>${u.code}</strong> (${u.count} claims, AED ${u.amount.toLocaleString()}) — ${u.reason}. <em>Verify specialty coding accuracy or check for misclassified claims.</em>`
+            ).join('<br>'),
+            type: 'warning',
+            isUnusual: true
+        });
+    }
+
     // CODE-SPECIFIC RECOMMENDATIONS (NEW)
     const sortedCodes = Object.entries(codeStats)
         .sort((a, b) => b[1].amount - a[1].amount)
@@ -1130,6 +1298,14 @@ function renderRecs() {
     }
     
     document.getElementById('recList').innerHTML = list.map(x => {
+        if (x.isUnusual) {
+            return `
+                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--warning);margin-bottom:15px;background:rgba(245,158,11,0.05);">
+                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-warning">${x.type.toUpperCase()}</span></div>
+                    <div style="margin-top:10px;font-size:13px;line-height:1.8;color:var(--text-secondary)">${x.body}</div>
+                </div>
+            `;
+        }
         if (x.isCodeSection) {
             return `
                 <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:15px;">
@@ -1138,10 +1314,12 @@ function renderRecs() {
                         ${x.codes.map(([code, data]) => {
                             const rec = DENIAL_RECOMMENDATIONS[code] || { clinical: '', admin: 'Review denial reason and appeal with supporting documentation.', prevention: '', urgency: 'medium' };
                             const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
+                            // Flag if unusual for this specialty
+                            const isUnusual = specialtyProfile.LOW.includes(code) ? ' ⚠️ <span class="badge badge-warning">UNUSUAL FOR THIS SPECIALTY</span>' : '';
                             return `
                                 <div style="background:var(--bg-dark);padding:15px;border-radius:8px;margin-bottom:10px;border-left:3px solid ${urgencyColor};">
                                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                                        <strong style="color:var(--accent);">${code}</strong>
+                                        <strong style="color:var(--accent);">${code}${isUnusual}</strong>
                                         <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};">${rec.urgency.toUpperCase()}</span>
                                     </div>
                                     <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Reason:</strong> ${DENIAL_MAP[code] || 'Unknown'}</div>
