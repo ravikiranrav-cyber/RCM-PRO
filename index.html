@@ -40,22 +40,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-dark);color:va
 .badge-danger{background:rgba(239,68,68,0.2);color:var(--danger);}
 .badge-success{background:rgba(34,197,94,0.2);color:var(--success);}
 .assign-select{background:var(--bg-dark);color:var(--text-primary);border:1px solid var(--border);padding:4px;border-radius:4px;font-size:11px;}
-
-/* UPGRADED TABLE CSS */
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 th { text-align:left; color:var(--text-secondary); font-size:11px; padding:12px; position:sticky; top:0; background:var(--bg-card); z-index:10; border-bottom:2px solid var(--border); }
 td { padding:12px; border-bottom:1px solid var(--border); font-size:13px; transition:0.2s; }
 tbody tr:hover td { background: rgba(56,189,248,0.05); }
-
-/* VISUAL STATUS PILLS */
 .status-paid { background: rgba(34,197,94,0.15); color: var(--success); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; display: inline-block; }
 .status-denied { background: rgba(239,68,68,0.15); color: var(--danger); padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; display: inline-block; }
-
 @media(max-width:1024px){.grid-4{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
-
 <div id="toast" style="position:fixed; bottom:-100px; right:30px; background:var(--success); color:var(--bg-dark); padding:15px 25px; border-radius:10px; font-weight:bold; transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index:10000; box-shadow:0 10px 20px rgba(0,0,0,0.3);">Notification</div>
 
 <div id="welcomeModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,6,23,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
@@ -508,7 +502,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
 
             <div style="background:var(--bg-card);padding:25px;border-radius:16px;margin-top:20px;">
                 <h4 class="card-title">📊 Appeal Success Rate Tracking</h4>
-                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Track appeal outcomes by TPA, denial code, and physician. Optimize appeal effort where success rate is highest.</h4>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Track appeal outcomes by TPA, denial code, and physician. Optimize appeal effort where success rate is highest.</p>
                 <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
                     <button class="btn btn-pro" onclick="renderAppealAnalytics()">🔄 Refresh</button>
                     <button class="btn" onclick="exportAppealAnalytics()">📤 Export CSV</button>
@@ -603,31 +597,23 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
                 <h1 style="font-size:50px;">☁️</h1>
                 <h2>Import Clinic Data</h2>
                 <p style="color:var(--text-secondary);margin-bottom:20px;">Upload Excel (XLSX) or CSV Remittances</p>
-                
-                <!-- Primary: Hidden input with label (most reliable) -->
+
                 <label for="fileIn" style="display:inline-block;cursor:pointer;margin-bottom:10px;">
-                    <input type="file" id="fileIn" accept=".csv, .xlsx, .xls" 
-                           style="display:none"
-                           onchange="console.log('File selected:', this.files[0]?.name); handleFileSelect(this)">
+                    <input type="file" id="fileIn" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSelect(this)">
                     <span style="display:inline-block;padding:15px 30px;background:var(--gradient-pro);color:white;border-radius:10px;font-weight:600;font-size:16px;cursor:pointer;transition:transform 0.2s;box-shadow:0 4px 15px rgba(56,189,248,0.3);"
                           onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                         📁 Choose File (CSV/XLSX)
                     </span>
                 </label>
-                
-                <!-- Fallback: Visible file input (always works) -->
+
                 <div style="margin-top:15px;padding:15px;background:var(--bg-dark);border-radius:10px;border:1px solid var(--border);">
-                    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">If button above doesn't work, use this:</p>
-                    <input type="file" id="fileInFallback" accept=".csv, .xlsx, .xls" 
-                           style="display:block;width:100%;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:white;"
-                           onchange="console.log('Fallback file selected:', this.files[0]?.name); handleFileSelect(this)">
+                    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:10px;">If the button above doesn't work, use this:</p>
+                    <input type="file" id="fileInFallback" accept=".csv,.xlsx,.xls" style="display:block;width:100%;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:white;" onchange="handleFileSelect(this)">
                 </div>
-                
-                <p style="margin-top:15px;color:var(--text-secondary);font-size:13px;">or drag & drop file above</p>
             </div>
             <div style="margin-top:15px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
                 <button class="btn btn-pro" onclick="loadSample()">Load Official UAE Network Sample</button>
-                <button class="btn" onclick="testLibraries()" style="background:var(--warning);">🔧 Test Libraries</button>
+                <button class="btn" style="background:var(--warning);" onclick="testLibraries()">🔧 Test Libraries</button>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
                 <button class="btn" onclick="exportFullBackup()">💾 Export Full Backup (JSON)</button>
@@ -660,31 +646,22 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
 </div>
 
 <script>
-// Ensure DOM ready before initializing
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM ready, initializing RCM Pro...');
-
-    // Verify critical elements exist
     const critical = ['fileIn', 'analysisBody', 'mainChart', 'sideRecovered'];
     critical.forEach(id => {
         if (!document.getElementById(id)) console.warn('Missing element:', id);
     });
-
-    // Global error handler - catch and display any JS errors
     window.addEventListener('error', function(e) {
         console.error('RCM Pro Error:', e.message, 'at', e.filename, ':', e.lineno);
         if (typeof window.showToast === 'function') {
             window.showToast('⚠️ Error: ' + e.message);
         }
     });
-
-    // Check CDN libraries loaded
     console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅' : '❌ MISSING');
     console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅' : '❌ MISSING');
     console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
     console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
-
-    // Dismiss welcome modal
     window.dismissWelcome = function() {
         const modal = document.getElementById('welcomeModal');
         if (modal) {
@@ -693,120 +670,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-window.testLibraries = function() {
-    console.log('Testing libraries...');
-    console.log('PapaParse:', typeof Papa !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-    console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-    console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-    console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅ LOADED' : '❌ MISSING');
-    console.log('fileIn element:', document.getElementById('fileIn') ? '✅ FOUND' : '❌ MISSING');
-    
-    const msg = [
-        'PapaParse: ' + (typeof Papa !== 'undefined' ? '✅' : '❌'),
-        'Chart.js: ' + (typeof Chart !== 'undefined' ? '✅' : '❌'),
-        'XLSX: ' + (typeof XLSX !== 'undefined' ? '✅' : '❌'),
-        'jsPDF: ' + (typeof jspdf !== 'undefined' ? '✅' : '❌'),
-        'fileIn: ' + (document.getElementById('fileIn') ? '✅' : '❌')
-    ].join('\n');
-    
-    window.showToast('Check console (F12) for library status');
-    alert('Library Status:\n' + msg);
-};
+    window.testLibraries = function() {
+        const status = {
+            PapaParse: typeof Papa !== 'undefined',
+            'Chart.js': typeof Chart !== 'undefined',
+            XLSX: typeof XLSX !== 'undefined',
+            jsPDF: typeof jspdf !== 'undefined',
+            fileIn: !!document.getElementById('fileIn')
+        };
+        console.log('Library status:', status);
+        const msg = Object.entries(status).map(([k, v]) => `${k}: ${v ? '✅' : '❌'}`).join('\n');
+        window.showToast('Check console (F12) for library status');
+        alert('Library Status:\n' + msg);
+    };
 
-    // File input handler with debugging
-    const fileIn = document.getElementById('fileIn');
-    console.log('fileIn element found:', !!fileIn);
-    
-    if (fileIn) {
-        fileIn.addEventListener('change', function(e) {
-            console.log('fileIn change event fired');
-            const file = e.target.files[0];
-            console.log('File selected:', file?.name, file?.type, file?.size);
-            if (!file) return;
-            
-            // Add quick header check for CSV files
-            if (file.name.endsWith('.csv')) {
-                console.log('Parsing CSV with PapaParse...');
-                Papa.parse(file, {
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        console.log('PapaParse complete:', results.data?.length, 'rows,', results.errors?.length, 'errors');
-                        if (results.errors.length > 0) {
-                             console.warn("CSV Parsing Errors:", results.errors);
-                        }
-                        const scrubbedData = scrubPHIAdvanced(results.data);
-                        logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
-                        processImportedData(scrubbedData);
-                    }
-                });
-            } else {
-                console.log('Reading Excel file with XLSX...');
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    console.log('FileReader onload, parsing with XLSX...');
-                    try {
-                        const data = evt.target.result;
-                        const wb = XLSX.read(data, { type: 'array' });
-                        const wsname = wb.SheetNames[0];
-                        const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-                        console.log('XLSX parsed:', rawParsedData?.length, 'rows');
-                        
-                        const scrubbedData = scrubPHIAdvanced(rawParsedData);
-                        logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
-                        processImportedData(scrubbedData);
-                    } catch (err) {
-                        console.error('XLSX parse error:', err);
-                        window.showToast('❌ Excel parse error: ' + err.message);
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-    } else {
-        console.error('fileIn element NOT FOUND!');
-    }
-
-    // Also add direct onchange handler as backup
-    const fileInDirect = document.getElementById('fileIn');
-    if (fileInDirect && !fileInDirect.hasAttribute('data-listener-attached')) {
-        fileInDirect.setAttribute('data-listener-attached', 'true');
-        fileInDirect.addEventListener('change', function(e) {
-            console.log('Direct fileIn change:', e.target.files[0]?.name);
-        });
-    }
-
-    // Also attach to fallback input
-    const fileInFallback = document.getElementById('fileInFallback');
-    if (fileInFallback) {
-        fileInFallback.addEventListener('change', function(e) {
-            console.log('Fallback fileIn change:', e.target.files[0]?.name);
-        });
-    }
-
-    // Unified file handler
+    // SINGLE unified file handler — used by both #fileIn and #fileInFallback via inline onchange.
+    // Do NOT also attach addEventListener('change', ...) to these inputs: a second listener
+    // firing on the same event, combined with clearing input.value below, causes unreliable/duplicate imports.
     window.handleFileSelect = function(input) {
         const file = input.files[0];
-        console.log('handleFileSelect called:', file?.name, file?.type, file?.size);
+        console.log('handleFileSelect:', file?.name, file?.type, file?.size);
         if (!file) return;
-        
-        // Add quick header check for CSV files
-        if (file.name.endsWith('.csv')) {
+        const name = file.name.toLowerCase();
+        if (name.endsWith('.csv')) {
             console.log('Parsing CSV with PapaParse...');
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
                     console.log('PapaParse complete:', results.data?.length, 'rows,', results.errors?.length, 'errors');
-                    if (results.errors.length > 0) {
-                         console.warn("CSV Parsing Errors:", results.errors);
-                    }
+                    if (results.errors.length > 0) { console.warn('CSV Parsing Errors:', results.errors); }
                     const scrubbedData = scrubPHIAdvanced(results.data);
                     logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
                     processImportedData(scrubbedData);
+                },
+                error: function(err) {
+                    console.error('PapaParse error:', err);
+                    window.showToast('❌ CSV parse error: ' + err.message);
                 }
             });
-        } else {
+        } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
             console.log('Reading Excel file with XLSX...');
             const reader = new FileReader();
             reader.onload = function(evt) {
@@ -817,7 +720,6 @@ window.testLibraries = function() {
                     const wsname = wb.SheetNames[0];
                     const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
                     console.log('XLSX parsed:', rawParsedData?.length, 'rows');
-                    
                     const scrubbedData = scrubPHIAdvanced(rawParsedData);
                     logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
                     processImportedData(scrubbedData);
@@ -826,14 +728,20 @@ window.testLibraries = function() {
                     window.showToast('❌ Excel parse error: ' + err.message);
                 }
             };
+            reader.onerror = function(err) {
+                console.error('FileReader error:', err);
+                window.showToast('❌ Could not read file');
+            };
             reader.readAsArrayBuffer(file);
+        } else {
+            window.showToast('❌ Unsupported file type — use .csv, .xlsx, or .xls');
         }
-        
-        // Clear the input so same file can be re-uploaded
+        // Clear so the same file can be re-selected later; safe now since only one
+        // listener (this function) ever touches the input.
         input.value = '';
     };
 
-    // Auto-dismiss welcome modal after 5 seconds if not dismissed
+    if (!document.getElementById('fileIn')) console.error('fileIn element NOT FOUND!');
     setTimeout(() => {
         const modal = document.getElementById('welcomeModal');
         if (modal && modal.style.display !== 'none') {
@@ -841,8 +749,6 @@ window.testLibraries = function() {
             modal.style.display = 'none';
         }
     }, 5000);
-
-    // Click outside modal to dismiss
     const welcomeModal = document.getElementById('welcomeModal');
     if (welcomeModal) {
         welcomeModal.addEventListener('click', (e) => {
@@ -852,8 +758,6 @@ window.testLibraries = function() {
             }
         });
     }
-
-    // Escape key to dismiss
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             const modal = document.getElementById('welcomeModal');
@@ -863,7 +767,6 @@ window.testLibraries = function() {
             }
         }
     });
-// Global state variables (must be at top level for all functions)
 let DATA = [];
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
@@ -875,112 +778,28 @@ const BENCHMARKS = {
     neuro: 22, urology: 20, psych: 25, physio: 14,
     radiology: 12, lab: 10, asc: 18, polyclinic: 19
 };
-
-// Expected denial code frequency per specialty (for "unusual denial" flagging)
-// HIGH = common for this specialty, MEDIUM = occasional, LOW = rare/unusual
 const SPECIALTY_DENIAL_PROFILE = {
-    gp: {
-        HIGH: ['ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'PRCE-001', 'AUTH-001', 'BENX-001'],
-        MEDIUM: ['CODE-010', 'CODE-014', 'AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008']
-    },
-    pediatrics: {
-        HIGH: ['CODE-014', 'ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'VFC', 'BENX-001'],
-        MEDIUM: ['AUTH-001', 'AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'NCOV-001']
-    },
-    internal: {
-        HIGH: ['MNEC-003', 'CODE-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'PRCE-001', 'TIME-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012']
-    },
-    cardiology: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'PRCE-008', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'CODE-010', 'MNEC-005', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    gastro: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    oncology: {
-        HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-001', 'BENX-001', 'TIME-001', 'ELIG-001', 'CODE-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014', 'COPY-001']
-    },
-    ortho: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
-    },
-    derma: {
-        HIGH: ['MNEC-003', 'NCOV-001', 'CODE-001', 'AUTH-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001'],
-        MEDIUM: ['MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'AUTH-002', 'CODE-014']
-    },
-    dental: {
-        HIGH: ['BENX-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'CODE-001', 'COPY-001', 'TIME-001', 'MNEC-003'],
-        MEDIUM: ['AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
-    },
-    obgyn: {
-        HIGH: ['AUTH-001', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    ophthalmo: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    ent: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    neuro: {
-        HIGH: ['MNEC-003', 'AUTH-001', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005', 'PRCE-008'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    urology: {
-        HIGH: ['AUTH-001', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    psych: {
-        HIGH: ['BENX-001', 'MNEC-003', 'CODE-001', 'TIME-001', 'ELIG-001', 'COPY-001', 'AUTH-001', 'PRCE-001'],
-        MEDIUM: ['MNEC-005', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'AUTH-002'],
-        LOW: ['CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014']
-    },
-    physio: {
-        HIGH: ['MNEC-005', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'],
-        MEDIUM: ['AUTH-001', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'PRCE-008'],
-        LOW: ['CLAI-012', 'CODE-010', 'CODE-014', 'AUTH-002']
-    },
-    radiology: {
-        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'PRCE-008', 'DUPL-002'],
-        MEDIUM: ['AUTH-001', 'MNEC-005', 'BENX-001', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    lab: {
-        HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'DUPL-002', 'BENX-001'],
-        MEDIUM: ['AUTH-001', 'MNEC-005', 'PRCE-008', 'COPY-001', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014']
-    },
-    asc: {
-        HIGH: ['PRCE-008', 'AUTH-001', 'AUTH-002', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'],
-        MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014']
-    },
-    polyclinic: {
-        HIGH: ['ELIG-001', 'ELIG-005', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'COPY-001', 'AUTH-001', 'BENX-001'],
-        MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'],
-        LOW: ['MNEC-004', 'CLAI-012', 'CODE-014']
-    }
+    gp: { HIGH: ['ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'PRCE-001', 'AUTH-001', 'BENX-001'], MEDIUM: ['CODE-010', 'CODE-014', 'AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008'] },
+    pediatrics: { HIGH: ['CODE-014', 'ELIG-001', 'ELIG-005', 'COPY-001', 'CODE-001', 'TIME-001', 'MNEC-003', 'VFC', 'BENX-001'], MEDIUM: ['AUTH-001', 'AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002'], LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'NCOV-001'] },
+    internal: { HIGH: ['MNEC-003', 'CODE-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'PRCE-001', 'TIME-001', 'BENX-001', 'COPY-001'], MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012'] },
+    cardiology: { HIGH: ['AUTH-001', 'AUTH-002', 'PRCE-008', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'], MEDIUM: ['AUTH-004', 'CODE-010', 'MNEC-005', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    gastro: { HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'], MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    oncology: { HIGH: ['AUTH-001', 'AUTH-002', 'MNEC-003', 'PRCE-001', 'BENX-001', 'TIME-001', 'ELIG-001', 'CODE-001'], MEDIUM: ['AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014', 'COPY-001'] },
+    ortho: { HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'], MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-014'] },
+    derma: { HIGH: ['MNEC-003', 'NCOV-001', 'CODE-001', 'AUTH-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001'], MEDIUM: ['MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'AUTH-002', 'CODE-014'] },
+    dental: { HIGH: ['BENX-001', 'AUTH-001', 'ELIG-001', 'ELIG-005', 'CODE-001', 'COPY-001', 'TIME-001', 'MNEC-003'], MEDIUM: ['AUTH-002', 'PRCE-001', 'MNEC-005', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014'] },
+    obgyn: { HIGH: ['AUTH-001', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'], MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'PRCE-008', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014'] },
+    ophthalmo: { HIGH: ['PRCE-008', 'AUTH-001', 'PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001'], MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    ent: { HIGH: ['PRCE-008', 'AUTH-001', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'], MEDIUM: ['AUTH-002', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    neuro: { HIGH: ['MNEC-003', 'AUTH-001', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005', 'PRCE-008'], MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    urology: { HIGH: ['AUTH-001', 'MNEC-003', 'PRCE-008', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'MNEC-005'], MEDIUM: ['AUTH-002', 'AUTH-004', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    psych: { HIGH: ['BENX-001', 'MNEC-003', 'CODE-001', 'TIME-001', 'ELIG-001', 'COPY-001', 'AUTH-001', 'PRCE-001'], MEDIUM: ['MNEC-005', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'AUTH-002'], LOW: ['CLAI-012', 'PRCE-008', 'CODE-010', 'CODE-014'] },
+    physio: { HIGH: ['MNEC-005', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001', 'BENX-001', 'COPY-001'], MEDIUM: ['AUTH-001', 'MNEC-004', 'DUPL-002', 'NCOV-001', 'PRCE-008'], LOW: ['CLAI-012', 'CODE-010', 'CODE-014', 'AUTH-002'] },
+    radiology: { HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'PRCE-008', 'DUPL-002'], MEDIUM: ['AUTH-001', 'MNEC-005', 'BENX-001', 'COPY-001', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014'] },
+    lab: { HIGH: ['PRCE-001', 'CODE-001', 'MNEC-003', 'TIME-001', 'ELIG-001', 'DUPL-002', 'BENX-001'], MEDIUM: ['AUTH-001', 'MNEC-005', 'PRCE-008', 'COPY-001', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-010', 'CODE-014'] },
+    asc: { HIGH: ['PRCE-008', 'AUTH-001', 'AUTH-002', 'MNEC-003', 'CODE-001', 'PRCE-001', 'TIME-001', 'ELIG-001'], MEDIUM: ['AUTH-004', 'MNEC-005', 'CODE-010', 'DUPL-002', 'BENX-001', 'COPY-001'], LOW: ['MNEC-004', 'CLAI-012', 'NCOV-001', 'CODE-014'] },
+    polyclinic: { HIGH: ['ELIG-001', 'ELIG-005', 'CODE-001', 'MNEC-003', 'PRCE-001', 'TIME-001', 'COPY-001', 'AUTH-001', 'BENX-001'], MEDIUM: ['AUTH-002', 'AUTH-004', 'MNEC-005', 'CODE-010', 'PRCE-008', 'DUPL-002', 'NCOV-001'], LOW: ['MNEC-004', 'CLAI-012', 'CODE-014'] }
 };
-
 const DENIAL_MAP = {
     'AUTH-001': 'Prior approval is required and was not obtained.',
     'AUTH-002': 'Claim information is inconsistent with authorized services.',
@@ -1006,148 +825,33 @@ const DENIAL_MAP = {
     'TIME-001': 'Claim Received After Cut-Off Period (Timely Filing).',
     'TIME-003': 'Appeal procedures not followed or time limits not met.'
 };
-
-// SPECIFIC CLINICAL/ADMIN RECOMMENDATIONS PER DENIAL CODE
 const DENIAL_RECOMMENDATIONS = {
-    'MNEC-003': {
-        clinical: 'Compare ICD-10 diagnosis vs CPT procedure — ensure medical necessity link is documented. Add clinical rationale in progress note: "Procedure X indicated due to Diagnosis Y because [clinical reasoning]."',
-        admin: 'Query provider: "Does medical record clearly support necessity of [CPT] for [ICD-10]?" Update record if missing.',
-        prevention: 'Implement smart phrases/templates linking common ICD-10/CPT pairs with necessity language.',
-        urgency: 'high'
-    },
-    'MNEC-004': {
-        clinical: 'Verify if service truly meets emergency criteria (life/limb threat). If not emergency, obtain retro-auth or appeal with "urgent care" justification.',
-        admin: 'Train front desk to flag non-emergency ER visits. Ensure ER physician documents acuity level.',
-        prevention: 'Add ER triage acuity to charge capture workflow.',
-        urgency: 'medium'
-    },
-    'MNEC-005': {
-        clinical: 'Review frequency limits: e.g., E/M 99213 max 1/day, therapy 97110 max 3/week. Document medical necessity for excess units.',
-        admin: 'Set up claim edits to flag units > payer limits before submission.',
-        prevention: 'Build frequency rules into EHR charge capture.',
-        urgency: 'medium'
-    },
-    'PRCE-001': {
-        clinical: '',
-        admin: 'Compare paid amount vs contract rate for this CTP/TPA. Appeal with contract page screenshot showing agreed rate.',
-        prevention: 'Load all TPA contract rates into system; enable auto-flag on import (already built).',
-        urgency: 'high'
-    },
-    'PRCE-008': {
-        clinical: 'Verify if procedures are truly separate (different sites/sessions) or bundled per NCCI. Apply correct modifier (59, XS, 51, 76-79).',
-        admin: 'Use Bundling/NCCI Editor tab to validate CPT pairs before submission.',
-        prevention: 'Integrate NCCI edit check into claim scrubber.',
-        urgency: 'high'
-    },
-    'CODE-001': {
-        clinical: 'Ensure primary ICD-10 is valid, specific (not "unspecified"), and matches clinical picture. Add secondary diagnoses.',
-        admin: 'Coder to review claim before submission — require primary dx validation.',
-        prevention: 'EHR dx validation rules (no R69, no unspecified as primary).',
-        urgency: 'high'
-    },
-    'CODE-010': {
-        clinical: 'Confirm provider specialty matches procedure (e.g., cardiologist doing 93000 OK, dermatologist doing 93000 needs justification).',
-        admin: 'Map provider specialty in system; flag mismatches.',
-        prevention: 'Specialty-procedure mapping table.',
-        urgency: 'medium'
-    },
-    'CODE-014': {
-        clinical: 'Check age/gender edits: e.g., pediatric codes on adults, maternity codes on males. Correct ICD-10 or CPT.',
-        admin: 'Demographic validation in claim scrubber.',
-        prevention: 'EHR age/gender alerts at charge entry.',
-        urgency: 'medium'
-    },
-    'AUTH-001': {
-        clinical: 'Determine if service requires prior auth per TPA policy. If emergency, document acuity for exemption.',
-        admin: 'Pre-auth checklist by CPT/TPA. Flag at scheduling.',
-        prevention: 'Real-time auth check at order entry via TPA portal/API.',
-        urgency: 'high'
-    },
-    'AUTH-002': {
-        clinical: 'Ensure clinical details in auth request match claim (same CPT, ICD, units, provider).',
-        admin: 'Auth-tracking log: link auth number to claim at submission.',
-        prevention: 'Auto-populate claim from approved auth.',
-        urgency: 'high'
-    },
-    'AUTH-004': {
-        clinical: 'Verify service date falls within auth validity window. If expired, obtain new auth.',
-        admin: 'Track auth expiry dates; alert 7 days before expiry.',
-        prevention: 'Calendar alerts for auth windows.',
-        urgency: 'high'
-    },
-    'ELIG-001': {
-        clinical: '',
-        admin: 'Verify Emirates ID at check-in. Confirm active coverage with TPA portal. Collect copay upfront.',
-        prevention: 'Real-time EID check at registration (already in NABIDH tab).',
-        urgency: 'critical'
-    },
-    'ELIG-005': {
-        clinical: '',
-        admin: 'Check policy expiry date. Contact patient for renewed card before visit.',
-        prevention: 'Monthly eligibility batch run for active patients.',
-        urgency: 'critical'
-    },
-    'ELIG-007': {
-        clinical: '',
-        admin: 'Confirm provider is in-network for this plan. If OON, obtain GAP exception or redirect patient.',
-        prevention: 'Network status check at scheduling.',
-        urgency: 'critical'
-    },
-    'BENX-001': {
-        clinical: 'Review benefit limits (visits, $ caps). Document medical necessity for exceptions.',
-        admin: 'Track utilization vs benefit limits per member. Alert at 80% utilization.',
-        prevention: 'Benefit tracker in EHR.',
-        urgency: 'medium'
-    },
-    'COPY-001': {
-        clinical: '',
-        admin: 'Collect copay/deductible at time of service. Post payment to claim before submission.',
-        prevention: 'POS collection workflow + copay estimator.',
-        urgency: 'critical'
-    },
-    'DUPL-002': {
-        clinical: '',
-        admin: 'Check if claim already paid/processed. Search by member + DOS + CPT. Void duplicate.',
-        prevention: 'Duplicate claim edit in scrubber.',
-        urgency: 'high'
-    },
-    'NCOV-001': {
-        clinical: 'Verify if diagnosis/service is truly excluded (cosmetic, experimental). If covered, appeal with policy citation.',
-        admin: 'Maintain TPA exclusion lists. Pre-check at scheduling.',
-        prevention: 'Exclusion list database per TPA.',
-        urgency: 'medium'
-    },
-    'TIME-001': {
-        clinical: '',
-        admin: 'Submit within 30 days of DOS. Track submission timestamps. Appeal with clearinghouse receipt.',
-        prevention: 'Daily claim submission job; aging report at 20 days.',
-        urgency: 'critical'
-    },
-    'TIME-003': {
-        clinical: '',
-        admin: 'File appeal within TPA deadline (usually 30-60 days from denial). Track appeal deadlines.',
-        prevention: 'Appeal deadline calendar from denial date.',
-        urgency: 'critical'
-    },
-    'CLAI-012': {
-        clinical: '',
-        admin: 'Ensure network procedures/contract terms applied. Verify TPA-specific billing rules.',
-        prevention: 'TPA rule engine per contract.',
-        urgency: 'high'
-    }
+    'MNEC-003': { clinical: 'Compare ICD-10 diagnosis vs CPT procedure — ensure medical necessity link is documented. Add clinical rationale in progress note: "Procedure X indicated due to Diagnosis Y because [clinical reasoning]."', admin: 'Query provider: "Does medical record clearly support necessity of [CPT] for [ICD-10]?" Update record if missing.', prevention: 'Implement smart phrases/templates linking common ICD-10/CPT pairs with necessity language.', urgency: 'high' },
+    'MNEC-004': { clinical: 'Verify if service truly meets emergency criteria (life/limb threat). If not emergency, obtain retro-auth or appeal with "urgent care" justification.', admin: 'Train front desk to flag non-emergency ER visits. Ensure ER physician documents acuity level.', prevention: 'Add ER triage acuity to charge capture workflow.', urgency: 'medium' },
+    'MNEC-005': { clinical: 'Review frequency limits: e.g., E/M 99213 max 1/day, therapy 97110 max 3/week. Document medical necessity for excess units.', admin: 'Set up claim edits to flag units > payer limits before submission.', prevention: 'Build frequency rules into EHR charge capture.', urgency: 'medium' },
+    'PRCE-001': { clinical: '', admin: 'Compare paid amount vs contract rate for this CTP/TPA. Appeal with contract page screenshot showing agreed rate.', prevention: 'Load all TPA contract rates into system; enable auto-flag on import (already built).', urgency: 'high' },
+    'PRCE-008': { clinical: 'Verify if procedures are truly separate (different sites/sessions) or bundled per NCCI. Apply correct modifier (59, XS, 51, 76-79).', admin: 'Use Bundling/NCCI Editor tab to validate CPT pairs before submission.', prevention: 'Integrate NCCI edit check into claim scrubber.', urgency: 'high' },
+    'CODE-001': { clinical: 'Ensure primary ICD-10 is valid, specific (not "unspecified"), and matches clinical picture. Add secondary diagnoses.', admin: 'Coder to review claim before submission — require primary dx validation.', prevention: 'EHR dx validation rules (no R69, no unspecified as primary).', urgency: 'high' },
+    'CODE-010': { clinical: 'Confirm provider specialty matches procedure (e.g., cardiologist doing 93000 OK, dermatologist doing 93000 needs justification).', admin: 'Map provider specialty in system; flag mismatches.', prevention: 'Specialty-procedure mapping table.', urgency: 'medium' },
+    'CODE-014': { clinical: 'Check age/gender edits: e.g., pediatric codes on adults, maternity codes on males. Correct ICD-10 or CPT.', admin: 'Demographic validation in claim scrubber.', prevention: 'EHR age/gender alerts at charge entry.', urgency: 'medium' },
+    'AUTH-001': { clinical: 'Determine if service requires prior auth per TPA policy. If emergency, document acuity for exemption.', admin: 'Pre-auth checklist by CPT/TPA. Flag at scheduling.', prevention: 'Real-time auth check at order entry via TPA portal/API.', urgency: 'high' },
+    'AUTH-002': { clinical: 'Ensure clinical details in auth request match claim (same CPT, ICD, units, provider).', admin: 'Auth-tracking log: link auth number to claim at submission.', prevention: 'Auto-populate claim from approved auth.', urgency: 'high' },
+    'AUTH-004': { clinical: 'Verify service date falls within auth validity window. If expired, obtain new auth.', admin: 'Track auth expiry dates; alert 7 days before expiry.', prevention: 'Calendar alerts for auth windows.', urgency: 'high' },
+    'ELIG-001': { clinical: '', admin: 'Verify Emirates ID at check-in. Confirm active coverage with TPA portal. Collect copay upfront.', prevention: 'Real-time EID check at registration (already in NABIDH tab).', urgency: 'critical' },
+    'ELIG-005': { clinical: '', admin: 'Check policy expiry date. Contact patient for renewed card before visit.', prevention: 'Monthly eligibility batch run for active patients.', urgency: 'critical' },
+    'ELIG-007': { clinical: '', admin: 'Confirm provider is in-network for this plan. If OON, obtain GAP exception or redirect patient.', prevention: 'Network status check at scheduling.', urgency: 'critical' },
+    'BENX-001': { clinical: 'Review benefit limits (visits, $ caps). Document medical necessity for exceptions.', admin: 'Track utilization vs benefit limits per member. Alert at 80% utilization.', prevention: 'Benefit tracker in EHR.', urgency: 'medium' },
+    'COPY-001': { clinical: '', admin: 'Collect copay/deductible at time of service. Post payment to claim before submission.', prevention: 'POS collection workflow + copay estimator.', urgency: 'critical' },
+    'DUPL-002': { clinical: '', admin: 'Check if claim already paid/processed. Search by member + DOS + CPT. Void duplicate.', prevention: 'Duplicate claim edit in scrubber.', urgency: 'high' },
+    'NCOV-001': { clinical: 'Verify if diagnosis/service is truly excluded (cosmetic, experimental). If covered, appeal with policy citation.', admin: 'Maintain TPA exclusion lists. Pre-check at scheduling.', prevention: 'Exclusion list database per TPA.', urgency: 'medium' },
+    'TIME-001': { clinical: '', admin: 'Submit within 30 days of DOS. Track submission timestamps. Appeal with clearinghouse receipt.', prevention: 'Daily claim submission job; aging report at 20 days.', urgency: 'critical' },
+    'TIME-003': { clinical: '', admin: 'File appeal within TPA deadline (usually 30-60 days from denial). Track appeal deadlines.', prevention: 'Appeal deadline calendar from denial date.', urgency: 'critical' },
+    'CLAI-012': { clinical: '', admin: 'Ensure network procedures/contract terms applied. Verify TPA-specific billing rules.', prevention: 'TPA rule engine per contract.', urgency: 'high' }
 };
 const DOCTORS = ['Dr. Al Mansoori', 'Dr. Sarah', 'Dr. Kumar', 'Dr. Youssef'];
-
-// NEW: TPA Contract Rates
 let CONTRACT_RATES = [];
-
-// NEW: Capitation Budgets
 let CAPITATION_BUDGETS = [];
-
-// NEW: Audit Trail
 let AUDIT_TRAIL = [];
-
-// NEW: NCCI Edit Rules (simplified for UAE common scenarios)
 const NCCI_EDITS = {
     '99213': { bundles: ['93000', '83036', '85025'], modifier: '25', description: 'E/M + diagnostic test requires modifier 25' },
     '99214': { bundles: ['93000', '83036', '85025'], modifier: '25', description: 'E/M + diagnostic test requires modifier 25' },
@@ -1155,10 +859,7 @@ const NCCI_EDITS = {
     '83036': { bundles: ['83037'], modifier: '59', description: 'HbA1c point of care vs lab' },
     '99203': { bundles: ['99213', '99214'], modifier: '59', description: 'New vs established patient' }
 };
-
-// PRE-COMPILED REGEX AND SETS FOR PERFORMANCE
 const PHI_KEY_SET = new Set(['name', 'patient', 'dob', 'emirates', 'eid', 'phone', 'member', 'policy', 'mobile', 'email', 'passport', 'mrn']);
-
 const PHI_PATTERNS = [
     { name: 'Emirates ID', regex: /784-\d{4}-\d{7}-\d/ },
     { name: 'UAE Phone', regex: /05\d{8}/ },
@@ -1167,33 +868,21 @@ const PHI_PATTERNS = [
     { name: 'Passport', regex: /[A-Z]\d{7}/ },
     { name: 'Email', regex: /[\w\.-]+@[\w\.-]+\.\w+/ }
 ];
-
 const PHI_REGEX_COMBINED = new RegExp(PHI_PATTERNS.map(p => p.regex.source).join('|'), 'i');
-
 const STORAGE_KEY = 'rcmpro_data_v1';
-
 window.showToast = function(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.style.bottom = '30px'; 
-    setTimeout(() => {
-        toast.style.bottom = '-100px'; 
-    }, 3000);
+    setTimeout(() => { toast.style.bottom = '-100px'; }, 3000);
 };
-
 function saveState() {
     try {
         const payload = JSON.stringify({DATA, RECOVERED, NABIDH_LOGS, ELIG_LOGS, CONTRACT_RATES, CAPITATION_BUDGETS, AUDIT_TRAIL});
-        if (payload.length > 4.5 * 1024 * 1024) {  // 4.5MB safety margin
-            console.warn('State too large for localStorage, skipping save');
-            return;
-        }
+        if (payload.length > 4.5 * 1024 * 1024) { console.warn('State too large for localStorage, skipping save'); return; }
         localStorage.setItem(STORAGE_KEY, payload);
-    } catch (e) {
-        console.error('localStorage save failed:', e);
-    }
+    } catch (e) { console.error('localStorage save failed:', e); }
 }
-
 function loadState() {
     const s = localStorage.getItem(STORAGE_KEY);
     if(s) {
@@ -1213,7 +902,6 @@ function loadState() {
 }
 window.addEventListener('beforeunload', saveState);
 loadState();
-
 function nav(p, el) {
     document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
     document.getElementById('page-'+p).classList.add('active');
@@ -1227,51 +915,31 @@ function nav(p, el) {
     if(p==='analytics') { setDefaultDateRange(); window.renderAnalytics(); window.renderAppealAnalytics(); window.renderProviderProductivity(); }
     if(p==='audit') window.renderAuditTrail();
 }
-
 function logAudit(action, details) {
-    AUDIT_TRAIL.unshift({
-        id: 'AUD-' + Date.now(),
-        timestamp: new Date().toISOString(),
-        action: action,
-        details: details,
-        user: 'Admin'
-    });
+    AUDIT_TRAIL.unshift({ id: 'AUD-' + Date.now(), timestamp: new Date().toISOString(), action: action, details: details, user: 'Admin' });
     if(AUDIT_TRAIL.length > 1000) AUDIT_TRAIL = AUDIT_TRAIL.slice(0, 1000);
     saveState();
 }
-
 function scrubPHIAdvanced(rawData) {
     return rawData.map(row => {
         const cleanRow = {};
         for (const [key, val] of Object.entries(row)) {
             const keyLower = key.toLowerCase();
             const strVal = String(val ?? '');
-            
             const isPHIKey = [...PHI_KEY_SET].some(phi => keyLower.includes(phi));
             const isPHIValue = PHI_REGEX_COMBINED.test(strVal);
-            
-            if (!isPHIKey && !isPHIValue) {
-                cleanRow[key] = val;
-            }
+            if (!isPHIKey && !isPHIValue) { cleanRow[key] = val; }
         }
         return cleanRow;
     });
 }
-
-
-
 function processImportedData(rawData) {
     DATA = rawData.map((row, idx) => {
         const amt = parseFloat(row.Amount || row.Billed || 0);
         const status = (row.Status || '').toLowerCase().includes('denied') ? 'denied' : 'paid';
-        
-        // Parse service date from common column names
         let serviceDate = null;
         const dateKeys = ['Date_of_Service', 'Service_Date', 'DOS', 'ServiceDate', 'Date of Service', 'DOS_Date'];
-        for (const k of dateKeys) {
-            if (row[k]) { serviceDate = row[k]; break; }
-        }
-        
+        for (const k of dateKeys) { if (row[k]) { serviceDate = row[k]; break; } }
         return {
             id: row.ClaimID || row.ID || `IMP-${Math.floor(Math.random()*90000)}`,
             payer: row.Payer || row.TPA || 'Unknown TPA',
@@ -1284,82 +952,44 @@ function processImportedData(rawData) {
             cpt: row.CPT || row.ProcedureCode || '',
             icd: row.ICD || row.DiagnosisCode || '',
             serviceDate: serviceDate,
-            // NEW FIELDS FOR TIER 1/2
             copayExpected: parseFloat(row.Copay_Expected || row.CopayExpected || row.Copay || 0) || 0,
             copayCollected: parseFloat(row.Copay_Collected || row.CopayCollected || 0) || 0,
-            appealStatus: row.Appeal_Status || row.AppealStatus || '', // '', 'submitted', 'under_review', 'paid', 'denied', 'written_off'
+            appealStatus: row.Appeal_Status || row.AppealStatus || '',
             appealSubmittedDate: row.Appeal_Submitted_Date || row.AppealSubmittedDate || '',
             appealResolvedDate: row.Appeal_Resolved_Date || row.AppealResolvedDate || '',
             appealAmount: parseFloat(row.Appeal_Amount || row.AppealAmount || 0) || 0
         };
     }).filter(x => x.amt > 0); 
-    
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
-    
-    // AUTO-RUN PRCE-001 CHECK AFTER IMPORT
-    if (CONTRACT_RATES.length > 0) {
-        setTimeout(() => window.runPRCECheck(), 500);
-    }
-    
-    // AUTO-CALC CAPITATION UTILIZATION
+    if (CONTRACT_RATES.length > 0) { setTimeout(() => window.runPRCECheck(), 500); }
     updateCapitationFromClaims();
-    
     window.showToast('✅ De-identified Data Imported Successfully!');
 }
-
 window.loadSample = function(n=100) {
     const tpals=['NextCare','NAS Neuron','Aafiya','FMC Network','Inayah','GlobeMed','MedNet','Almadallah'];
     const codes=Object.keys(DENIAL_MAP);
     const mockCpts=['99213', '99214', '93000', '83036'];
     const specialties = Object.keys(BENCHMARKS);
-    
     let tmp=[];
     for(let i=0;i<n;i++){
         const amt=Math.floor(Math.random()*1200)+100;
         const status=Math.random()>0.7?'denied':'paid';
         const specialty = specialties[Math.floor(Math.random()*specialties.length)];
-        tmp.push({
-            id: 'UAE-'+Math.floor(Math.random()*90000),
-            payer: tpals[Math.floor(Math.random()*tpals.length)],
-            physician: DOCTORS[Math.floor(Math.random()*DOCTORS.length)],
-            amt: amt,
-            status: status,
-            code: status==='denied' ? codes[Math.floor(Math.random()*codes.length)] : '',
-            batch: Math.floor(Math.random() * 10) + 1,
-            assignee: '',
-            cpt: mockCpts[Math.floor(Math.random()*mockCpts.length)],
-            icd: 'I50.9',
-            specialty: specialty,
-            // NEW FIELDS
-            copayExpected: status === 'paid' ? (Math.random() > 0.7 ? Math.floor(Math.random()*100) + 20 : 0) : 0,
-            copayCollected: status === 'paid' ? (Math.random() > 0.3 ? Math.floor(Math.random()*100) + 20 : 0) : 0,
-            appealStatus: '',
-            appealSubmittedDate: '',
-            appealResolvedDate: '',
-            appealAmount: 0
-        });
+        tmp.push({ id: 'UAE-'+Math.floor(Math.random()*90000), payer: tpals[Math.floor(Math.random()*tpals.length)], physician: DOCTORS[Math.floor(Math.random()*DOCTORS.length)], amt: amt, status: status, code: status==='denied' ? codes[Math.floor(Math.random()*codes.length)] : '', batch: Math.floor(Math.random() * 10) + 1, assignee: '', cpt: mockCpts[Math.floor(Math.random()*mockCpts.length)], icd: 'I50.9', specialty: specialty, copayExpected: status === 'paid' ? (Math.random() > 0.7 ? Math.floor(Math.random()*100) + 20 : 0) : 0, copayCollected: status === 'paid' ? (Math.random() > 0.3 ? Math.floor(Math.random()*100) + 20 : 0) : 0, appealStatus: '', appealSubmittedDate: '', appealResolvedDate: '', appealAmount: 0 });
     }
     DATA=tmp;
-    
-    // Set default specialty to gp for demo
     document.getElementById('specSelect').value = 'gp';
-    
-    // Sample NABIDH logs
     NABIDH_LOGS = [
         { id: 'NB-1', batchId: 'BATCH-A1B2', clearinghouse: 'Malaffi Direct', submitted: '2026-01-15', claimCount: 45, status: 'acknowledged', ackRef: 'MLA-2026-001234', deadline: '2026-02-14', notes: 'Clean submission', createdAt: '2026-01-15T10:00:00Z' },
         { id: 'NB-2', batchId: 'BATCH-C3D4', clearinghouse: 'NABIDH Gateway', submitted: '2026-01-20', claimCount: 32, status: 'pending', ackRef: '', deadline: '2026-02-19', notes: 'Awaiting ACK', createdAt: '2026-01-20T14:30:00Z' },
         { id: 'NB-3', batchId: 'BATCH-E5F6', clearinghouse: 'E-Claim', submitted: '2026-01-10', claimCount: 28, status: 'rejected', ackRef: 'ECL-ERR-789', deadline: '2026-02-09', notes: 'Format error in segment 3', createdAt: '2026-01-10T09:15:00Z' }
     ];
-    
-    // Sample Eligibility logs
     ELIG_LOGS = [
         { id: 'EG-1', patientRef: 'PT-2026-045', eidMasked: '****-****-****-1234', tpa: 'NextCare - Enhanced', checked: '2026-01-22', status: 'active', benefit: 'Enhanced', copay: 50, notes: 'Full coverage', createdAt: '2026-01-22T08:00:00Z' },
         { id: 'EG-2', patientRef: 'PT-2026-046', eidMasked: '****-****-****-5678', tpa: 'Aafiya - EBP', checked: '2026-01-22', status: 'active', benefit: 'EBP', copay: 0, notes: 'EBP annual limit AED 150k', createdAt: '2026-01-22T08:15:00Z' },
         { id: 'EG-3', patientRef: 'PT-2026-047', eidMasked: '****-****-****-9012', tpa: 'NAS Neuron', checked: '2026-01-21', status: 'expired', benefit: 'Enhanced', copay: 100, notes: 'Policy expired 2025-12-31', createdAt: '2026-01-21T11:00:00Z' }
     ];
-    
-    // Sample Contract Rates
     CONTRACT_RATES = [
         { id: 'CT-1', tpa: 'NextCare', cpt: '99213', rate: 250.00, effective: '2026-01-01', expiry: '2026-12-31', notes: 'Standard E/M Level 3', createdAt: '2026-01-01T00:00:00Z' },
         { id: 'CT-2', tpa: 'NextCare', cpt: '99214', rate: 380.00, effective: '2026-01-01', expiry: '2026-12-31', notes: 'Standard E/M Level 4', createdAt: '2026-01-01T00:00:00Z' },
@@ -1368,37 +998,29 @@ window.loadSample = function(n=100) {
         { id: 'CT-5', tpa: 'Aafiya', cpt: '99213', rate: 150.00, effective: '2026-01-01', expiry: '2026-12-31', notes: 'EBP rate', createdAt: '2026-01-01T00:00:00Z' },
         { id: 'CT-6', tpa: 'MedNet', cpt: '83036', rate: 120.00, effective: '2026-01-01', expiry: '2026-12-31', notes: 'HbA1c', createdAt: '2026-01-01T00:00:00Z' }
     ];
-    
-    // Sample Capitation Budgets
     CAPITATION_BUDGETS = [
         { id: 'CAP-1', tpa: 'Aafiya', type: 'EBP', periodStart: '2026-01-01', periodEnd: '2026-12-31', annualCap: 500000, utilized: 320000, createdAt: '2026-01-01T00:00:00Z' },
         { id: 'CAP-2', tpa: 'NextCare', type: 'Capitation', periodStart: '2026-01-01', periodEnd: '2026-12-31', annualCap: 1200000, utilized: 780000, createdAt: '2026-01-01T00:00:00Z' },
         { id: 'CAP-3', tpa: 'DHA - Thiqa', type: 'Thiqa', periodStart: '2026-01-01', periodEnd: '2026-12-31', annualCap: 800000, utilized: 650000, createdAt: '2026-01-01T00:00:00Z' }
     ];
-    
     updateUI();
     nav('dashboard', document.querySelector('.nav-item'));
     window.showToast('✅ Official Sample Data Loaded (including NABIDH/Elig logs, Contracts, Capitation)!');
 };
-
 function updateUI() {
     const tot=DATA.reduce((a,b)=>a+b.amt,0);
     const den=DATA.filter(x=>x.status==='denied').reduce((a,b)=>a+b.amt,0);
     const rate=DATA.length?(DATA.filter(x=>x.status==='denied').length/DATA.length*100).toFixed(1):0;
-    
     document.getElementById('mTotal').textContent='AED '+tot.toLocaleString();
     document.getElementById('mDenied').textContent='AED '+den.toLocaleString();
     document.getElementById('mRate').textContent=rate+'%';
     document.getElementById('mPotential').textContent='AED '+Math.floor(den*0.62).toLocaleString();
-    
     renderTable();
     window.renderChart();
     window.updateBenchmark();
 }
-
 function renderTable() {
     document.getElementById('analysisBody').innerHTML = DATA.map(x => {
-        // Calculate aging for denied claims
         let agingBadge = '';
         if (x.status === 'denied' && x.serviceDate) {
             const dos = new Date(x.serviceDate);
@@ -1409,8 +1031,6 @@ function renderTable() {
             else if (ageDays > 30) agingBadge = '<span class="badge badge-accent" title="31-60 days">⏰ ' + ageDays + 'd</span>';
             else agingBadge = '<span class="badge badge-success" title="0-30 days">' + ageDays + 'd</span>';
         }
-        
-        // Copay status for paid claims
         let copayStatus = '';
         if (x.status === 'paid' && x.copayExpected > 0) {
             const collected = x.copayCollected || 0;
@@ -1420,8 +1040,6 @@ function renderTable() {
             else if (collected > 0) copayStatus = '<span class="badge badge-warning" title="Partial copay collected">💰 ' + pct + '%</span>';
             else copayStatus = '<span class="badge badge-danger" title="Copay NOT collected">💰 0%</span>';
         }
-        
-        // Appeal status badge
         let appealBadge = '';
         if (x.status === 'denied' && x.appealStatus) {
             const appealColors = { submitted: 'accent', under_review: 'warning', paid: 'success', denied: 'danger', written_off: 'text-secondary' };
@@ -1429,7 +1047,6 @@ function renderTable() {
             const color = appealColors[x.appealStatus] || 'text-secondary';
             appealBadge = `<span class="badge badge-${color}" title="Appeal: ${x.appealStatus}">${appealIcons[x.appealStatus] || '📄'} ${x.appealStatus}</span>`;
         }
-        
         return `
         <tr>
             <td>${x.id}</td>
@@ -1459,22 +1076,16 @@ function renderTable() {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 }
-
-window.assignTask = function(id, person) {
-    const claim = DATA.find(c => c.id === id);
-    if(claim) claim.assignee = person;
-};
-
+window.assignTask = function(id, person) { const claim = DATA.find(c => c.id === id); if(claim) claim.assignee = person; };
 window.updateAppealStatus = function(id) {
     const claim = DATA.find(c => c.id === id);
     if(!claim) return;
-    
     const statuses = ['', 'submitted', 'under_review', 'paid', 'denied', 'written_off'];
     const labels = ['Clear Status', '📤 Submitted', '👁️ Under Review', '✅ Paid', '❌ Denied', '🗑️ Written Off'];
     const currentIdx = statuses.indexOf(claim.appealStatus || '');
-    
     let html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:500px;margin:auto;">
             <h4>📋 Update Appeal Status: ${id}</h4>
@@ -1501,56 +1112,38 @@ window.updateAppealStatus = function(id) {
     `;
     openModal(html);
 };
-
 window.saveAppealStatus = function(id) {
     const claim = DATA.find(c => c.id === id);
     if(!claim) return;
-    
     claim.appealStatus = document.getElementById('newAppealStatus').value;
     claim.appealAmount = parseFloat(document.getElementById('newAppealAmount').value) || 0;
     claim.appealSubmittedDate = document.getElementById('newAppealSubmitted').value;
     claim.appealResolvedDate = document.getElementById('newAppealResolved').value;
-    
     saveState();
     renderTable();
     closeModal();
     window.showToast('📋 Appeal status updated!');
     logAudit('APPEAL_STATUS_UPDATE', `Claim ${id}: ${claim.appealStatus} (AED ${claim.appealAmount})`);
 };
-
 window.filterTable = function(viewType) {
     const rows = document.querySelectorAll('#analysisBody tr');
     rows.forEach(row => {
         const statusText = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
-        if (viewType === 'all') {
-            row.style.display = '';
-        } else if (viewType === 'denied' && statusText.includes('denied')) {
-            row.style.display = '';
-        } else if (viewType === 'paid' && statusText.includes('paid')) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+        if (viewType === 'all') { row.style.display = ''; }
+        else if (viewType === 'denied' && statusText.includes('denied')) { row.style.display = ''; }
+        else if (viewType === 'paid' && statusText.includes('paid')) { row.style.display = ''; }
+        else { row.style.display = 'none'; }
     });
 };
-
 window.exportAudit = function() {
-    if(DATA.length === 0) {
-        window.showToast('❌ No data to export!');
-        return;
-    }
+    if(DATA.length === 0) { window.showToast('❌ No data to export!'); return; }
     const csvRows = [];
     const headers = ['Claim_ID', 'Physician', 'CPT_Code', 'ICD_Focus', 'TPA', 'Amount_AED', 'Status', 'Denial_Code', 'Root_Cause'];
     csvRows.push(headers.join(','));
-    
     DATA.forEach(row => {
-        const rowData = [
-            row.id, row.physician, row.cpt, row.icd, row.payer, row.amt, row.status, row.code, 
-            (DENIAL_MAP[row.code] || '').replace(/,/g, '') 
-        ];
+        const rowData = [ row.id, row.physician, row.cpt, row.icd, row.payer, row.amt, row.status, row.code, (DENIAL_MAP[row.code] || '').replace(/,/g, '') ];
         csvRows.push(rowData.join(','));
     });
-    
     const csvString = csvRows.join('\n');
     const blob = new Blob([csvString], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -1563,13 +1156,10 @@ window.exportAudit = function() {
     document.body.removeChild(a);
     window.showToast('📤 Audit Exported Successfully!');
 };
-
 function renderRecs() {
     const denied = DATA.filter(x => x.status === 'denied');
     const currentSpecialty = document.getElementById('specSelect')?.value || 'gp';
     const specialtyProfile = SPECIALTY_DENIAL_PROFILE[currentSpecialty] || { HIGH: [], MEDIUM: [], LOW: [] };
-    
-    // Aggregate by code for specific recommendations
     const codeStats = {};
     denied.forEach(d => {
         if (!d.code) return;
@@ -1578,18 +1168,11 @@ function renderRecs() {
         codeStats[d.code].amount += d.amt;
         codeStats[d.code].codes.push(d);
     });
-    
-    // DETECT UNUSUAL DENIALS FOR THIS SPECIALTY
     const unusualDenials = [];
     Object.entries(codeStats).forEach(([code, data]) => {
-        const expectedLevel = specialtyProfile.HIGH.includes(code) ? 'HIGH' : 
-                             specialtyProfile.MEDIUM.includes(code) ? 'MEDIUM' : 'LOW';
-        if (expectedLevel === 'LOW' && data.count > 0) {
-            unusualDenials.push({ code, count: data.count, amount: data.amount, reason: `Rare for ${currentSpecialty.toUpperCase()}` });
-        }
+        const expectedLevel = specialtyProfile.HIGH.includes(code) ? 'HIGH' : specialtyProfile.MEDIUM.includes(code) ? 'MEDIUM' : 'LOW';
+        if (expectedLevel === 'LOW' && data.count > 0) { unusualDenials.push({ code, count: data.count, amount: data.amount, reason: `Rare for ${currentSpecialty.toUpperCase()}` }); }
     });
-    
-    // Also keep category aggregates for high-level view
     let adminFrontDesk = 0, clinicalCoding = 0, medicalNecessity = 0, timelyFiling = 0, preAuth = 0;
     denied.forEach(d => {
         if(d.code.startsWith('ELIG') || d.code.startsWith('COPY')) adminFrontDesk++;
@@ -1598,44 +1181,21 @@ function renderRecs() {
         if(d.code.startsWith('TIME')) timelyFiling++;
         if(d.code.startsWith('AUTH')) preAuth++;
     });
-    
     const physDenials = {};
     denied.forEach(d => physDenials[d.physician] = (physDenials[d.physician] || 0) + 1);
     const topPhys = Object.keys(physDenials).sort((a,b) => physDenials[b] - physDenials[a])[0] || 'N/A';
-
     const list = [];
-
-    // Category-level alerts (existing)
     if (adminFrontDesk > 3) list.push({title:'🚨 Front-Desk Alert: Eligibility & Co-Pay Errors',impact:`${adminFrontDesk} Claims Denied`,body:'High volume of ELIG and COPY denials. Recommend mandatory Emirates ID real-time checks and upfront copay collection training.',type:'high'});
     if (clinicalCoding > 3) list.push({title:'💰 Revenue Leakage: Coding & Bundling Rules',impact:`${clinicalCoding} Claims Denied`,body:'TPAs are citing CODE and PRCE bundling rules. Coders need to review Modifier 25 application and NCCI edits before submission.',type:'critical'});
     if (medicalNecessity > 2) list.push({title:'🩺 Clinical Documentation: Medical Necessity (MNEC)',impact:`${medicalNecessity} Claims Denied`,body:'Services are not clinically justified based on ICD-10 pairings. Review doctor charting templates to ensure clear history and vitals.',type:'high'});
     if (timelyFiling > 0) list.push({title:'⏰ Critical: Timely Filing Violations (TIME)',impact:`${timelyFiling} Claims Denied`,body:'Claims submitted after the 30-day cutoff period. Workflow bottleneck detected between billing queue and clearinghouse.',type:'critical'});
     if (preAuth > 3) list.push({title:'🔐 Pre-Auth Alert (AUTH)',impact:`Prevent ${preAuth} future denials`,body:'Procedures requiring DHA/HAAD pre-authorization are being missed. Verify the AED 500 threshold rules with NAS and NextCare.',type:'high'});
     if (topPhys !== 'N/A') list.push({title:'👨‍⚕️ Physician Education Opportunity',impact:'High Impact',body:`${topPhys} has the highest volume of overall denials. Recommend a 1-on-1 review of recent MNEC and CODE rejections.`,type:'success'});
-
-    // UNUSUAL DENIALS ALERT (NEW)
     if (unusualDenials.length > 0) {
-        list.unshift({
-            title: `⚠️ Unusual Denials for ${currentSpecialty.toUpperCase()}`,
-            impact: `${unusualDenials.length} code(s) flagged`,
-            body: unusualDenials.map(u => 
-                `<strong>${u.code}</strong> (${u.count} claims, AED ${u.amount.toLocaleString()}) — ${u.reason}. <em>Verify specialty coding accuracy or check for misclassified claims.</em>`
-            ).join('<br>'),
-            type: 'warning',
-            isUnusual: true
-        });
+        list.unshift({ title: `⚠️ Unusual Denials for ${currentSpecialty.toUpperCase()}`, impact: `${unusualDenials.length} code(s) flagged`, body: unusualDenials.map(u => `<strong>${u.code}</strong> (${u.count} claims, AED ${u.amount.toLocaleString()}) — ${u.reason}. <em>Verify specialty coding accuracy or check for misclassified claims.</em>`).join('<br>'), type: 'warning', isUnusual: true });
     }
-
-    // CODE-SPECIFIC RECOMMENDATIONS (NEW)
-    const sortedCodes = Object.entries(codeStats)
-        .sort((a, b) => b[1].amount - a[1].amount)
-        .slice(0, 10); // Top 10 denial codes by amount
-    
-    if (sortedCodes.length > 0) {
-        list.push({title:'🎯 Top Denial Codes — Specific Actions',impact:`${sortedCodes.length} codes analyzed`,body:'',type:'info', isCodeSection: true, codes: sortedCodes});
-    }
-    
-    // COPAY COLLECTION SUMMARY (NEW)
+    const sortedCodes = Object.entries(codeStats).sort((a, b) => b[1].amount - a[1].amount).slice(0, 10);
+    if (sortedCodes.length > 0) { list.push({title:'🎯 Top Denial Codes — Specific Actions',impact:`${sortedCodes.length} codes analyzed`,body:'',type:'info', isCodeSection: true, codes: sortedCodes}); }
     const paidWithCopay = DATA.filter(d => d.status === 'paid' && d.copayExpected > 0);
     if (paidWithCopay.length > 0) {
         const totalExpected = paidWithCopay.reduce((s, d) => s + (d.copayExpected || 0), 0);
@@ -1643,173 +1203,76 @@ function renderRecs() {
         const uncollected = totalExpected - totalCollected;
         const uncollectedCount = paidWithCopay.filter(d => (d.copayCollected || 0) < (d.copayExpected || 0)).length;
         const collectionRate = totalExpected > 0 ? Math.round((totalCollected / totalExpected) * 100) : 100;
-        
-        if (uncollected > 0) {
-            list.push({
-                title: '💰 Copay Collection Gap',
-                impact: `${uncollectedCount} claims | AED ${uncollected.toLocaleString()} uncollected`,
-                body: `Collection rate: ${collectionRate}%. ${uncollectedCount} paid claims have uncollected copays. Front desk must collect at time of service to avoid COPY-001 denials and revenue leakage.`,
-                type: collectionRate < 80 ? 'critical' : 'high'
-            });
-        }
+        if (uncollected > 0) { list.push({ title: '💰 Copay Collection Gap', impact: `${uncollectedCount} claims | AED ${uncollected.toLocaleString()} uncollected`, body: `Collection rate: ${collectionRate}%. ${uncollectedCount} paid claims have uncollected copays. Front desk must collect at time of service to avoid COPY-001 denials and revenue leakage.`, type: collectionRate < 80 ? 'critical' : 'high' }); }
     }
-    
     document.getElementById('recList').innerHTML = list.map(x => {
-        if (x.isUnusual) {
-            return `
-                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--warning);margin-bottom:15px;background:rgba(245,158,11,0.05);">
-                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-warning">${x.type.toUpperCase()}</span></div>
-                    <div style="margin-top:10px;font-size:13px;line-height:1.8;color:var(--text-secondary)">${x.body}</div>
-                </div>
-            `;
-        }
+        if (x.isUnusual) { return `<div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--warning);margin-bottom:15px;background:rgba(245,158,11,0.05);"><div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-warning">${x.type.toUpperCase()}</span></div><div style="margin-top:10px;font-size:13px;line-height:1.8;color:var(--text-secondary)">${x.body}</div></div>`; }
         if (x.isCodeSection) {
-            return `
-                <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:15px;">
-                    <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-info">${x.type.toUpperCase()}</span></div>
-                    <div style="margin-top:15px;">
+            return `<div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--accent);margin-bottom:15px;"><div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-info">${x.type.toUpperCase()}</span></div><div style="margin-top:15px;">
                         ${x.codes.map(([code, data]) => {
                             const rec = DENIAL_RECOMMENDATIONS[code] || { clinical: '', admin: 'Review denial reason and appeal with supporting documentation.', prevention: '', urgency: 'medium' };
                             const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
-                            // Flag if unusual for this specialty
                             const isUnusual = specialtyProfile.LOW.includes(code) ? ' ⚠️ <span class="badge badge-warning">UNUSUAL FOR THIS SPECIALTY</span>' : '';
-                            return `
-                                <div style="background:var(--bg-dark);padding:15px;border-radius:8px;margin-bottom:10px;border-left:3px solid ${urgencyColor};">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                                        <strong style="color:var(--accent);">${code}${isUnusual}</strong>
-                                        <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};">${rec.urgency.toUpperCase()}</span>
-                                    </div>
-                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Reason:</strong> ${DENIAL_MAP[code] || 'Unknown'}</div>
-                                    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Count:</strong> ${data.count} | <strong>Amount:</strong> AED ${data.amount.toLocaleString()}</div>
-                                    ${rec.clinical ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(34,197,94,0.1);border-radius:4px;"><strong>🩺 Clinical:</strong> ${rec.clinical}</div>` : ''}
-                                    ${rec.admin ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(56,189,248,0.1);border-radius:4px;"><strong>📋 Admin:</strong> ${rec.admin}</div>` : ''}
-                                    ${rec.prevention ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(245,158,11,0.1);border-radius:4px;"><strong>🛡️ Prevention:</strong> ${rec.prevention}</div>` : ''}
-                                </div>
-                            `;
+                            return `<div style="background:var(--bg-dark);padding:15px;border-radius:8px;margin-bottom:10px;border-left:3px solid ${urgencyColor};"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><strong style="color:var(--accent);">${code}${isUnusual}</strong><span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};">${rec.urgency.toUpperCase()}</span></div><div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Reason:</strong> ${DENIAL_MAP[code] || 'Unknown'}</div><div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;"><strong>Count:</strong> ${data.count} | <strong>Amount:</strong> AED ${data.amount.toLocaleString()}</div>${rec.clinical ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(34,197,94,0.1);border-radius:4px;"><strong>🩺 Clinical:</strong> ${rec.clinical}</div>` : ''}${rec.admin ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(56,189,248,0.1);border-radius:4px;"><strong>📋 Admin:</strong> ${rec.admin}</div>` : ''}${rec.prevention ? `<div style="font-size:12px;margin:6px 0;padding:8px;background:rgba(245,158,11,0.1);border-radius:4px;"><strong>🛡️ Prevention:</strong> ${rec.prevention}</div>` : ''}</div>`;
                         }).join('')}
-                    </div>
-                </div>
-            `;
+                    </div></div>`;
         }
-        return `
-            <div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;">
-                <div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div>
-                <p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p>
-            </div>
-        `;
+        return `<div style="background:var(--bg-card);padding:20px;border-radius:12px;border-left:4px solid var(--${x.type==='critical'?'danger':'accent'});margin-bottom:15px;"><div style="display:flex;justify-content:space-between;"><strong>${x.title}</strong><span class="badge badge-${x.type==='critical'?'danger':'success'}">${x.type.toUpperCase()}</span></div><p style="font-size:13px;margin:10px 0;color:var(--text-secondary)">${x.body}</p></div>`;
     }).join('');
 }
-
 window.genAppeal = function(id, p, code, a){
     try{
         const {jsPDF} = window.jspdf; 
         const doc = new jsPDF();
-        
         doc.setFontSize(16);
         doc.text("2026 TPA REJECTION APPEAL - UAE", 20, 20);
-        
         doc.setFontSize(11);
         doc.text(`TPA: ${p}`, 20, 35);
         doc.text(`Claim ID: ${id}`, 20, 42);
         doc.text(`Disputed Amount: AED ${a}`, 20, 49);
         doc.text(`Denial Code: ${code} - ${DENIAL_MAP[code] || 'Unspecified'}`, 20, 56);
-        
         let justification = "Clinical justification for outpatient encounter submitted in accordance with DHA/HAAD billing regulations.";
-        
         if (code.startsWith('MNEC')) justification = "Enclosed are the full clinical consultation notes, vital signs, and patient history which clearly establish medical necessity for the procedures performed as per standard clinical guidelines.";
         else if (code.startsWith('TIME')) justification = "This claim was submitted within the contractual timeframes. Please review the attached system timestamps proving timely initial dispatch to the clearinghouse.";
         else if (code.startsWith('AUTH')) justification = "This case qualifies under the emergency/urgent care exemption clause, waiving the requirement for standard pre-approval due to the patient's acute presentation upon arrival.";
         else if (code.startsWith('CODE') || code.startsWith('PRCE')) justification = "The CPT and ICD-10 pairings submitted adhere to global NCCI coding standards. Modifiers were appropriately applied to denote separately identifiable services. Please reverse the bundling edit.";
-
         doc.text("Clinical/Administrative Justification:", 20, 70);
         doc.setFont("helvetica", "italic");
         doc.text(doc.splitTextToSize(justification, 170), 20, 80);
-        
         const data = doc.output('datauristring');
         const link = document.createElement('a');
         link.href = data;
         link.download = `Appeal_${id}_${code}.pdf`;
         link.click();
-        
         RECOVERED += a;
         document.getElementById('sideRecovered').textContent = 'AED '+RECOVERED.toLocaleString();
         window.showToast('📄 Appeal PDF Generated Successfully!');
-    } catch(e) {
-        window.showToast('❌ PDF Generator blocked by browser.');
-    }
+    } catch(e) { window.showToast('❌ PDF Generator blocked by browser.'); }
 };
-
 window.updateBenchmark = function(){
     const s=document.getElementById('specSelect').value;const avg=BENCHMARKS[s];
     const my=parseFloat(document.getElementById('mRate').textContent)||0;
     document.getElementById('benchInfo').innerHTML=`Market Avg: ${avg}% | Your Status: <span style="color:var(--${my>avg?'danger':'success'})">${my>avg?`High (+${(my-avg).toFixed(1)}%)`:`Good`}</span>`;
 };
-
 window.renderChart = function() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     if(window.c) window.c.destroy();
-    
-    // Date range filter - uses serviceDate if present, else falls back to batch
     const startDate = document.getElementById('chartStartDate')?.value;
     const endDate = document.getElementById('chartEndDate')?.value;
-    
     const batchStats = {};
     for (let i = 1; i <= 10; i++) batchStats[i] = { total: 0, paid: 0 };
-    
     DATA.forEach(row => {
-        // Use serviceDate if available, else derive from batch (1=oldest, 10=newest)
         let rowDate;
-        if (row.serviceDate) {
-            rowDate = new Date(row.serviceDate);
-        } else {
-            // Fallback: batch 1 = ~90 days ago, batch 10 = today
-            rowDate = new Date();
-            rowDate.setDate(rowDate.getDate() - (11 - row.batch) * 9);
-        }
-        
-        // Filter by date range if set
+        if (row.serviceDate) { rowDate = new Date(row.serviceDate); }
+        else { rowDate = new Date(); rowDate.setDate(rowDate.getDate() - (11 - row.batch) * 9); }
         if (startDate && rowDate < new Date(startDate)) return;
         if (endDate && rowDate > new Date(endDate)) return;
-        
-        if (row.batch >= 1 && row.batch <= 10) {
-            batchStats[row.batch].total++;
-            if (row.status === 'paid') batchStats[row.batch].paid++;
-        }
+        if (row.batch >= 1 && row.batch <= 10) { batchStats[row.batch].total++; if (row.status === 'paid') batchStats[row.batch].paid++; }
     });
-
     const labels = Object.keys(batchStats).sort((a, b) => a - b);
-    const acceptanceRates = labels.map(batch => {
-        const b = batchStats[batch];
-        return b.total === 0 ? 0 : Math.round((b.paid / b.total) * 100);
-    });
-
-    window.c = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Acceptance %',
-                data: acceptanceRates,
-                borderColor: '#38bdf8',
-                tension: 0.4,
-                fill: true,
-                backgroundColor: 'rgba(56,189,248,0.1)'
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, max: 100, grid: { color: '#334155' } },
-                x: { 
-                    title: { display: true, text: 'Audit Sample Batch (1 - 10)', color: '#94a3b8' },
-                    grid: { display: false } 
-                }
-            }
-        }
-    });
+    const acceptanceRates = labels.map(batch => { const b = batchStats[batch]; return b.total === 0 ? 0 : Math.round((b.paid / b.total) * 100); });
+    window.c = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Acceptance %', data: acceptanceRates, borderColor: '#38bdf8', tension: 0.4, fill: true, backgroundColor: 'rgba(56,189,248,0.1)' }] }, options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, x: { title: { display: true, text: 'Audit Sample Batch (1 - 10)', color: '#94a3b8' }, grid: { display: false } } } } });
 };
-
-// Initialize chart date range on load
 setTimeout(() => {
     const end = new Date();
     const start = new Date();
@@ -1819,15 +1282,11 @@ setTimeout(() => {
     if(startEl) startEl.value = start.toISOString().split('T')[0];
     if(endEl) endEl.value = end.toISOString().split('T')[0];
 }, 100);
-
-// NABIDH/MALAFFI TRACKER DATA & LOGIC
-
 window.showNabidhModal = function() {
     const batchId = 'BATCH-' + Date.now().toString(36).toUpperCase();
     const clearinghouses = ['Malaffi Direct', 'NABIDH Gateway', 'E-Claim', 'HealthTech', 'Other'];
     const today = new Date().toISOString().split('T')[0];
     const deadline = new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0];
-    
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:600px;margin:auto;">
             <h4>📤 Log Clearinghouse Submission</h4>
@@ -1849,27 +1308,14 @@ window.showNabidhModal = function() {
     `;
     openModal(html);
 };
-
 window.saveNabidhLog = function() {
-    const log = {
-        id: 'NB-' + Date.now(),
-        batchId: document.getElementById('nbBatchId').value,
-        clearinghouse: document.getElementById('nbClearinghouse').value,
-        submitted: document.getElementById('nbSubmitted').value,
-        claimCount: parseInt(document.getElementById('nbClaimCount').value),
-        status: document.getElementById('nbStatus').value,
-        ackRef: document.getElementById('nbAckRef').value,
-        deadline: document.getElementById('nbDeadline').value,
-        notes: document.getElementById('nbNotes').value,
-        createdAt: new Date().toISOString()
-    };
+    const log = { id: 'NB-' + Date.now(), batchId: document.getElementById('nbBatchId').value, clearinghouse: document.getElementById('nbClearinghouse').value, submitted: document.getElementById('nbSubmitted').value, claimCount: parseInt(document.getElementById('nbClaimCount').value), status: document.getElementById('nbStatus').value, ackRef: document.getElementById('nbAckRef').value, deadline: document.getElementById('nbDeadline').value, notes: document.getElementById('nbNotes').value, createdAt: new Date().toISOString() };
     NABIDH_LOGS.unshift(log);
     window.closeModal();
     renderNabidhTable();
     saveState();
     window.showToast('📤 Submission logged!');
 };
-
 window.showEligModal = function() {
     const today = new Date().toISOString().split('T')[0];
     const html = `
@@ -1893,27 +1339,14 @@ window.showEligModal = function() {
     `;
     openModal(html);
 };
-
 window.saveEligLog = function() {
-    const log = {
-        id: 'EG-' + Date.now(),
-        patientRef: document.getElementById('egPatRef').value,
-        eidMasked: '****-****-****-' + document.getElementById('egEid').value.padStart(4, '*'),
-        tpa: document.getElementById('egTpa').value,
-        checked: document.getElementById('egDate').value,
-        status: document.getElementById('egStatus').value,
-        benefit: document.getElementById('egBenefit').value,
-        copay: parseFloat(document.getElementById('egCopay').value) || 0,
-        notes: document.getElementById('egNotes').value,
-        createdAt: new Date().toISOString()
-    };
+    const log = { id: 'EG-' + Date.now(), patientRef: document.getElementById('egPatRef').value, eidMasked: '****-****-****-' + document.getElementById('egEid').value.padStart(4, '*'), tpa: document.getElementById('egTpa').value, checked: document.getElementById('egDate').value, status: document.getElementById('egStatus').value, benefit: document.getElementById('egBenefit').value, copay: parseFloat(document.getElementById('egCopay').value) || 0, notes: document.getElementById('egNotes').value, createdAt: new Date().toISOString() };
     ELIG_LOGS.unshift(log);
     window.closeModal();
     renderEligTable();
     saveState();
     window.showToast('🆔 Eligibility check logged!');
 };
-
 function openModal(html) {
     const modal = document.createElement('div');
     modal.id = 'dynamicModal';
@@ -1922,64 +1355,26 @@ function openModal(html) {
     document.body.appendChild(modal);
     modal.addEventListener('click', (e) => { if(e.target === modal) window.closeModal(); });
 }
-
-window.closeModal = function() {
-    const m = document.getElementById('dynamicModal');
-    if(m) m.remove();
-};
-
+window.closeModal = function() { const m = document.getElementById('dynamicModal'); if(m) m.remove(); };
 window.showCodeRec = function(code) {
     const rec = DENIAL_RECOMMENDATIONS[code];
-    if (!rec) {
-        window.showToast('❌ No specific recommendation for ' + code);
-        return;
-    }
+    if (!rec) { window.showToast('❌ No specific recommendation for ' + code); return; }
     const urgencyColor = rec.urgency === 'critical' ? 'var(--danger)' : rec.urgency === 'high' ? 'var(--warning)' : 'var(--accent)';
-    
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:700px;margin:auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                 <h4 style="color:var(--accent);">${code} — ${DENIAL_MAP[code] || 'Unknown Denial'}</h4>
                 <span class="badge" style="background:${urgencyColor}20;color:${urgencyColor};font-size:12px;padding:6px 12px;">${rec.urgency.toUpperCase()} PRIORITY</span>
             </div>
-            
-            ${rec.clinical ? `
-                <div style="background:rgba(34,197,94,0.1);border:1px solid var(--success);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">🩺</span>
-                        <strong style="color:var(--success);">Clinical Action Required</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.clinical}</p>
-                </div>
-            ` : ''}
-            
-            ${rec.admin ? `
-                <div style="background:rgba(56,189,248,0.1);border:1px solid var(--accent);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">📋</span>
-                        <strong style="color:var(--accent);">Administrative Action Required</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.admin}</p>
-                </div>
-            ` : ''}
-            
-            ${rec.prevention ? `
-                <div style="background:rgba(245,158,11,0.1);border:1px solid var(--warning);padding:15px;border-radius:8px;margin-bottom:15px;">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:18px;">🛡️</span>
-                        <strong style="color:var(--warning);">Prevention / System Fix</strong>
-                    </div>
-                    <p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.prevention}</p>
-                </div>
-            ` : ''}
-            
+            ${rec.clinical ? `<div style="background:rgba(34,197,94,0.1);border:1px solid var(--success);padding:15px;border-radius:8px;margin-bottom:15px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:18px;">🩺</span><strong style="color:var(--success);">Clinical Action Required</strong></div><p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.clinical}</p></div>` : ''}
+            ${rec.admin ? `<div style="background:rgba(56,189,248,0.1);border:1px solid var(--accent);padding:15px;border-radius:8px;margin-bottom:15px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:18px;">📋</span><strong style="color:var(--accent);">Administrative Action Required</strong></div><p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.admin}</p></div>` : ''}
+            ${rec.prevention ? `<div style="background:rgba(245,158,11,0.1);border:1px solid var(--warning);padding:15px;border-radius:8px;margin-bottom:15px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:18px;">🛡️</span><strong style="color:var(--warning);">Prevention / System Fix</strong></div><p style="font-size:13px;line-height:1.6;color:var(--text-primary);">${rec.prevention}</p></div>` : ''}
             <div style="background:var(--bg-dark);padding:15px;border-radius:8px;font-size:12px;">
                 <strong>Appeal Justification Template:</strong>
                 <p style="margin-top:8px;font-style:italic;color:var(--text-secondary);">
                     ${rec.clinical ? 'Clinical: ' + rec.clinical.substring(0, 150) + '...' : rec.admin ? 'Admin: ' + rec.admin.substring(0, 150) + '...' : 'Standard appeal with supporting documentation.'}
                 </p>
             </div>
-            
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
                 <button class="btn" style="background:var(--primary-light);" onclick="window.closeModal()">Close</button>
                 <button class="btn btn-pro" onclick="window.closeModal(); window.showToast('Copied to clipboard'); navigator.clipboard.writeText(\`Denial: ${code} - ${DENIAL_MAP[code]}\\nClinical: ${rec.clinical || 'N/A'}\\nAdmin: ${rec.admin || 'N/A'}\\nPrevention: ${rec.prevention || 'N/A'}\`)">📋 Copy All</button>
@@ -1988,70 +1383,33 @@ window.showCodeRec = function(code) {
     `;
     openModal(html);
 };
-
 function renderNabidhTable() {
     const filter = window.nabidhFilter || 'all';
     const filtered = filter === 'all' ? NABIDH_LOGS : NABIDH_LOGS.filter(x => x.status === filter);
-    
     document.getElementById('nabidhBody').innerHTML = filtered.map(x => {
         const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24));
         const deadlineClass = daysLeft < 0 ? 'danger' : daysLeft < 7 ? 'warning' : 'success';
         const deadlineText = daysLeft < 0 ? `OVERDUE ${Math.abs(daysLeft)}d` : `${daysLeft}d left`;
-        
-        return `
-            <tr>
-                <td><strong>${x.batchId}</strong></td>
-                <td>${x.clearinghouse}</td>
-                <td>${x.submitted}</td>
-                <td>${x.claimCount}</td>
-                <td><span class="badge badge-${x.status==='pending'?'warning':x.status==='acknowledged'?'success':'danger'}">${x.status.toUpperCase()}</span></td>
-                <td>${x.ackRef || '-'}</td>
-                <td><span class="badge badge-${deadlineClass}">${deadlineText}</span></td>
-                <td>
-                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.editNabidh('${x.id}')">✏️</button>
-                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteNabidh('${x.id}')">🗑️</button>
-                </td>
-            </tr>
-        `;
+        return `<tr><td><strong>${x.batchId}</strong></td><td>${x.clearinghouse}</td><td>${x.submitted}</td><td>${x.claimCount}</td><td><span class="badge badge-${x.status==='pending'?'warning':x.status==='acknowledged'?'success':'danger'}">${x.status.toUpperCase()}</span></td><td>${x.ackRef || '-'}</td><td><span class="badge badge-${deadlineClass}">${deadlineText}</span></td><td><button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.editNabidh('${x.id}')">✏️</button><button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteNabidh('${x.id}')">🗑️</button></td></tr>`;
     }).join('');
 }
-
 window.filterNabidh = function(type, e) {
     window.nabidhFilter = type;
     renderNabidhTable();
     document.querySelectorAll('#page-nabidh .btn').forEach(b => b.style.opacity = '0.5');
     if (e) e.target.style.opacity = '1';
 };
-
 function renderEligTable() {
     const filter = window.eligFilter || 'all';
     const filtered = filter === 'all' ? ELIG_LOGS : ELIG_LOGS.filter(x => x.status === filter);
-    
     const statusColors = { active: 'success', inactive: 'danger', expired: 'warning', not_found: 'danger' };
-    
-    document.getElementById('eligBody').innerHTML = filtered.map(x => `
-        <tr>
-            <td>${x.patientRef || '-'}</td>
-            <td><code>${x.eidMasked}</code></td>
-            <td>${x.tpa}</td>
-            <td>${x.checked}</td>
-            <td><span class="badge badge-${statusColors[x.status]}">${x.status.toUpperCase()}</span></td>
-            <td>${x.benefit}</td>
-            <td>AED ${x.copay}</td>
-            <td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${x.notes || '-'}</td>
-        </tr>
-    `).join('');
+    document.getElementById('eligBody').innerHTML = filtered.map(x => `<tr><td>${x.patientRef || '-'}</td><td><code>${x.eidMasked}</code></td><td>${x.tpa}</td><td>${x.checked}</td><td><span class="badge badge-${statusColors[x.status]}">${x.status.toUpperCase()}</span></td><td>${x.benefit}</td><td>AED ${x.copay}</td><td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${x.notes || '-'}</td></tr>`).join('');
 }
-
 window.filterElig = function(type, e) {
     window.eligFilter = type;
     renderEligTable();
-    document.querySelectorAll('#page-nabidh .btn:nth-child(n+6)').forEach((b, i) => {
-        const types = ['all','active','inactive','expired'];
-        b.style.opacity = types[i] === type ? '1' : '0.5';
-    });
+    document.querySelectorAll('#page-nabidh .btn:nth-child(n+6)').forEach((b, i) => { const types = ['all','active','inactive','expired']; b.style.opacity = types[i] === type ? '1' : '0.5'; });
 };
-
 window.editNabidh = function(id) {
     const log = NABIDH_LOGS.find(x => x.id === id);
     if(!log) return;
@@ -2068,43 +1426,22 @@ window.editNabidh = function(id) {
         document.querySelector('#dynamicModal .btn-pro').onclick = () => window.updateNabidhLog(id);
     }, 50);
 };
-
 window.updateNabidhLog = function(id) {
     const idx = NABIDH_LOGS.findIndex(x => x.id === id);
     if(idx === -1) return;
-    NABIDH_LOGS[idx] = {
-        ...NABIDH_LOGS[idx],
-        batchId: document.getElementById('nbBatchId').value,
-        clearinghouse: document.getElementById('nbClearinghouse').value,
-        submitted: document.getElementById('nbSubmitted').value,
-        claimCount: parseInt(document.getElementById('nbClaimCount').value),
-        status: document.getElementById('nbStatus').value,
-        ackRef: document.getElementById('nbAckRef').value,
-        deadline: document.getElementById('nbDeadline').value,
-        notes: document.getElementById('nbNotes').value
-    };
+    NABIDH_LOGS[idx] = { ...NABIDH_LOGS[idx], batchId: document.getElementById('nbBatchId').value, clearinghouse: document.getElementById('nbClearinghouse').value, submitted: document.getElementById('nbSubmitted').value, claimCount: parseInt(document.getElementById('nbClaimCount').value), status: document.getElementById('nbStatus').value, ackRef: document.getElementById('nbAckRef').value, deadline: document.getElementById('nbDeadline').value, notes: document.getElementById('nbNotes').value };
     window.closeModal();
     renderNabidhTable();
     saveState();
     window.showToast('✅ Submission updated!');
 };
-
 window.deleteNabidh = function(id) {
-    if(confirm('Delete this submission log?')) {
-        NABIDH_LOGS = NABIDH_LOGS.filter(x => x.id !== id);
-        renderNabidhTable();
-        saveState();
-        window.showToast('🗑️ Deleted');
-    }
+    if(confirm('Delete this submission log?')) { NABIDH_LOGS = NABIDH_LOGS.filter(x => x.id !== id); renderNabidhTable(); saveState(); window.showToast('🗑️ Deleted'); }
 };
-
 window.exportNabidh = function() {
     if(NABIDH_LOGS.length === 0) { window.showToast('❌ No data to export!'); return; }
     const headers = ['Batch_ID', 'Clearinghouse', 'Submitted_Date', 'Claims_Count', 'Status', 'ACK_Reference', 'Deadline', 'Days_Left', 'Notes'];
-    const rows = NABIDH_LOGS.map(x => {
-        const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24));
-        return [x.batchId, x.clearinghouse, x.submitted, x.claimCount, x.status, x.ackRef, x.deadline, daysLeft, x.notes.replace(/,/g, ';')];
-    });
+    const rows = NABIDH_LOGS.map(x => { const daysLeft = Math.ceil((new Date(x.deadline) - new Date()) / (1000*60*60*24)); return [x.batchId, x.clearinghouse, x.submitted, x.claimCount, x.status, x.ackRef, x.deadline, daysLeft, x.notes.replace(/,/g, ';')]; });
     const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -2115,28 +1452,17 @@ window.exportNabidh = function() {
     URL.revokeObjectURL(url);
     window.showToast('📤 NABIDH Log Exported!');
 };
-
-// Auto-render when nav to nabidh page
 const originalNav = nav;
 window.nav = function(p, el) {
     originalNav(p, el);
-    if(p === 'nabidh') {
-        renderNabidhTable();
-        renderEligTable();
-    }
+    if(p === 'nabidh') { renderNabidhTable(); renderEligTable(); }
 };
-
-// ============================================
-// TPA CONTRACT RATE ENGINE
-// ============================================
 window.showContractModal = function(editId = null) {
     const tpals = [...new Set(DATA.map(d => d.payer).concat(CONTRACT_RATES.map(c => c.tpa)))].sort();
     const cpts = [...new Set(DATA.map(d => d.cpt).filter(Boolean))].sort();
     const today = new Date().toISOString().split('T')[0];
     const yearLater = new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0];
-    
     let existing = editId ? CONTRACT_RATES.find(c => c.id === editId) : null;
-    
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:600px;margin:auto;">
             <h4>${existing ? '✏️ Edit' : '➕ Add'} Contract Rate</h4>
@@ -2167,30 +1493,14 @@ window.showContractModal = function(editId = null) {
         </div>
     `;
     openModal(html);
-    
-    // Handle dynamic TPA/CPT selection
-    document.getElementById('ctTPA').onchange = function() {
-        document.getElementById('ctTPANew').style.display = this.value === '__NEW__' ? 'block' : 'none';
-    };
-    document.getElementById('ctCPT').onchange = function() {
-        document.getElementById('ctCPTNew').style.display = this.value === '__NEW__' ? 'block' : 'none';
-    };
+    document.getElementById('ctTPA').onchange = function() { document.getElementById('ctTPANew').style.display = this.value === '__NEW__' ? 'block' : 'none'; };
+    document.getElementById('ctCPT').onchange = function() { document.getElementById('ctCPTNew').style.display = this.value === '__NEW__' ? 'block' : 'none'; };
 };
-
 window.saveContract = function() {
     const tpa = document.getElementById('ctTPA').value === '__NEW__' ? document.getElementById('ctTPANew').value : document.getElementById('ctTPA').value;
     const cpt = document.getElementById('ctCPT').value === '__NEW__' ? document.getElementById('ctCPTNew').value : document.getElementById('ctCPT').value;
     if(!tpa || !cpt) { window.showToast('❌ TPA and CPT required'); return; }
-    
-    const contract = {
-        id: 'CT-' + Date.now(),
-        tpa, cpt,
-        rate: parseFloat(document.getElementById('ctRate').value),
-        effective: document.getElementById('ctEffective').value,
-        expiry: document.getElementById('ctExpiry').value,
-        notes: document.getElementById('ctNotes').value,
-        createdAt: new Date().toISOString()
-    };
+    const contract = { id: 'CT-' + Date.now(), tpa, cpt, rate: parseFloat(document.getElementById('ctRate').value), effective: document.getElementById('ctEffective').value, expiry: document.getElementById('ctExpiry').value, notes: document.getElementById('ctNotes').value, createdAt: new Date().toISOString() };
     CONTRACT_RATES.push(contract);
     window.closeModal();
     renderContracts();
@@ -2198,28 +1508,18 @@ window.saveContract = function() {
     logAudit('CONTRACT_ADD', `Added rate for ${tpa} / ${cpt}: AED ${contract.rate}`);
     window.showToast('💰 Contract rate saved!');
 };
-
 window.updateContract = function(id) {
     const idx = CONTRACT_RATES.findIndex(c => c.id === id);
     if(idx === -1) return;
     const tpa = document.getElementById('ctTPA').value === '__NEW__' ? document.getElementById('ctTPANew').value : document.getElementById('ctTPA').value;
     const cpt = document.getElementById('ctCPT').value === '__NEW__' ? document.getElementById('ctCPTNew').value : document.getElementById('ctCPT').value;
-    
-    CONTRACT_RATES[idx] = {
-        ...CONTRACT_RATES[idx],
-        tpa, cpt,
-        rate: parseFloat(document.getElementById('ctRate').value),
-        effective: document.getElementById('ctEffective').value,
-        expiry: document.getElementById('ctExpiry').value,
-        notes: document.getElementById('ctNotes').value
-    };
+    CONTRACT_RATES[idx] = { ...CONTRACT_RATES[idx], tpa, cpt, rate: parseFloat(document.getElementById('ctRate').value), effective: document.getElementById('ctEffective').value, expiry: document.getElementById('ctExpiry').value, notes: document.getElementById('ctNotes').value };
     window.closeModal();
     renderContracts();
     saveState();
     logAudit('CONTRACT_UPDATE', `Updated rate for ${tpa} / ${cpt}`);
     window.showToast('✅ Contract rate updated!');
 };
-
 function renderContracts() {
     const today = new Date();
     document.getElementById('contractBody').innerHTML = CONTRACT_RATES.map(c => {
@@ -2231,115 +1531,37 @@ function renderContracts() {
         else if (daysToExpiry <= 60) expiryBadge = '<span class="badge badge-warning">⏰ ' + daysToExpiry + 'd left</span>';
         else if (daysToExpiry <= 90) expiryBadge = '<span class="badge badge-accent">📅 ' + daysToExpiry + 'd left</span>';
         else expiryBadge = '<span class="badge badge-success">' + daysToExpiry + 'd left</span>';
-        
-        return `
-        <tr style="${daysToExpiry < 0 ? 'background:rgba(239,68,68,0.1);' : daysToExpiry <= 30 ? 'background:rgba(239,68,68,0.05);' : daysToExpiry <= 60 ? 'background:rgba(245,158,11,0.05);' : ''}">
-            <td>${c.tpa}</td>
-            <td><strong>${c.cpt}</strong></td>
-            <td>AED ${c.rate.toFixed(2)}</td>
-            <td>${c.effective}</td>
-            <td>${c.expiry} ${expiryBadge}</td>
-            <td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.notes || '-'}</td>
-            <td>
-                <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showContractModal('${c.id}')">✏️</button>
-                <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteContract('${c.id}')">🗑️</button>
-            </td>
-        </tr>`;
+        return `<tr style="${daysToExpiry < 0 ? 'background:rgba(239,68,68,0.1);' : daysToExpiry <= 30 ? 'background:rgba(239,68,68,0.05);' : daysToExpiry <= 60 ? 'background:rgba(245,158,11,0.05);' : ''}"><td>${c.tpa}</td><td><strong>${c.cpt}</strong></td><td>AED ${c.rate.toFixed(2)}</td><td>${c.effective}</td><td>${c.expiry} ${expiryBadge}</td><td style="font-size:11px;color:var(--text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.notes || '-'}</td><td><button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showContractModal('${c.id}')">✏️</button><button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteContract('${c.id}')">🗑️</button></td></tr>`;
     }).join('');
-    
-    // Update header alert for expiring contracts
     updateContractExpiryAlert();
 }
-
 function updateContractExpiryAlert() {
     const today = new Date();
-    const expiring = CONTRACT_RATES.filter(c => {
-        const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24));
-        return days <= 90 && days >= 0;
-    });
-    const expired = CONTRACT_RATES.filter(c => {
-        const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24));
-        return days < 0;
-    });
-    
+    const expiring = CONTRACT_RATES.filter(c => { const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24)); return days <= 90 && days >= 0; });
+    const expired = CONTRACT_RATES.filter(c => { const days = Math.ceil((new Date(c.expiry) - today) / (1000*60*60*24)); return days < 0; });
     let alertEl = document.getElementById('contractExpiryAlert');
-    if (!alertEl) {
-        alertEl = document.createElement('div');
-        alertEl.id = 'contractExpiryAlert';
-        alertEl.style.cssText = 'position:fixed;top:70px;right:20px;z-index:9999;max-width:350px;';
-        document.body.appendChild(alertEl);
-    }
-    
+    if (!alertEl) { alertEl = document.createElement('div'); alertEl.id = 'contractExpiryAlert'; alertEl.style.cssText = 'position:fixed;top:70px;right:20px;z-index:9999;max-width:350px;'; document.body.appendChild(alertEl); }
     if (expired.length > 0 || expiring.length > 0) {
-        alertEl.innerHTML = `
-            <div style="background:var(--bg-card);border:1px solid var(--warning);border-radius:12px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:slideIn 0.3s ease;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                    <strong style="color:var(--warning);">⏰ Contract Expiry Alert</strong>
-                    <button onclick="this.parentElement.parentElement.style.display='none'" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;">✕</button>
-                </div>
-                ${expired.length > 0 ? `<div style="margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:6px;"><strong style="color:var(--danger);">${expired.length} EXPIRED</strong> — Rates no longer valid for PRCE checks</div>` : ''}
-                ${expiring.length > 0 ? `<div style="padding:8px;background:rgba(245,158,11,0.1);border-radius:6px;"><strong style="color:var(--warning);">${expiring.length} EXPIRING ≤90d</strong> — Renew to avoid PRCE-001 misses</div>` : ''}
-                <button class="btn btn-sm" style="width:100%;margin-top:10px;background:var(--warning);color:var(--bg-dark);" onclick="nav('contracts', document.querySelector('[onclick*=\"contracts\"])')">View Contracts Tab</button>
-            </div>`;
+        alertEl.innerHTML = `<div style="background:var(--bg-card);border:1px solid var(--warning);border-radius:12px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:slideIn 0.3s ease;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><strong style="color:var(--warning);">⏰ Contract Expiry Alert</strong><button onclick="this.parentElement.parentElement.style.display='none'" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;">✕</button></div>${expired.length > 0 ? `<div style="margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:6px;"><strong style="color:var(--danger);">${expired.length} EXPIRED</strong> — Rates no longer valid for PRCE checks</div>` : ''}${expiring.length > 0 ? `<div style="padding:8px;background:rgba(245,158,11,0.1);border-radius:6px;"><strong style="color:var(--warning);">${expiring.length} EXPIRING ≤90d</strong> — Renew to avoid PRCE-001 misses</div>` : ''}<button class="btn btn-sm" style="width:100%;margin-top:10px;background:var(--warning);color:var(--bg-dark);" onclick="nav('contracts', document.querySelector('[onclick*=\"contracts\"])')">View Contracts Tab</button></div>`;
         alertEl.style.display = 'block';
-    } else {
-        alertEl.style.display = 'none';
-    }
+    } else { alertEl.style.display = 'none'; }
 }
-
 window.deleteContract = function(id) {
-    if(confirm('Delete this contract rate?')) {
-        const c = CONTRACT_RATES.find(x => x.id === id);
-        CONTRACT_RATES = CONTRACT_RATES.filter(x => x.id !== id);
-        renderContracts();
-        saveState();
-        logAudit('CONTRACT_DELETE', `Deleted rate for ${c?.tpa} / ${c?.cpt}`);
-        window.showToast('🗑️ Deleted');
-    }
+    if(confirm('Delete this contract rate?')) { const c = CONTRACT_RATES.find(x => x.id === id); CONTRACT_RATES = CONTRACT_RATES.filter(x => x.id !== id); renderContracts(); saveState(); logAudit('CONTRACT_DELETE', `Deleted rate for ${c?.tpa} / ${c?.cpt}`); window.showToast('🗑️ Deleted'); }
 };
-
 window.runPRCECheck = function() {
     if(CONTRACT_RATES.length === 0) { window.showToast('❌ No contract rates defined'); return; }
     if(DATA.length === 0) { window.showToast('❌ No claims data'); return; }
-    
     const paidClaims = DATA.filter(d => d.status === 'paid');
     const results = [];
-    
     paidClaims.forEach(claim => {
-        const contract = CONTRACT_RATES.find(c => 
-            c.tpa === claim.payer && 
-            c.cpt === claim.cpt &&
-            new Date(c.effective) <= new Date() &&
-            new Date(c.expiry) >= new Date()
-        );
-        if(contract && claim.amt < contract.rate) {
-            results.push({
-                claimId: claim.id,
-                tpa: claim.payer,
-                cpt: claim.cpt,
-                contractedRate: contract.rate,
-                paidAmount: claim.amt,
-                shortfall: contract.rate - claim.amt
-            });
-        }
+        const contract = CONTRACT_RATES.find(c => c.tpa === claim.payer && c.cpt === claim.cpt && new Date(c.effective) <= new Date() && new Date(c.expiry) >= new Date());
+        if(contract && claim.amt < contract.rate) { results.push({ claimId: claim.id, tpa: claim.payer, cpt: claim.cpt, contractedRate: contract.rate, paidAmount: claim.amt, shortfall: contract.rate - claim.amt }); }
     });
-    
-    document.getElementById('prceBody').innerHTML = results.map(r => `
-        <tr style="${r.shortfall > 500 ? 'background:rgba(239,68,68,0.1);' : ''}">
-            <td>${r.claimId}</td>
-            <td>${r.tpa}</td>
-            <td>${r.cpt}</td>
-            <td>AED ${r.contractedRate.toFixed(2)}</td>
-            <td>AED ${r.paidAmount.toFixed(2)}</td>
-            <td style="color:var(--danger);font-weight:bold;">AED ${r.shortfall.toFixed(2)}</td>
-            <td><button class="btn btn-pro btn-sm" onclick="window.genAppeal('${r.claimId}','${r.tpa}','PRCE-001',${r.shortfall})">📄 Appeal</button></td>
-        </tr>
-    `).join('');
-    
+    document.getElementById('prceBody').innerHTML = results.map(r => `<tr style="${r.shortfall > 500 ? 'background:rgba(239,68,68,0.1);' : ''}"><td>${r.claimId}</td><td>${r.tpa}</td><td>${r.cpt}</td><td>AED ${r.contractedRate.toFixed(2)}</td><td>AED ${r.paidAmount.toFixed(2)}</td><td style="color:var(--danger);font-weight:bold;">AED ${r.shortfall.toFixed(2)}</td><td><button class="btn btn-pro btn-sm" onclick="window.genAppeal('${r.claimId}','${r.tpa}','PRCE-001',${r.shortfall})">📄 Appeal</button></td></tr>`).join('');
     const totalShortfall = results.reduce((s, r) => s + r.shortfall, 0);
     window.showToast(`🔍 Found ${results.length} underpaid claims. Total shortfall: AED ${totalShortfall.toFixed(2)}`);
 };
-
 window.exportContracts = function() {
     if(CONTRACT_RATES.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'CPT', 'Rate_AED', 'Effective', 'Expiry', 'Notes'];
@@ -2347,11 +1569,7 @@ window.exportContracts = function() {
     downloadCSV(csv, 'TPA_Contract_Rates.csv');
     window.showToast('📤 Contract rates exported!');
 };
-
-window.importContracts = function() {
-    document.getElementById('contractImport').click();
-};
-
+window.importContracts = function() { document.getElementById('contractImport').click(); };
 window.handleContractImport = function(e) {
     const file = e.target.files[0];
     if(!file) return;
@@ -2364,16 +1582,7 @@ window.handleContractImport = function(e) {
         for(let i=1;i<lines.length;i++) {
             const vals = lines[i].split(',');
             if(vals.length >= 3) {
-                CONTRACT_RATES.push({
-                    id: 'CT-' + Date.now() + '-' + i,
-                    tpa: vals[0].trim(),
-                    cpt: vals[1].trim(),
-                    rate: parseFloat(vals[2]) || 0,
-                    effective: vals[3]?.trim() || new Date().toISOString().split('T')[0],
-                    expiry: vals[4]?.trim() || new Date(Date.now()+365*24*60*60*1000).toISOString().split('T')[0],
-                    notes: vals[5]?.trim() || '',
-                    createdAt: new Date().toISOString()
-                });
+                CONTRACT_RATES.push({ id: 'CT-' + Date.now() + '-' + i, tpa: vals[0].trim(), cpt: vals[1].trim(), rate: parseFloat(vals[2]) || 0, effective: vals[3]?.trim() || new Date().toISOString().split('T')[0], expiry: vals[4]?.trim() || new Date(Date.now()+365*24*60*60*1000).toISOString().split('T')[0], notes: vals[5]?.trim() || '', createdAt: new Date().toISOString() });
                 added++;
             }
         }
@@ -2385,80 +1594,31 @@ window.handleContractImport = function(e) {
     };
     reader.readAsText(file);
 };
-
-// ============================================
-// BUNDLING / NCCI EDITOR
-// ============================================
 window.checkBundling = function() {
     const primary = document.getElementById('bunPrimaryCPT').value.trim();
     const secondary = document.getElementById('bunSecondaryCPT').value.trim();
     const modifier = document.getElementById('bunModifier').value;
-    
     if(!primary || !secondary) { window.showToast('❌ Enter both CPT codes'); return; }
-    
     let result = { bundles: false, requiredModifier: '', message: '', severity: 'info' };
-    
-    // Check NCCI edits
-    if(NCCI_EDITS[primary] && NCCI_EDITS[primary].bundles.includes(secondary)) {
-        result.bundles = true;
-        result.requiredModifier = NCCI_EDITS[primary].modifier;
-        result.message = NCCI_EDITS[primary].description;
-        result.severity = modifier === result.requiredModifier ? 'success' : 'warning';
-    } else if(NCCI_EDITS[secondary] && NCCI_EDITS[secondary].bundles.includes(primary)) {
-        result.bundles = true;
-        result.requiredModifier = NCCI_EDITS[secondary].modifier;
-        result.message = NCCI_EDITS[secondary].description;
-        result.severity = modifier === result.requiredModifier ? 'success' : 'warning';
-    } else {
-        result.message = 'No NCCI edit found for this CPT pair. Verify with payer-specific rules.';
-        result.severity = 'info';
-    }
-    
+    if(NCCI_EDITS[primary] && NCCI_EDITS[primary].bundles.includes(secondary)) { result.bundles = true; result.requiredModifier = NCCI_EDITS[primary].modifier; result.message = NCCI_EDITS[primary].description; result.severity = modifier === result.requiredModifier ? 'success' : 'warning'; }
+    else if(NCCI_EDITS[secondary] && NCCI_EDITS[secondary].bundles.includes(primary)) { result.bundles = true; result.requiredModifier = NCCI_EDITS[secondary].modifier; result.message = NCCI_EDITS[secondary].description; result.severity = modifier === result.requiredModifier ? 'success' : 'warning'; }
+    else { result.message = 'No NCCI edit found for this CPT pair. Verify with payer-specific rules.'; result.severity = 'info'; }
     const colors = { success: 'var(--success)', warning: 'var(--warning)', danger: 'var(--danger)', info: 'var(--accent)' };
     const icons = { success: '✅', warning: '⚠️', danger: '❌', info: 'ℹ️' };
-    
-    document.getElementById('bundlingResult').innerHTML = `
-        <div style="background:var(--bg-dark);padding:20px;border-radius:12px;border-left:4px solid ${colors[result.severity]};">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                <span style="font-size:24px;">${icons[result.severity]}</span>
-                <strong style="color:${colors[result.severity]};">${result.severity.toUpperCase()}</strong>
-            </div>
-            <p style="margin-bottom:10px;">${result.message}</p>
-            ${result.bundles ? `
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
-                    <div><strong>Required Modifier:</strong> ${result.requiredModifier}</div>
-                    <div><strong>Your Selection:</strong> ${modifier || 'None'}</div>
-                    <div><strong>Status:</strong> ${modifier === result.requiredModifier ? '✅ Correct modifier applied' : modifier ? `❌ Wrong modifier. Use ${result.requiredModifier}` : '⚠️ No modifier selected - claim will likely deny for bundling'}</div>
-                    <div><strong>Action:</strong> ${modifier === result.requiredModifier ? 'Ready for submission' : 'Add correct modifier before submission'}</div>
-                </div>
-            ` : ''}
-        </div>
-    `;
+    document.getElementById('bundlingResult').innerHTML = `<div style="background:var(--bg-dark);padding:20px;border-radius:12px;border-left:4px solid ${colors[result.severity]};"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span style="font-size:24px;">${icons[result.severity]}</span><strong style="color:${colors[result.severity]};">${result.severity.toUpperCase()}</strong></div><p style="margin-bottom:10px;">${result.message}</p>${result.bundles ? `<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;"><div><strong>Required Modifier:</strong> ${result.requiredModifier}</div><div><strong>Your Selection:</strong> ${modifier || 'None'}</div><div><strong>Status:</strong> ${modifier === result.requiredModifier ? '✅ Correct modifier applied' : modifier ? `❌ Wrong modifier. Use ${result.requiredModifier}` : '⚠️ No modifier selected - claim will likely deny for bundling'}</div><div><strong>Action:</strong> ${modifier === result.requiredModifier ? 'Ready for submission' : 'Add correct modifier before submission'}</div></div>` : ''}</div>`;
 };
-
-// ============================================
-// AR AGING BY TPA
-// ============================================
 window.populateARTPAFilter = function() {
     const tpals = [...new Set(DATA.filter(d => d.status !== 'paid').map(d => d.payer))].sort();
     document.getElementById('arTPAFilter').innerHTML = '<option value="all">All TPAs</option>' + tpals.map(t => `<option value="${t}">${t}</option>`).join('');
 };
-
-window.refreshAR = function() {
-    window.renderAR();
-    window.showToast('🔄 AR Aging refreshed from current claims');
-};
-
+window.refreshAR = function() { window.renderAR(); window.showToast('🔄 AR Aging refreshed from current claims'); };
 window.renderAR = function() {
     const filter = document.getElementById('arTPAFilter').value;
     const deniedClaims = DATA.filter(d => d.status === 'denied');
-    
-    // Group by TPA
     const tpaGroups = {};
     deniedClaims.forEach(claim => {
         if(filter !== 'all' && claim.payer !== filter) return;
         if(!tpaGroups[claim.payer]) tpaGroups[claim.payer] = { '0-30': 0, '31-60': 0, '61-90': 0, '90+': 0 };
-        // Simulate aging based on batch (batch 1-10 = months ago)
         const ageDays = (11 - claim.batch) * 30 + Math.floor(Math.random() * 30);
         let bucket = '90+';
         if(ageDays <= 30) bucket = '0-30';
@@ -2466,45 +1626,23 @@ window.renderAR = function() {
         else if(ageDays <= 90) bucket = '61-90';
         tpaGroups[claim.payer][bucket] += claim.amt;
     });
-    
     let total030 = 0, total3160 = 0, total6190 = 0, total90 = 0;
-    
     document.getElementById('arBody').innerHTML = Object.entries(tpaGroups).map(([tpa, buckets]) => {
         const total = buckets['0-30'] + buckets['31-60'] + buckets['61-90'] + buckets['90+'];
-        total030 += buckets['0-30'];
-        total3160 += buckets['31-60'];
-        total6190 += buckets['61-90'];
-        total90 += buckets['90+'];
-        
-        // Collection probability based on aging
+        total030 += buckets['0-30']; total3160 += buckets['31-60']; total6190 += buckets['61-90']; total90 += buckets['90+'];
         const prob = buckets['0-30'] > 0 ? 85 : buckets['31-60'] > 0 ? 60 : buckets['61-90'] > 0 ? 35 : 15;
         const priority = prob >= 60 ? '🟢 High' : prob >= 35 ? '🟡 Medium' : '🔴 Low';
-        
-        return `
-            <tr>
-                <td><strong>${tpa}</strong></td>
-                <td style="color:var(--success)">AED ${buckets['0-30'].toLocaleString()}</td>
-                <td style="color:var(--warning)">AED ${buckets['31-60'].toLocaleString()}</td>
-                <td style="color:var(--danger)">AED ${buckets['61-90'].toLocaleString()}</td>
-                <td style="color:var(--accent)">AED ${buckets['90+'].toLocaleString()}</td>
-                <td><strong>AED ${total.toLocaleString()}</strong></td>
-                <td>${prob}%</td>
-                <td>${priority}</td>
-            </tr>
-        `;
+        return `<tr><td><strong>${tpa}</strong></td><td style="color:var(--success)">AED ${buckets['0-30'].toLocaleString()}</td><td style="color:var(--warning)">AED ${buckets['31-60'].toLocaleString()}</td><td style="color:var(--danger)">AED ${buckets['61-90'].toLocaleString()}</td><td style="color:var(--accent)">AED ${buckets['90+'].toLocaleString()}</td><td><strong>AED ${total.toLocaleString()}</strong></td><td>${prob}%</td><td>${priority}</td></tr>`;
     }).join('');
-    
     document.getElementById('ar030').textContent = 'AED ' + total030.toLocaleString();
     document.getElementById('ar3160').textContent = 'AED ' + total3160.toLocaleString();
     document.getElementById('ar6190').textContent = 'AED ' + total6190.toLocaleString();
     document.getElementById('ar90').textContent = 'AED ' + total90.toLocaleString();
 };
-
 window.exportAR = function() {
     const filter = document.getElementById('arTPAFilter').value;
     const deniedClaims = DATA.filter(d => d.status === 'denied' && (filter === 'all' || d.payer === filter));
     if(deniedClaims.length === 0) { window.showToast('❌ No AR data'); return; }
-    
     const tpaGroups = {};
     deniedClaims.forEach(claim => {
         if(!tpaGroups[claim.payer]) tpaGroups[claim.payer] = { '0-30': 0, '31-60': 0, '61-90': 0, '90+': 0 };
@@ -2515,24 +1653,17 @@ window.exportAR = function() {
         else if(ageDays <= 90) bucket = '61-90';
         tpaGroups[claim.payer][bucket] += claim.amt;
     });
-    
     const headers = ['TPA', '0-30_Days', '31-60_Days', '61-90_Days', '90+_Days', 'Total'];
     const csv = [headers, ...Object.entries(tpaGroups).map(([tpa, b]) => [tpa, b['0-30'], b['31-60'], b['61-90'], b['90+'], b['0-30']+b['31-60']+b['61-90']+b['90+']])].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, 'AR_Aging_Report.csv');
     window.showToast('📤 AR Aging exported!');
 };
-
-// ============================================
-// CAPITATION TRACKER
-// ============================================
 window.showCapitationModal = function(editId = null) {
     const tpals = [...new Set(DATA.map(d => d.payer))].sort();
     const today = new Date();
     const periodStart = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
     const periodEnd = new Date(today.getFullYear(), 11, 31).toISOString().split('T')[0];
-    
     let existing = editId ? CAPITATION_BUDGETS.find(c => c.id === editId) : null;
-    
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:600px;margin:auto;">
             <h4>${existing ? '✏️ Edit' : '➕ Add'} Capitation Budget</h4>
@@ -2563,18 +1694,8 @@ window.showCapitationModal = function(editId = null) {
     `;
     openModal(html);
 };
-
 window.saveCapitation = function() {
-    const cap = {
-        id: 'CAP-' + Date.now(),
-        tpa: document.getElementById('capTPA').value,
-        type: document.getElementById('capType').value,
-        periodStart: document.getElementById('capStart').value,
-        periodEnd: document.getElementById('capEnd').value,
-        annualCap: parseFloat(document.getElementById('capAnnual').value) || 0,
-        utilized: parseFloat(document.getElementById('capUtilized').value) || 0,
-        createdAt: new Date().toISOString()
-    };
+    const cap = { id: 'CAP-' + Date.now(), tpa: document.getElementById('capTPA').value, type: document.getElementById('capType').value, periodStart: document.getElementById('capStart').value, periodEnd: document.getElementById('capEnd').value, annualCap: parseFloat(document.getElementById('capAnnual').value) || 0, utilized: parseFloat(document.getElementById('capUtilized').value) || 0, createdAt: new Date().toISOString() };
     CAPITATION_BUDGETS.push(cap);
     window.closeModal();
     renderCapitation();
@@ -2582,26 +1703,16 @@ window.saveCapitation = function() {
     logAudit('CAPITATION_ADD', `Added ${cap.type} budget for ${cap.tpa}: AED ${cap.annualCap.toLocaleString()}`);
     window.showToast('🏦 Capitation budget saved!');
 };
-
 window.updateCapitation = function(id) {
     const idx = CAPITATION_BUDGETS.findIndex(c => c.id === id);
     if(idx === -1) return;
-    CAPITATION_BUDGETS[idx] = {
-        ...CAPITATION_BUDGETS[idx],
-        tpa: document.getElementById('capTPA').value,
-        type: document.getElementById('capType').value,
-        periodStart: document.getElementById('capStart').value,
-        periodEnd: document.getElementById('capEnd').value,
-        annualCap: parseFloat(document.getElementById('capAnnual').value) || 0,
-        utilized: parseFloat(document.getElementById('capUtilized').value) || 0
-    };
+    CAPITATION_BUDGETS[idx] = { ...CAPITATION_BUDGETS[idx], tpa: document.getElementById('capTPA').value, type: document.getElementById('capType').value, periodStart: document.getElementById('capStart').value, periodEnd: document.getElementById('capEnd').value, annualCap: parseFloat(document.getElementById('capAnnual').value) || 0, utilized: parseFloat(document.getElementById('capUtilized').value) || 0 };
     window.closeModal();
     renderCapitation();
     saveState();
     logAudit('CAPITATION_UPDATE', `Updated budget for ${CAPITATION_BUDGETS[idx].tpa}`);
     window.showToast('✅ Capitation budget updated!');
 };
-
 function renderCapitation() {
     const today = new Date();
     document.getElementById('capBody').innerHTML = CAPITATION_BUDGETS.map(c => {
@@ -2610,8 +1721,6 @@ function renderCapitation() {
         let statusClass = 'success', statusText = 'Healthy';
         if(pctUsed >= 90) { statusClass = 'danger'; statusText = 'Critical'; }
         else if(pctUsed >= 75) { statusClass = 'warning'; statusText = 'Warning'; }
-        
-        // Calculate days to cap exhaustion based on current burn rate
         const periodStart = new Date(c.periodStart);
         const periodEnd = new Date(c.periodEnd);
         const daysElapsed = Math.max(1, Math.floor((today - periodStart) / (1000*60*60*24)));
@@ -2619,53 +1728,13 @@ function renderCapitation() {
         const dailyBurnRate = daysElapsed > 0 ? c.utilized / daysElapsed : 0;
         const daysToExhaustion = dailyBurnRate > 0 ? Math.floor(remaining / dailyBurnRate) : Infinity;
         const exhaustionDate = daysToExhaustion !== Infinity ? new Date(today.getTime() + daysToExhaustion * 24*60*60*1000) : null;
-        
-        // Gauge color
         const gaugeColor = pctUsed >= 90 ? 'var(--danger)' : pctUsed >= 75 ? 'var(--warning)' : pctUsed >= 50 ? 'var(--accent)' : 'var(--success)';
-        const gaugeBg = pctUsed >= 90 ? 'rgba(239,68,68,0.2)' : pctUsed >= 75 ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.2)';
-        
-        return `
-            <tr style="${pctUsed >= 90 ? 'background:rgba(239,68,68,0.1);' : pctUsed >= 75 ? 'background:rgba(245,158,11,0.1);' : ''}">
-                <td>${c.tpa}</td>
-                <td><span class="badge badge-${c.type==='EBP'?'success':c.type==='Thiqa'?'warning':'accent'}">${c.type}</span></td>
-                <td>${c.periodStart} to ${c.periodEnd}</td>
-                <td>AED ${c.annualCap.toLocaleString()}</td>
-                <td>AED ${c.utilized.toLocaleString()}</td>
-                <td style="color:${remaining>=0?'var(--success)':'var(--danger)'}">AED ${remaining.toLocaleString()}</td>
-                <td>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <div style="flex:1;height:8px;background:var(--bg-dark);border-radius:4px;overflow:hidden;">
-                            <div style="width:${Math.min(100, pctUsed)}%;height:100%;background:${gaugeColor};border-radius:4px;transition:width 0.3s;"></div>
-                        </div>
-                        <strong style="color:${gaugeColor};min-width:50px;">${pctUsed}%</strong>
-                    </div>
-                </td>
-                <td><span class="badge badge-${statusClass}">${statusText}</span></td>
-                <td style="font-size:11px;">
-                    ${daysToExhaustion !== Infinity ? 
-                        `<div style="color:${daysToExhaustion <= daysRemaining ? 'var(--success)' : 'var(--danger)'}">⏱ ${daysToExhaustion}d left</div>
-                         <div style="color:var(--text-secondary);">Exhaust: ${exhaustionDate.toLocaleDateString()}</div>` 
-                        : '<span style="color:var(--success)">∞ (no burn)</span>'}
-                    ${daysRemaining > 0 ? `<div style="color:var(--text-secondary);">${daysRemaining}d in period</div>` : ''}
-                </td>
-                <td>
-                    <button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showCapitationModal('${c.id}')">✏️</button>
-                    <button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteCapitation('${c.id}')">🗑️</button>
-                </td>
-            </tr>
-        `;
+        return `<tr style="${pctUsed >= 90 ? 'background:rgba(239,68,68,0.1);' : pctUsed >= 75 ? 'background:rgba(245,158,11,0.1);' : ''}"><td>${c.tpa}</td><td><span class="badge badge-${c.type==='EBP'?'success':c.type==='Thiqa'?'warning':'accent'}">${c.type}</span></td><td>${c.periodStart} to ${c.periodEnd}</td><td>AED ${c.annualCap.toLocaleString()}</td><td>AED ${c.utilized.toLocaleString()}</td><td style="color:${remaining>=0?'var(--success)':'var(--danger)'}">AED ${remaining.toLocaleString()}</td><td><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:8px;background:var(--bg-dark);border-radius:4px;overflow:hidden;"><div style="width:${Math.min(100, pctUsed)}%;height:100%;background:${gaugeColor};border-radius:4px;transition:width 0.3s;"></div></div><strong style="color:${gaugeColor};min-width:50px;">${pctUsed}%</strong></div></td><td><span class="badge badge-${statusClass}">${statusText}</span></td><td style="font-size:11px;">${daysToExhaustion !== Infinity ? `<div style="color:${daysToExhaustion <= daysRemaining ? 'var(--success)' : 'var(--danger)'}">⏱ ${daysToExhaustion}d left</div><div style="color:var(--text-secondary);">Exhaust: ${exhaustionDate.toLocaleDateString()}</div>` : '<span style="color:var(--success)">∞ (no burn)</span>'}${daysRemaining > 0 ? `<div style="color:var(--text-secondary);">${daysRemaining}d in period</div>` : ''}</td><td><button class="btn btn-sm" style="background:var(--primary-light);" onclick="window.showCapitationModal('${c.id}')">✏️</button><button class="btn btn-sm" style="background:rgba(239,68,68,0.2); color:var(--danger);" onclick="window.deleteCapitation('${c.id}')">🗑️</button></td></tr>`;
     }).join('');
 }
-
 window.deleteCapitation = function(id) {
-    if(confirm('Delete this capitation budget?')) {
-        CAPITATION_BUDGETS = CAPITATION_BUDGETS.filter(x => x.id !== id);
-        renderCapitation();
-        saveState();
-        window.showToast('🗑️ Deleted');
-    }
+    if(confirm('Delete this capitation budget?')) { CAPITATION_BUDGETS = CAPITATION_BUDGETS.filter(x => x.id !== id); renderCapitation(); saveState(); window.showToast('🗑️ Deleted'); }
 };
-
 window.exportCapitation = function() {
     if(CAPITATION_BUDGETS.length === 0) { window.showToast('❌ No data'); return; }
     const headers = ['TPA', 'Type', 'Period_Start', 'Period_End', 'Annual_Cap_AED', 'YTD_Utilized_AED', 'Remaining_AED', 'Pct_Used'];
@@ -2673,37 +1742,15 @@ window.exportCapitation = function() {
     downloadCSV(csv, 'Capitation_Budgets.csv');
     window.showToast('📤 Capitation exported!');
 };
-
 function updateCapitationFromClaims() {
     if (CAPITATION_BUDGETS.length === 0) return;
-    
-    // Sum paid claims per TPA that match capitation budgets
     const paidByTpa = {};
-    DATA.filter(d => d.status === 'paid').forEach(d => {
-        paidByTpa[d.payer] = (paidByTpa[d.payer] || 0) + d.amt;
-    });
-    
+    DATA.filter(d => d.status === 'paid').forEach(d => { paidByTpa[d.payer] = (paidByTpa[d.payer] || 0) + d.amt; });
     let updated = false;
-    CAPITATION_BUDGETS.forEach(budget => {
-        const tpaPaid = paidByTpa[budget.tpa] || 0;
-        if (tpaPaid > 0 && tpaPaid !== budget.utilized) {
-            budget.utilized = tpaPaid;
-            updated = true;
-        }
-    });
-    
-    if (updated) {
-        renderCapitation();
-        saveState();
-        logAudit('CAPITATION_AUTO_UPDATE', 'Utilization recalculated from paid claims');
-    }
+    CAPITATION_BUDGETS.forEach(budget => { const tpaPaid = paidByTpa[budget.tpa] || 0; if (tpaPaid > 0 && tpaPaid !== budget.utilized) { budget.utilized = tpaPaid; updated = true; } });
+    if (updated) { renderCapitation(); saveState(); logAudit('CAPITATION_AUTO_UPDATE', 'Utilization recalculated from paid claims'); }
 }
-
-// ============================================
-// ADVANCED ANALYTICS
-// ============================================
 let analyticsChart1 = null, analyticsChart2 = null, forecastChart = null;
-
 function setDefaultDateRange() {
     const end = new Date();
     const start = new Date();
@@ -2711,44 +1758,22 @@ function setDefaultDateRange() {
     document.getElementById('analyticsStart').value = start.toISOString().split('T')[0];
     document.getElementById('analyticsEnd').value = end.toISOString().split('T')[0];
 }
-
 window.renderAnalytics = function() {
     const start = document.getElementById('analyticsStart').value;
     const end = document.getElementById('analyticsEnd').value;
     const groupBy = document.getElementById('analyticsGroupBy').value;
-    
-    // Filter claims by date range (using batch as proxy for month)
-    // In production, you'd have actual service dates
-    const filtered = DATA; // Simplified - all data for demo
-    
-    // Chart 1: Denial Rate Trend
+    const filtered = DATA;
     const trendData = calculateTrend(filtered, groupBy);
-    
     if(analyticsChart1) analyticsChart1.destroy();
     const ctx1 = document.getElementById('analyticsChart1').getContext('2d');
-    analyticsChart1 = new Chart(ctx1, {
-        type: 'line',
-        data: { labels: trendData.labels, datasets: [{ label: 'Denial Rate %', data: trendData.rates, borderColor: '#ef4444', tension: 0.3, fill: true, backgroundColor: 'rgba(239,68,68,0.1)' }] },
-        options: { maintainAspectRatio: false, plugins: { title: { display: true, text: 'Denial Rate Trend', color: '#f8fafc' } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, x: { grid: { display: false } } } }
-    });
-    
-    // Chart 2: Amount by Group
+    analyticsChart1 = new Chart(ctx1, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'Denial Rate %', data: trendData.rates, borderColor: '#ef4444', tension: 0.3, fill: true, backgroundColor: 'rgba(239,68,68,0.1)' }] }, options: { maintainAspectRatio: false, plugins: { title: { display: true, text: 'Denial Rate Trend', color: '#f8fafc' } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, x: { grid: { display: false } } } } });
     const amountData = calculateAmounts(filtered, groupBy);
     if(analyticsChart2) analyticsChart2.destroy();
     const ctx2 = document.getElementById('analyticsChart2').getContext('2d');
-    analyticsChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: amountData.labels, datasets: [{ label: 'Denied Amount', data: amountData.denied, backgroundColor: 'rgba(239,68,68,0.7)' }, { label: 'Paid Amount', data: amountData.paid, backgroundColor: 'rgba(34,197,94,0.7)' }] },
-        options: { maintainAspectRatio: false, plugins: { title: { display: true, text: `Amount by ${groupBy}`, color: '#f8fafc' } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } }
-    });
-    
-    // Pareto Analysis
+    analyticsChart2 = new Chart(ctx2, { type: 'bar', data: { labels: amountData.labels, datasets: [{ label: 'Denied Amount', data: amountData.denied, backgroundColor: 'rgba(239,68,68,0.7)' }, { label: 'Paid Amount', data: amountData.paid, backgroundColor: 'rgba(34,197,94,0.7)' }] }, options: { maintainAspectRatio: false, plugins: { title: { display: true, text: `Amount by ${groupBy}`, color: '#f8fafc' } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } } });
     renderPareto(filtered);
-    
-    // Forecast
     renderForecast(filtered);
 };
-
 function calculateTrend(data, groupBy) {
     const groups = {};
     data.forEach(d => {
@@ -2759,17 +1784,14 @@ function calculateTrend(data, groupBy) {
         else if(groupBy === 'tpa') key = d.payer;
         else if(groupBy === 'denialCode') key = d.code || 'N/A';
         else key = d.payer;
-        
         if(!groups[key]) groups[key] = { total: 0, denied: 0 };
         groups[key].total++;
         if(d.status === 'denied') groups[key].denied++;
     });
-    
     const labels = Object.keys(groups).sort();
     const rates = labels.map(k => groups[k].total > 0 ? Math.round((groups[k].denied / groups[k].total) * 100) : 0);
     return { labels, rates };
 }
-
 function calculateAmounts(data, groupBy) {
     const groups = {};
     data.forEach(d => {
@@ -2780,92 +1802,52 @@ function calculateAmounts(data, groupBy) {
         else if(groupBy === 'tpa') key = d.payer;
         else if(groupBy === 'denialCode') key = d.code || 'N/A';
         else key = d.payer;
-        
         if(!groups[key]) groups[key] = { paid: 0, denied: 0 };
         if(d.status === 'paid') groups[key].paid += d.amt;
         else groups[key].denied += d.amt;
     });
-    
     const labels = Object.keys(groups).sort();
     return { labels, paid: labels.map(k => groups[k].paid), denied: labels.map(k => groups[k].denied) };
 }
-
 function renderPareto(data) {
     const denied = data.filter(d => d.status === 'denied');
     const codeStats = {};
-    denied.forEach(d => {
-        if(!d.code) return;
-        if(!codeStats[d.code]) codeStats[d.code] = { count: 0, amount: 0 };
-        codeStats[d.code].count++;
-        codeStats[d.code].amount += d.amt;
-    });
-    
+    denied.forEach(d => { if(!d.code) return; if(!codeStats[d.code]) codeStats[d.code] = { count: 0, amount: 0 }; codeStats[d.code].count++; codeStats[d.code].amount += d.amt; });
     const totalAmount = Object.values(codeStats).reduce((s, v) => s + v.amount, 0);
-    const sorted = Object.entries(codeStats)
-        .map(([code, v]) => ({ code, count: v.count, amount: v.amount, desc: DENIAL_MAP[code] || '' }))
-        .sort((a, b) => b.amount - a.amount);
-    
+    const sorted = Object.entries(codeStats).map(([code, v]) => ({ code, count: v.count, amount: v.amount, desc: DENIAL_MAP[code] || '' })).sort((a, b) => b.amount - a.amount);
     let cumulative = 0;
     document.getElementById('paretoBody').innerHTML = sorted.map((item, i) => {
         cumulative += item.amount;
         const cumPct = totalAmount > 0 ? ((cumulative / totalAmount) * 100).toFixed(1) : 0;
         const priority = cumPct <= 80 ? '🔴 Critical' : cumPct <= 95 ? '🟡 High' : '🟢 Monitor';
-        return `
-            <tr>
-                <td>${i+1}</td>
-                <td><strong>${item.code}</strong></td>
-                <td style="font-size:11px;color:var(--text-secondary)">${item.desc}</td>
-                <td>${item.count}</td>
-                <td>AED ${item.amount.toLocaleString()}</td>
-                <td>${cumPct}%</td>
-                <td>${priority}</td>
-            </tr>
-        `;
+        return `<tr><td>${i+1}</td><td><strong>${item.code}</strong></td><td style="font-size:11px;color:var(--text-secondary)">${item.desc}</td><td>${item.count}</td><td>AED ${item.amount.toLocaleString()}</td><td>${cumPct}%</td><td>${priority}</td></tr>`;
     }).join('');
 }
-
 function renderForecast(data) {
     const denied = data.filter(d => d.status === 'denied');
     const monthlyDenied = denied.reduce((s, d) => s + d.amt, 0) / Math.max(1, [...new Set(denied.map(d => d.batch))].length);
-    const recoveryRate = 0.62; // 62% recovery assumption
+    const recoveryRate = 0.62;
     const monthlyRecoverable = monthlyDenied * recoveryRate;
-    
     document.getElementById('fcCurrent').textContent = 'AED ' + Math.round(monthlyDenied).toLocaleString();
     document.getElementById('fcProjected').textContent = 'AED ' + Math.round(monthlyRecoverable * 3).toLocaleString();
     document.getElementById('fcAnnual').textContent = 'AED ' + Math.round(monthlyRecoverable * 12).toLocaleString();
-    
-    // Simple forecast chart - next 12 months
     const months = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
-    const forecastData = months.map((_, i) => Math.round(monthlyRecoverable * (1 + i * 0.02))); // 2% growth
-    
+    const forecastData = months.map((_, i) => Math.round(monthlyRecoverable * (1 + i * 0.02)));
     if(forecastChart) forecastChart.destroy();
     const ctx = document.getElementById('forecastChart').getContext('2d');
-    forecastChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: months, datasets: [{ label: 'Projected Monthly Recovery (AED)', data: forecastData, borderColor: '#22c55e', tension: 0.3, fill: true, backgroundColor: 'rgba(34,197,94,0.1)' }] },
-        options: { maintainAspectRatio: false, plugins: { title: { display: true, text: '12-Month Recovery Forecast', color: '#f8fafc' } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } }
-    });
+    forecastChart = new Chart(ctx, { type: 'line', data: { labels: months, datasets: [{ label: 'Projected Monthly Recovery (AED)', data: forecastData, borderColor: '#22c55e', tension: 0.3, fill: true, backgroundColor: 'rgba(34,197,94,0.1)' }] }, options: { maintainAspectRatio: false, plugins: { title: { display: true, text: '12-Month Recovery Forecast', color: '#f8fafc' } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' } }, x: { grid: { display: false } } } } });
 }
-
 window.exportAnalytics = function() {
     const groupBy = document.getElementById('analyticsGroupBy').value;
     const amountData = calculateAmounts(DATA, groupBy);
     const headers = [groupBy, 'Paid_AED', 'Denied_AED', 'Total_AED', 'Denial_Rate_Pct'];
-    const csv = [headers, ...amountData.labels.map((label, i) => {
-        const total = amountData.paid[i] + amountData.denied[i];
-        const rate = total > 0 ? ((amountData.denied[i] / total) * 100).toFixed(1) : 0;
-        return [label, amountData.paid[i], amountData.denied[i], total, rate];
-    })].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...amountData.labels.map((label, i) => { const total = amountData.paid[i] + amountData.denied[i]; const rate = total > 0 ? ((amountData.denied[i] / total) * 100).toFixed(1) : 0; return [label, amountData.paid[i], amountData.denied[i], total, rate]; })].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, `Analytics_${groupBy}.csv`);
     window.showToast('📤 Analytics exported!');
 };
-
 let appealSuccessChart1 = null, appealSuccessChart2 = null;
-
 window.renderAppealAnalytics = function() {
     const deniedWithAppeals = DATA.filter(d => d.status === 'denied' && d.appealStatus);
-    
-    // Group by TPA
     const tpaStats = {};
     deniedWithAppeals.forEach(d => {
         if(!tpaStats[d.payer]) tpaStats[d.payer] = { total: 0, won: 0, lost: 0, pending: 0, recovered: 0, days: [] };
@@ -2873,13 +1855,8 @@ window.renderAppealAnalytics = function() {
         if(d.appealStatus === 'paid') { tpaStats[d.payer].won++; tpaStats[d.payer].recovered += d.appealAmount || d.amt; }
         else if(d.appealStatus === 'denied' || d.appealStatus === 'written_off') tpaStats[d.payer].lost++;
         else tpaStats[d.payer].pending++;
-        if(d.appealSubmittedDate && d.appealResolvedDate) {
-            const days = Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24));
-            if(days > 0) tpaStats[d.payer].days.push(days);
-        }
+        if(d.appealSubmittedDate && d.appealResolvedDate) { const days = Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24)); if(days > 0) tpaStats[d.payer].days.push(days); }
     });
-    
-    // Group by Denial Code
     const codeStats = {};
     deniedWithAppeals.forEach(d => {
         if(!d.code) return;
@@ -2889,38 +1866,16 @@ window.renderAppealAnalytics = function() {
         else if(d.appealStatus === 'denied' || d.appealStatus === 'written_off') codeStats[d.code].lost++;
         else codeStats[d.code].pending++;
     });
-    
-    // Chart 1: Win Rate by TPA
     const tpaLabels = Object.keys(tpaStats).sort();
-    const tpaWinRates = tpaLabels.map(tpa => {
-        const s = tpaStats[tpa];
-        return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0;
-    });
-    
+    const tpaWinRates = tpaLabels.map(tpa => { const s = tpaStats[tpa]; return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0; });
     if(appealSuccessChart1) appealSuccessChart1.destroy();
     const ctx1 = document.getElementById('appealSuccessChart1').getContext('2d');
-    appealSuccessChart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: { labels: tpaLabels, datasets: [{ label: 'Win Rate %', data: tpaWinRates, backgroundColor: 'rgba(34,197,94,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by TPA', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Chart 2: Win Rate by Denial Code
+    appealSuccessChart1 = new Chart(ctx1, { type: 'bar', data: { labels: tpaLabels, datasets: [{ label: 'Win Rate %', data: tpaWinRates, backgroundColor: 'rgba(34,197,94,0.7)' }] }, options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by TPA', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } } });
     const codeLabels = Object.keys(codeStats).sort();
-    const codeWinRates = codeLabels.map(code => {
-        const s = codeStats[code];
-        return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0;
-    });
-    
+    const codeWinRates = codeLabels.map(code => { const s = codeStats[code]; return s.total > 0 ? Math.round((s.won / s.total) * 100) : 0; });
     if(appealSuccessChart2) appealSuccessChart2.destroy();
     const ctx2 = document.getElementById('appealSuccessChart2').getContext('2d');
-    appealSuccessChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: codeLabels, datasets: [{ label: 'Win Rate %', data: codeWinRates, backgroundColor: 'rgba(56,189,248,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by Denial Code', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Table
+    appealSuccessChart2 = new Chart(ctx2, { type: 'bar', data: { labels: codeLabels, datasets: [{ label: 'Win Rate %', data: codeWinRates, backgroundColor: 'rgba(56,189,248,0.7)' }] }, options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Appeal Win Rate by Denial Code', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } } });
     document.getElementById('appealAnalyticsBody').innerHTML = [...new Set([...Object.keys(tpaStats), ...Object.keys(codeStats)])].map(dim => {
         const isTPA = tpaStats[dim];
         const isCode = codeStats[dim];
@@ -2928,38 +1883,19 @@ window.renderAppealAnalytics = function() {
         if(!s) return '';
         const winRate = s.total > 0 ? ((s.won / s.total) * 100).toFixed(1) : 0;
         const avgDays = s.days && s.days.length > 0 ? Math.round(s.days.reduce((a,b)=>a+b,0)/s.days.length) : 'N/A';
-        return `
-            <tr style="${dim.length > 10 ? 'background:rgba(56,189,248,0.05);' : ''}">
-                <td><strong>${dim}</strong> ${isTPA ? '<span class="badge badge-accent">TPA</span>' : '<span class="badge badge-warning">Code</span>'}</td>
-                <td>${s.total}</td>
-                <td style="color:var(--success)">${s.won}</td>
-                <td style="color:var(--danger)">${s.lost}</td>
-                <td style="color:var(--warning)">${s.pending}</td>
-                <td><strong style="color:${winRate >= 50 ? 'var(--success)' : winRate >= 25 ? 'var(--warning)' : 'var(--danger)'}">${winRate}%</strong></td>
-                <td style="color:var(--success)">AED ${(s.recovered || 0).toLocaleString()}</td>
-                <td>${avgDays}</td>
-            </tr>
-        `;
+        return `<tr style="${dim.length > 10 ? 'background:rgba(56,189,248,0.05);' : ''}"><td><strong>${dim}</strong> ${isTPA ? '<span class="badge badge-accent">TPA</span>' : '<span class="badge badge-warning">Code</span>'}</td><td>${s.total}</td><td style="color:var(--success)">${s.won}</td><td style="color:var(--danger)">${s.lost}</td><td style="color:var(--warning)">${s.pending}</td><td><strong style="color:${winRate >= 50 ? 'var(--success)' : winRate >= 25 ? 'var(--warning)' : 'var(--danger)'}">${winRate}%</strong></td><td style="color:var(--success)">AED ${(s.recovered || 0).toLocaleString()}</td><td>${avgDays}</td></tr>`;
     }).join('');
 };
-
 window.exportAppealAnalytics = function() {
     const deniedWithAppeals = DATA.filter(d => d.status === 'denied' && d.appealStatus);
     if(deniedWithAppeals.length === 0) { window.showToast('❌ No appeal data'); return; }
-    
     const headers = ['Claim_ID', 'TPA', 'Denial_Code', 'Physician', 'Original_Amt', 'Appeal_Amt', 'Appeal_Status', 'Submitted_Date', 'Resolved_Date', 'Days_to_Resolve'];
-    const csv = [headers, ...deniedWithAppeals.map(d => {
-        const days = (d.appealSubmittedDate && d.appealResolvedDate) ? Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24)) : '';
-        return [d.id, d.payer, d.code, d.physician, d.amt, d.appealAmount || d.amt, d.appealStatus, d.appealSubmittedDate, d.appealResolvedDate, days];
-    })].map(r=>r.join(',')).join('\n');
+    const csv = [headers, ...deniedWithAppeals.map(d => { const days = (d.appealSubmittedDate && d.appealResolvedDate) ? Math.floor((new Date(d.appealResolvedDate) - new Date(d.appealSubmittedDate)) / (1000*60*60*24)) : ''; return [d.id, d.payer, d.code, d.physician, d.amt, d.appealAmount || d.amt, d.appealStatus, d.appealSubmittedDate, d.appealResolvedDate, days]; })].map(r=>r.join(',')).join('\n');
     downloadCSV(csv, 'Appeal_Analytics.csv');
     window.showToast('📤 Appeal analytics exported!');
 };
-
 let providerProdChart1 = null, providerProdChart2 = null;
-
 window.renderProviderProductivity = function() {
-    // Group by physician
     const physStats = {};
     DATA.forEach(d => {
         if(!physStats[d.physician]) physStats[d.physician] = { total: 0, paid: 0, denied: 0, totalAmt: 0, deniedAmt: 0, batches: new Set() };
@@ -2968,42 +1904,16 @@ window.renderProviderProductivity = function() {
         if(d.status === 'paid') { physStats[d.physician].paid++; physStats[d.physician].totalAmt += d.amt; }
         else { physStats[d.physician].denied++; physStats[d.physician].deniedAmt += d.amt; }
     });
-    
     const physicians = Object.keys(physStats).sort();
     const labels = physicians;
-    const denialRates = labels.map(p => {
-        const s = physStats[p];
-        return s.total > 0 ? ((s.denied / s.total) * 100).toFixed(1) : 0;
-    });
-    const avgPerClaim = labels.map(p => {
-        const s = physStats[p];
-        return s.total > 0 ? Math.round(s.totalAmt / s.total) : 0;
-    });
-    const claimsPerDay = labels.map(p => {
-        const s = physStats[p];
-        const days = s.batches.size * 3; // Assume 3 days per batch
-        return days > 0 ? (s.total / days).toFixed(1) : 0;
-    });
-    
-    // Chart 1: Denial Rate by Physician
+    const denialRates = labels.map(p => { const s = physStats[p]; return s.total > 0 ? ((s.denied / s.total) * 100).toFixed(1) : 0; });
+    const avgPerClaim = labels.map(p => { const s = physStats[p]; return s.total > 0 ? Math.round(s.totalAmt / s.total) : 0; });
     if(providerProdChart1) providerProdChart1.destroy();
     const ctx1 = document.getElementById('providerProdChart1').getContext('2d');
-    providerProdChart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Denial Rate %', data: denialRates, backgroundColor: denialRates.map(r => r > 20 ? 'rgba(239,68,68,0.7)' : r > 10 ? 'rgba(245,158,11,0.7)' : 'rgba(34,197,94,0.7)') }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Denial Rate by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Chart 2: Avg $/Claim by Physician
+    providerProdChart1 = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Denial Rate %', data: denialRates, backgroundColor: denialRates.map(r => r > 20 ? 'rgba(239,68,68,0.7)' : r > 10 ? 'rgba(245,158,11,0.7)' : 'rgba(34,197,94,0.7)') }] }, options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Denial Rate by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#334155' } }, y: { grid: { display: false } } } } });
     if(providerProdChart2) providerProdChart2.destroy();
     const ctx2 = document.getElementById('providerProdChart2').getContext('2d');
-    providerProdChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Avg $/Claim', data: avgPerClaim, backgroundColor: 'rgba(56,189,248,0.7)' }] },
-        options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Average $/Claim by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, grid: { color: '#334155' } }, y: { grid: { display: false } } } }
-    });
-    
-    // Table
+    providerProdChart2 = new Chart(ctx2, { type: 'bar', data: { labels, datasets: [{ label: 'Avg $/Claim', data: avgPerClaim, backgroundColor: 'rgba(56,189,248,0.7)' }] }, options: { maintainAspectRatio: false, indexAxis: 'y', plugins: { title: { display: true, text: 'Average $/Claim by Physician', color: '#f8fafc' } }, scales: { x: { beginAtZero: true, grid: { color: '#334155' } }, y: { grid: { display: false } } } } });
     document.getElementById('providerProdBody').innerHTML = physicians.map(p => {
         const s = physStats[p];
         const denialRate = s.total > 0 ? ((s.denied / s.total) * 100).toFixed(1) : 0;
@@ -3012,34 +1922,12 @@ window.renderProviderProductivity = function() {
         let status = '🟢 On Track';
         if(denialRate > 20) status = '🔴 High Denials';
         else if(denialRate > 15) status = '🟡 Watch';
-        
-        return `
-            <tr>
-                <td><strong>${p}</strong></td>
-                <td>${s.total}</td>
-                <td style="color:var(--success)">${s.paid}</td>
-                <td style="color:var(--danger)">${s.denied}</td>
-                <td><strong style="color:${denialRate > 20 ? 'var(--danger)' : denialRate > 15 ? 'var(--warning)' : 'var(--success)'}">${denialRate}%</strong></td>
-                <td>AED ${s.totalAmt.toLocaleString()}</td>
-                <td>AED ${avgClaim.toLocaleString()}</td>
-                <td>${claimsPerDayVal}</td>
-                <td>${status}</td>
-            </tr>
-        `;
+        return `<tr><td><strong>${p}</strong></td><td>${s.total}</td><td style="color:var(--success)">${s.paid}</td><td style="color:var(--danger)">${s.denied}</td><td><strong style="color:${denialRate > 20 ? 'var(--danger)' : denialRate > 15 ? 'var(--warning)' : 'var(--success)'}">${denialRate}%</strong></td><td>AED ${s.totalAmt.toLocaleString()}</td><td>AED ${avgClaim.toLocaleString()}</td><td>${claimsPerDayVal}</td><td>${status}</td></tr>`;
     }).join('');
 };
-
 window.renderAuditTrail = function() {
-    document.getElementById('auditBody').innerHTML = AUDIT_TRAIL.map(a => `
-        <tr>
-            <td>${new Date(a.timestamp).toLocaleString()}</td>
-            <td><span class="badge badge-${a.action.includes('DELETE')||a.action.includes('PURGE')?'danger':a.action.includes('IMPORT')?'success':'accent'}">${a.action}</span></td>
-            <td style="font-size:11px;color:var(--text-secondary);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.details}</td>
-            <td>${a.user}</td>
-        </tr>
-    `).join('');
+    document.getElementById('auditBody').innerHTML = AUDIT_TRAIL.map(a => `<tr><td>${new Date(a.timestamp).toLocaleString()}</td><td><span class="badge badge-${a.action.includes('DELETE')||a.action.includes('PURGE')?'danger':a.action.includes('IMPORT')?'success':'accent'}">${a.action}</span></td><td style="font-size:11px;color:var(--text-secondary);max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.details}</td><td>${a.user}</td></tr>`).join('');
 };
-
 window.exportAuditTrail = function() {
     if(AUDIT_TRAIL.length === 0) { window.showToast('❌ No audit data'); return; }
     const headers = ['Timestamp', 'Action', 'Details', 'User'];
@@ -3047,25 +1935,11 @@ window.exportAuditTrail = function() {
     downloadCSV(csv, 'Audit_Trail_Export.csv');
     window.showToast('📤 Audit trail exported!');
 };
-
 window.clearAuditTrail = function() {
-    if(confirm('Clear all audit logs? This cannot be undone.')) {
-        AUDIT_TRAIL = [];
-        saveState();
-        renderAuditTrail();
-        window.showToast('🗑️ Audit trail cleared');
-    }
+    if(confirm('Clear all audit logs? This cannot be undone.')) { AUDIT_TRAIL = []; saveState(); renderAuditTrail(); window.showToast('🗑️ Audit trail cleared'); }
 };
-
-// ============================================
-// EXPORT/IMPORT JSON BACKUP
-// ============================================
 window.exportFullBackup = function() {
-    const backup = {
-        version: '5.0',
-        exportDate: new Date().toISOString(),
-        DATA, RECOVERED, NABIDH_LOGS, ELIG_LOGS, CONTRACT_RATES, CAPITATION_BUDGETS, AUDIT_TRAIL
-    };
+    const backup = { version: '5.0', exportDate: new Date().toISOString(), DATA, RECOVERED, NABIDH_LOGS, ELIG_LOGS, CONTRACT_RATES, CAPITATION_BUDGETS, AUDIT_TRAIL };
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -3076,7 +1950,6 @@ window.exportFullBackup = function() {
     logAudit('BACKUP_EXPORT', 'Full system backup exported');
     window.showToast('💾 Full backup exported!');
 };
-
 window.importFullBackup = function() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -3095,7 +1968,6 @@ window.importFullBackup = function() {
                 if(backup.CONTRACT_RATES) CONTRACT_RATES = backup.CONTRACT_RATES;
                 if(backup.CAPITATION_BUDGETS) CAPITATION_BUDGETS = backup.CAPITATION_BUDGETS;
                 if(backup.AUDIT_TRAIL) AUDIT_TRAIL = backup.AUDIT_TRAIL;
-                
                 saveState();
                 updateUI();
                 renderContracts();
@@ -3104,132 +1976,52 @@ window.importFullBackup = function() {
                 renderEligTable();
                 logAudit('BACKUP_IMPORT', 'Full system backup imported');
                 window.showToast('📥 Full backup imported successfully!');
-            } catch(err) {
-                window.showToast('❌ Invalid backup file');
-            }
+            } catch(err) { window.showToast('❌ Invalid backup file'); }
         };
         reader.readAsText(file);
     };
     input.click();
 };
-
-// ============================================
-// EXPORT/IMPORT EXCEL BACKUP (Multi-sheet)
-// ============================================
 window.exportFullBackupExcel = function() {
     const wb = XLSX.utils.book_new();
-    
-    // Claims sheet
     if(DATA.length > 0) {
-        const claimsData = DATA.map(d => ({
-            Claim_ID: d.id,
-            Physician: d.physician,
-            CPT: d.cpt,
-            ICD: d.icd,
-            TPA: d.payer,
-            Amount_AED: d.amt,
-            Status: d.status,
-            Denial_Code: d.code,
-            Root_Cause: DENIAL_MAP[d.code] || '',
-            Assignee: d.assignee,
-            Batch: d.batch,
-            Service_Date: d.serviceDate || ''
-        }));
+        const claimsData = DATA.map(d => ({ Claim_ID: d.id, Physician: d.physician, CPT: d.cpt, ICD: d.icd, TPA: d.payer, Amount_AED: d.amt, Status: d.status, Denial_Code: d.code, Root_Cause: DENIAL_MAP[d.code] || '', Assignee: d.assignee, Batch: d.batch, Service_Date: d.serviceDate || '' }));
         const ws1 = XLSX.utils.json_to_sheet(claimsData);
         XLSX.utils.book_append_sheet(wb, ws1, 'Claims');
     }
-    
-    // NABIDH Logs sheet
     if(NABIDH_LOGS.length > 0) {
-        const nabidhData = NABIDH_LOGS.map(l => ({
-            Batch_ID: l.batchId,
-            Clearinghouse: l.clearinghouse,
-            Submitted: l.submitted,
-            Claims_Count: l.claimCount,
-            Status: l.status,
-            ACK_Ref: l.ackRef,
-            Deadline: l.deadline,
-            Days_Left: Math.ceil((new Date(l.deadline) - new Date()) / (1000*60*60*24)),
-            Notes: l.notes
-        }));
+        const nabidhData = NABIDH_LOGS.map(l => ({ Batch_ID: l.batchId, Clearinghouse: l.clearinghouse, Submitted: l.submitted, Claims_Count: l.claimCount, Status: l.status, ACK_Ref: l.ackRef, Deadline: l.deadline, Days_Left: Math.ceil((new Date(l.deadline) - new Date()) / (1000*60*60*24)), Notes: l.notes }));
         const ws2 = XLSX.utils.json_to_sheet(nabidhData);
         XLSX.utils.book_append_sheet(wb, ws2, 'NABIDH_Logs');
     }
-    
-    // Eligibility Logs sheet
     if(ELIG_LOGS.length > 0) {
-        const eligData = ELIG_LOGS.map(l => ({
-            Patient_Ref: l.patientRef,
-            EID_Masked: l.eidMasked,
-            TPA: l.tpa,
-            Checked: l.checked,
-            Status: l.status,
-            Benefit: l.benefit,
-            Copay: l.copay,
-            Notes: l.notes
-        }));
+        const eligData = ELIG_LOGS.map(l => ({ Patient_Ref: l.patientRef, EID_Masked: l.eidMasked, TPA: l.tpa, Checked: l.checked, Status: l.status, Benefit: l.benefit, Copay: l.copay, Notes: l.notes }));
         const ws3 = XLSX.utils.json_to_sheet(eligData);
         XLSX.utils.book_append_sheet(wb, ws3, 'Eligibility_Logs');
     }
-    
-    // Contract Rates sheet
     if(CONTRACT_RATES.length > 0) {
-        const contractData = CONTRACT_RATES.map(c => ({
-            TPA: c.tpa,
-            CPT: c.cpt,
-            Rate_AED: c.rate,
-            Effective: c.effective,
-            Expiry: c.expiry,
-            Notes: c.notes
-        }));
+        const contractData = CONTRACT_RATES.map(c => ({ TPA: c.tpa, CPT: c.cpt, Rate_AED: c.rate, Effective: c.effective, Expiry: c.expiry, Notes: c.notes }));
         const ws4 = XLSX.utils.json_to_sheet(contractData);
         XLSX.utils.book_append_sheet(wb, ws4, 'Contract_Rates');
     }
-    
-    // Capitation Budgets sheet
     if(CAPITATION_BUDGETS.length > 0) {
-        const capData = CAPITATION_BUDGETS.map(c => ({
-            TPA: c.tpa,
-            Type: c.type,
-            Period_Start: c.periodStart,
-            Period_End: c.periodEnd,
-            Annual_Cap_AED: c.annualCap,
-            YTD_Utilized_AED: c.utilized,
-            Remaining_AED: c.annualCap - c.utilized,
-            Pct_Used: c.annualCap > 0 ? ((c.utilized / c.annualCap) * 100).toFixed(1) : 0
-        }));
+        const capData = CAPITATION_BUDGETS.map(c => ({ TPA: c.tpa, Type: c.type, Period_Start: c.periodStart, Period_End: c.periodEnd, Annual_Cap_AED: c.annualCap, YTD_Utilized_AED: c.utilized, Remaining_AED: c.annualCap - c.utilized, Pct_Used: c.annualCap > 0 ? ((c.utilized / c.annualCap) * 100).toFixed(1) : 0 }));
         const ws5 = XLSX.utils.json_to_sheet(capData);
         XLSX.utils.book_append_sheet(wb, ws5, 'Capitation_Budgets');
     }
-    
-    // Audit Trail sheet
     if(AUDIT_TRAIL.length > 0) {
-        const auditData = AUDIT_TRAIL.map(a => ({
-            Timestamp: a.timestamp,
-            Action: a.action,
-            Details: a.details,
-            User: a.user
-        }));
+        const auditData = AUDIT_TRAIL.map(a => ({ Timestamp: a.timestamp, Action: a.action, Details: a.details, User: a.user }));
         const ws6 = XLSX.utils.json_to_sheet(auditData);
         XLSX.utils.book_append_sheet(wb, ws6, 'Audit_Trail');
     }
-    
-    // Metadata sheet
-    const metaData = [{
-        Version: '5.0',
-        Export_Date: new Date().toISOString(),
-        Total_Claims: DATA.length,
-        Total_Recovered: RECOVERED
-    }];
+    const metaData = [{ Version: '5.0', Export_Date: new Date().toISOString(), Total_Claims: DATA.length, Total_Recovered: RECOVERED }];
     const wsMeta = XLSX.utils.json_to_sheet(metaData);
     XLSX.utils.book_append_sheet(wb, wsMeta, 'Metadata');
-    
     const filename = `RCMPRO_Full_Backup_${new Date().toISOString().split('T')[0]}.xlsx`;
     XLSX.writeFile(wb, filename);
     logAudit('BACKUP_EXPORT_EXCEL', 'Full system backup exported to Excel');
     window.showToast('📊 Full backup exported to Excel!');
 };
-
 window.importFullBackupExcel = function() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -3242,102 +2034,31 @@ window.importFullBackupExcel = function() {
             try {
                 const data = new Uint8Array(evt.target.result);
                 const wb = XLSX.read(data, { type: 'array' });
-                
-                // Import Claims
                 if(wb.SheetNames.includes('Claims')) {
                     const ws = wb.Sheets['Claims'];
                     const claims = XLSX.utils.sheet_to_json(ws);
-                    DATA = claims.map(c => ({
-                        id: c.Claim_ID || `IMP-${Math.floor(Math.random()*90000)}`,
-                        physician: c.Physician || '',
-                        cpt: c.CPT || '',
-                        icd: c.ICD || '',
-                        payer: c.TPA || '',
-                        amt: parseFloat(c.Amount_AED) || 0,
-                        status: c.Status || 'paid',
-                        code: c.Denial_Code || '',
-                        assignee: c.Assignee || '',
-                        batch: parseInt(c.Batch) || 1,
-                        serviceDate: c.Service_Date || null
-                    })).filter(x => x.amt > 0);
+                    DATA = claims.map(c => ({ id: c.Claim_ID || `IMP-${Math.floor(Math.random()*90000)}`, physician: c.Physician || '', cpt: c.CPT || '', icd: c.ICD || '', payer: c.TPA || '', amt: parseFloat(c.Amount_AED) || 0, status: c.Status || 'paid', code: c.Denial_Code || '', assignee: c.Assignee || '', batch: parseInt(c.Batch) || 1, serviceDate: c.Service_Date || null })).filter(x => x.amt > 0);
                 }
-                
-                // Import NABIDH Logs
                 if(wb.SheetNames.includes('NABIDH_Logs')) {
                     const ws = wb.Sheets['NABIDH_Logs'];
-                    NABIDH_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
-                        id: 'NB-' + Date.now() + Math.random(),
-                        batchId: l.Batch_ID,
-                        clearinghouse: l.Clearinghouse,
-                        submitted: l.Submitted,
-                        claimCount: parseInt(l.Claims_Count) || 0,
-                        status: l.Status,
-                        ackRef: l.ACK_Ref,
-                        deadline: l.Deadline,
-                        notes: l.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
+                    NABIDH_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({ id: 'NB-' + Date.now() + Math.random(), batchId: l.Batch_ID, clearinghouse: l.Clearinghouse, submitted: l.Submitted, claimCount: parseInt(l.Claims_Count) || 0, status: l.Status, ackRef: l.ACK_Ref, deadline: l.Deadline, notes: l.Notes, createdAt: new Date().toISOString() }));
                 }
-                
-                // Import Eligibility Logs
                 if(wb.SheetNames.includes('Eligibility_Logs')) {
                     const ws = wb.Sheets['Eligibility_Logs'];
-                    ELIG_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({
-                        id: 'EG-' + Date.now() + Math.random(),
-                        patientRef: l.Patient_Ref,
-                        eidMasked: l.EID_Masked,
-                        tpa: l.TPA,
-                        checked: l.Checked,
-                        status: l.Status,
-                        benefit: l.Benefit,
-                        copay: parseFloat(l.Copay) || 0,
-                        notes: l.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
+                    ELIG_LOGS = XLSX.utils.sheet_to_json(ws).map(l => ({ id: 'EG-' + Date.now() + Math.random(), patientRef: l.Patient_Ref, eidMasked: l.EID_Masked, tpa: l.TPA, checked: l.Checked, status: l.Status, benefit: l.Benefit, copay: parseFloat(l.Copay) || 0, notes: l.Notes, createdAt: new Date().toISOString() }));
                 }
-                
-                // Import Contract Rates
                 if(wb.SheetNames.includes('Contract_Rates')) {
                     const ws = wb.Sheets['Contract_Rates'];
-                    CONTRACT_RATES = XLSX.utils.sheet_to_json(ws).map(c => ({
-                        id: 'CT-' + Date.now() + Math.random(),
-                        tpa: c.TPA,
-                        cpt: c.CPT,
-                        rate: parseFloat(c.Rate_AED) || 0,
-                        effective: c.Effective,
-                        expiry: c.Expiry,
-                        notes: c.Notes,
-                        createdAt: new Date().toISOString()
-                    }));
+                    CONTRACT_RATES = XLSX.utils.sheet_to_json(ws).map(c => ({ id: 'CT-' + Date.now() + Math.random(), tpa: c.TPA, cpt: c.CPT, rate: parseFloat(c.Rate_AED) || 0, effective: c.Effective, expiry: c.Expiry, notes: c.Notes, createdAt: new Date().toISOString() }));
                 }
-                
-                // Import Capitation Budgets
                 if(wb.SheetNames.includes('Capitation_Budgets')) {
                     const ws = wb.Sheets['Capitation_Budgets'];
-                    CAPITATION_BUDGETS = XLSX.utils.sheet_to_json(ws).map(c => ({
-                        id: 'CAP-' + Date.now() + Math.random(),
-                        tpa: c.TPA,
-                        type: c.Type,
-                        periodStart: c.Period_Start,
-                        periodEnd: c.Period_End,
-                        annualCap: parseFloat(c.Annual_Cap_AED) || 0,
-                        utilized: parseFloat(c.YTD_Utilized_AED) || 0,
-                        createdAt: new Date().toISOString()
-                    }));
+                    CAPITATION_BUDGETS = XLSX.utils.sheet_to_json(ws).map(c => ({ id: 'CAP-' + Date.now() + Math.random(), tpa: c.TPA, type: c.Type, periodStart: c.Period_Start, periodEnd: c.Period_End, annualCap: parseFloat(c.Annual_Cap_AED) || 0, utilized: parseFloat(c.YTD_Utilized_AED) || 0, createdAt: new Date().toISOString() }));
                 }
-                
-                // Import Audit Trail
                 if(wb.SheetNames.includes('Audit_Trail')) {
                     const ws = wb.Sheets['Audit_Trail'];
-                    AUDIT_TRAIL = XLSX.utils.sheet_to_json(ws).map(a => ({
-                        id: 'AUD-' + Date.now() + Math.random(),
-                        timestamp: a.Timestamp,
-                        action: a.Action,
-                        details: a.Details,
-                        user: a.User || 'Imported'
-                    }));
+                    AUDIT_TRAIL = XLSX.utils.sheet_to_json(ws).map(a => ({ id: 'AUD-' + Date.now() + Math.random(), timestamp: a.Timestamp, action: a.Action, details: a.Details, user: a.User || 'Imported' }));
                 }
-                
                 saveState();
                 updateUI();
                 renderContracts();
@@ -3347,56 +2068,28 @@ window.importFullBackupExcel = function() {
                 if(typeof renderAuditTrail === 'function') renderAuditTrail();
                 logAudit('BACKUP_IMPORT_EXCEL', 'Full system backup imported from Excel');
                 window.showToast('📥 Full backup imported from Excel successfully!');
-            } catch(err) {
-                console.error(err);
-                window.showToast('❌ Invalid Excel backup file');
-            }
+            } catch(err) { console.error(err); window.showToast('❌ Invalid Excel backup file'); }
         };
         reader.readAsArrayBuffer(file);
     };
     input.click();
 };
-
-// ============================================
-// DATA RETENTION AUTO-PURGE (90 days)
-// ============================================
 function runDataRetention() {
     const cutoff = new Date(Date.now() - 90*24*60*60*1000);
     let purged = 0;
-    
-    // Purge old NABIDH logs
     const oldNabidh = NABIDH_LOGS.filter(l => new Date(l.createdAt) < cutoff).length;
     NABIDH_LOGS = NABIDH_LOGS.filter(l => new Date(l.createdAt) >= cutoff);
     purged += oldNabidh;
-    
-    // Purge old Eligibility logs
     const oldElig = ELIG_LOGS.filter(l => new Date(l.createdAt) < cutoff).length;
     ELIG_LOGS = ELIG_LOGS.filter(l => new Date(l.createdAt) >= cutoff);
     purged += oldElig;
-    
-    // Purge old Audit trail (keep last 1000 anyway)
-    if(AUDIT_TRAIL.length > 1000) {
-        purged += AUDIT_TRAIL.length - 1000;
-        AUDIT_TRAIL = AUDIT_TRAIL.slice(0, 1000);
-    }
-    
-    if(purged > 0) {
-        saveState();
-        logAudit('RETENTION_PURGE', `Auto-purged ${purged} records older than 90 days`);
-        window.showToast(`🧹 Purged ${purged} old records (90-day retention)`);
-    }
+    if(AUDIT_TRAIL.length > 1000) { purged += AUDIT_TRAIL.length - 1000; AUDIT_TRAIL = AUDIT_TRAIL.slice(0, 1000); }
+    if(purged > 0) { saveState(); logAudit('RETENTION_PURGE', `Auto-purged ${purged} records older than 90 days`); window.showToast(`🧹 Purged ${purged} old records (90-day retention)`); }
 }
-
-// Run retention check on load
 setTimeout(runDataRetention, 1000);
-
-// ============================================
-// BULK APPEAL GENERATION
-// ============================================
 window.showBulkAppealModal = function() {
     const deniedClaims = DATA.filter(d => d.status === 'denied');
     if(deniedClaims.length === 0) { window.showToast('❌ No denied claims'); return; }
-    
     const html = `
         <div style="background:var(--bg-card);padding:25px;border-radius:16px;max-width:700px;margin:auto;max-height:80vh;overflow-y:auto;">
             <h4>📄 Bulk Appeal Generator</h4>
@@ -3411,16 +2104,7 @@ window.showBulkAppealModal = function() {
                 <table style="width:100%;">
                     <thead><tr style="position:sticky;top:0;background:var(--bg-card);"><th style="width:40px;">✓</th><th>Claim ID</th><th>TPA</th><th>Code</th><th>Amount</th><th>Reason</th></tr></thead>
                     <tbody>
-                        ${deniedClaims.map(d => `
-                            <tr>
-                                <td><input type="checkbox" class="bulkClaim" value="${d.id}" data-code="${d.code}" data-amt="${d.amt}" data-payer="${d.payer}"></td>
-                                <td>${d.id}</td>
-                                <td>${d.payer}</td>
-                                <td><strong>${d.code}</strong></td>
-                                <td>AED ${d.amt}</td>
-                                <td style="font-size:11px;color:var(--text-secondary)">${DENIAL_MAP[d.code] || ''}</td>
-                            </tr>
-                        `).join('')}
+                        ${deniedClaims.map(d => `<tr><td><input type="checkbox" class="bulkClaim" value="${d.id}" data-code="${d.code}" data-amt="${d.amt}" data-payer="${d.payer}"></td><td>${d.id}</td><td>${d.payer}</td><td><strong>${d.code}</strong></td><td>AED ${d.amt}</td><td style="font-size:11px;color:var(--text-secondary)">${DENIAL_MAP[d.code] || ''}</td></tr>`).join('')}
                     </tbody>
                 </table>
             </div>
@@ -3432,40 +2116,21 @@ window.showBulkAppealModal = function() {
     `;
     openModal(html);
 };
-
-window.toggleAllBulk = function(select) {
-    document.querySelectorAll('.bulkClaim').forEach(cb => cb.checked = select);
-};
-
-window.toggleByCode = function(prefix) {
-    document.querySelectorAll('.bulkClaim').forEach(cb => {
-        cb.checked = cb.dataset.code.startsWith(prefix);
-    });
-};
-
+window.toggleAllBulk = function(select) { document.querySelectorAll('.bulkClaim').forEach(cb => cb.checked = select); };
+window.toggleByCode = function(prefix) { document.querySelectorAll('.bulkClaim').forEach(cb => { cb.checked = cb.dataset.code.startsWith(prefix); }); };
 window.generateBulkAppeals = function() {
-    const selected = Array.from(document.querySelectorAll('.bulkClaim:checked')).map(cb => ({
-        id: cb.value,
-        code: cb.dataset.code,
-        amt: parseFloat(cb.dataset.amt),
-        payer: cb.dataset.payer
-    }));
-    
+    const selected = Array.from(document.querySelectorAll('.bulkClaim:checked')).map(cb => ({ id: cb.value, code: cb.dataset.code, amt: parseFloat(cb.dataset.amt), payer: cb.dataset.payer }));
     if(selected.length === 0) { window.showToast('❌ No claims selected'); return; }
-    
     try {
         const {jsPDF} = window.jspdf;
         const doc = new jsPDF();
-        
         doc.setFontSize(16);
         doc.text("BULK TPA REJECTION APPEALS - UAE", 20, 20);
         doc.setFontSize(10);
         doc.text(`Generated: ${new Date().toLocaleDateString()} | Claims: ${selected.length} | Total: AED ${selected.reduce((s,c)=>s+c.amt,0).toLocaleString()}`, 20, 28);
-        
         let y = 40;
         selected.forEach((claim, i) => {
             if(y > 270) { doc.addPage(); y = 20; }
-            
             doc.setFontSize(11);
             doc.setFont("helvetica", "bold");
             doc.text(`Claim ${i+1}: ${claim.id}`, 20, y);
@@ -3475,13 +2140,11 @@ window.generateBulkAppeals = function() {
             y += 6;
             doc.text(`Reason: ${DENIAL_MAP[claim.code] || 'Unspecified'}`, 20, y);
             y += 6;
-            
             let justification = "Clinical justification submitted per DHA/HAAD regulations.";
             if (claim.code.startsWith('MNEC')) justification = "Full clinical notes, vitals, and history establish medical necessity per standard guidelines.";
             else if (claim.code.startsWith('TIME')) justification = "Claim submitted within contractual timeframes. System timestamps attached proving timely dispatch.";
             else if (claim.code.startsWith('AUTH')) justification = "Emergency/urgent care exemption applies. Pre-approval waived due to acute presentation.";
             else if (claim.code.startsWith('CODE') || claim.code.startsWith('PRCE')) justification = "CPT/ICD-10 pairings adhere to NCCI standards. Modifiers appropriately applied. Request bundling edit reversal.";
-            
             doc.text("Justification:", 20, y);
             y += 5;
             doc.setFont("helvetica", "italic");
@@ -3489,11 +2152,48 @@ window.generateBulkAppeals = function() {
             lines.forEach(line => { doc.text(line, 20, y); y += 5; });
             y += 8;
         });
-        
         const data = doc.output('datauristring');
         const link = document.createElement('a');
         link.href = data;
         link.download = `Bulk_Appeals_${selected.length}_Claims_${new Date().toISOString().split('T')[0]}.pdf`;
         link.click();
-        
-        const totalAmt = selected.redu
+        const totalAmt = selected.reduce((s,c)=>s+c.amt,0);
+        RECOVERED += totalAmt;
+        document.getElementById('sideRecovered').textContent = 'AED ' + RECOVERED.toLocaleString();
+        saveState();
+        logAudit('BULK_APPEAL', `Generated bulk appeal for ${selected.length} claims, AED ${totalAmt.toLocaleString()}`);
+        window.closeModal();
+        window.showToast(`📄 Bulk appeal PDF generated for ${selected.length} claims!`);
+    } catch(e) { window.showToast('❌ PDF generation failed'); }
+};
+window.copyClaimId = function(id) { navigator.clipboard.writeText(id).then(() => window.showToast(`📋 Copied: ${id}`)); };
+function downloadCSV(csv, filename) {
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+const CROSSWALK_DB = [
+    { dsl: 'DHA-ENDO-05', cpt: '83036', icd: 'E11.9', desc: 'HbA1c test (Endocrine)', rule: 'Max 1 per 90 days for Type 2 Diabetes without complications.' },
+    { dsl: 'DHA-CARD-10', cpt: '93000', icd: 'I50.9', desc: 'Electrocardiogram, routine (Cardiology)', rule: 'Requires primary symptom diagnosis; Auth needed > AED 500.' },
+    { dsl: 'DHA-ENT-22', cpt: '31575', icd: 'J38.01', desc: 'Laryngoscopy, flexible (ENT)', rule: 'Modifier 25 required if billed with same-day E/M.' },
+    { dsl: 'DHA-E/M-03', cpt: '99213', icd: 'R05.9', desc: 'Outpatient Visit - Level 3 (Cough)', rule: 'DHA standard documentation (vitals, history) mandatory.' },
+    { dsl: 'DHA-CARD-15', cpt: '93306', icd: 'I51.9', desc: 'Echocardiography (Cardiology)', rule: 'Prior authorization required by most top-tier TPAs.' },
+    { dsl: 'DHA-E/M-04', cpt: '99214', icd: 'R50.9', desc: 'Outpatient Visit - Level 4 (Fever)', rule: 'Requires moderate medical decision making. Document vitals.' },
+    { dsl: 'DHA-LAB-12', cpt: '85025', icd: 'R50.9', desc: 'Complete Blood Count (CBC)', rule: 'Medical necessity met for fever of unknown origin.' },
+    { dsl: 'DHA-ORTHO-01', cpt: '99203', icd: 'M54.5', desc: 'New Patient Visit (Low Back Pain)', rule: 'Require pain scale documentation.' },
+    { dsl: 'DHA-RAD-08', cpt: '72100', icd: 'M54.5', desc: 'X-ray exam of lower spine', rule: 'Step-therapy: Conservative treatment failed.' }
+];
+window.searchCrosswalk = function() {
+    const query = document.getElementById('crosswalkSearch').value.toLowerCase();
+    const results = CROSSWALK_DB.filter(item => item.cpt.toLowerCase().includes(query) || item.icd.toLowerCase().includes(query) || item.dsl.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query));
+    document.getElementById('crosswalkBody').innerHTML = results.map(x => `<tr><td><span class="badge badge-success">${x.dsl}</span></td><td><strong>${x.cpt}</strong></td><td>${x.icd}</td><td>${x.desc}</td><td style="color:var(--text-secondary); font-size:11px;">${x.rule}</td></tr>`).join('');
+};
+setTimeout(window.searchCrosswalk, 500);
+});
+</script>
+</body>
+</html>
