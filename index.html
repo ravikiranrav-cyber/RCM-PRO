@@ -67,7 +67,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <p style="color:var(--text-secondary);margin-bottom:25px;font-size:14px;line-height:1.6;">
             This is a secure, localized environment tailored for UAE clinics. To ensure complete compliance, no real Patient Health Information (PHI) is required to test the Engine. Everything is processed locally on your device.
         </p>
-        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="dismissWelcome()">Enter the Dashboard</button>
+        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="document.getElementById('welcomeModal').style.display='none'; console.log('Welcome modal dismissed via inline onclick');">Enter the Dashboard</button>
     </div>
 </div>
 
@@ -732,6 +732,28 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         }
     }, 5000);
+
+    // Click outside modal to dismiss
+    const welcomeModal = document.getElementById('welcomeModal');
+    if (welcomeModal) {
+        welcomeModal.addEventListener('click', (e) => {
+            if (e.target === welcomeModal) {
+                welcomeModal.style.display = 'none';
+                console.log('Welcome modal dismissed by clicking overlay');
+            }
+        });
+    }
+
+    // Escape key to dismiss
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('welcomeModal');
+            if (modal && modal.style.display !== 'none') {
+                modal.style.display = 'none';
+                console.log('Welcome modal dismissed by Escape key');
+            }
+        }
+    });
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
 let ELIG_LOGS = [];
