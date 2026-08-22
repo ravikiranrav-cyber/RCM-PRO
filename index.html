@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RCM Pro UAE v5.0 — Official Coding Edition</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https: data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: blob:;">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -67,7 +67,7 @@ tbody tr:hover td { background: rgba(56,189,248,0.05); }
         <p style="color:var(--text-secondary);margin-bottom:25px;font-size:14px;line-height:1.6;">
             This is a secure, localized environment tailored for UAE clinics. To ensure complete compliance, no real Patient Health Information (PHI) is required to test the Engine. Everything is processed locally on your device.
         </p>
-        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="document.getElementById('welcomeModal').style.display='none'">Enter the Dashboard</button>
+        <button class="btn btn-pro" style="width:100%;justify-content:center;font-size:15px;padding:14px;" onclick="dismissWelcome()">Enter the Dashboard</button>
     </div>
 </div>
 
@@ -661,7 +661,77 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('XLSX:', typeof XLSX !== 'undefined' ? '✅' : '❌ MISSING');
     console.log('jsPDF:', typeof jspdf !== 'undefined' ? '✅' : '❌ MISSING');
 
-let DATA = [];
+    // Dismiss welcome modal
+    window.dismissWelcome = function() {
+        const modal = document.getElementById('welcomeModal');
+        if (modal) {
+            modal.style.display = 'none';
+            console.log('Welcome modal dismissed');
+        }
+    };
+
+    // File input handler with debugging
+    const fileIn = document.getElementById('fileIn');
+    console.log('fileIn element found:', !!fileIn);
+    
+    if (fileIn) {
+        fileIn.addEventListener('change', function(e) {
+            console.log('fileIn change event fired');
+            const file = e.target.files[0];
+            console.log('File selected:', file?.name, file?.type, file?.size);
+            if (!file) return;
+            
+            // Add quick header check for CSV files
+            if (file.name.endsWith('.csv')) {
+                console.log('Parsing CSV with PapaParse...');
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        console.log('PapaParse complete:', results.data?.length, 'rows,', results.errors?.length, 'errors');
+                        if (results.errors.length > 0) {
+                             console.warn("CSV Parsing Errors:", results.errors);
+                        }
+                        const scrubbedData = scrubPHIAdvanced(results.data);
+                        logAudit('DATA_IMPORT', `Imported ${results.data.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+                        processImportedData(scrubbedData);
+                    }
+                });
+            } else {
+                console.log('Reading Excel file with XLSX...');
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    console.log('FileReader onload, parsing with XLSX...');
+                    try {
+                        const data = evt.target.result;
+                        const wb = XLSX.read(data, { type: 'array' });
+                        const wsname = wb.SheetNames[0];
+                        const rawParsedData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+                        console.log('XLSX parsed:', rawParsedData?.length, 'rows');
+                        
+                        const scrubbedData = scrubPHIAdvanced(rawParsedData);
+                        logAudit('DATA_IMPORT', `Imported ${rawParsedData.length} rows, scrubbed to ${scrubbedData.length} clean rows`);
+                        processImportedData(scrubbedData);
+                    } catch (err) {
+                        console.error('XLSX parse error:', err);
+                        window.showToast('❌ Excel parse error: ' + err.message);
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+    } else {
+        console.error('fileIn element NOT FOUND!');
+    }
+
+    // Auto-dismiss welcome modal after 5 seconds if not dismissed
+    setTimeout(() => {
+        const modal = document.getElementById('welcomeModal');
+        if (modal && modal.style.display !== 'none') {
+            console.log('Auto-dismissing welcome modal');
+            modal.style.display = 'none';
+        }
+    }, 5000);
 let RECOVERED = 0;
 let NABIDH_LOGS = [];
 let ELIG_LOGS = [];
